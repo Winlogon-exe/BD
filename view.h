@@ -35,7 +35,7 @@ private slots:
     void showTable(QSqlQueryModel *model);
 
 private:
-    Logic* logic;
+    Logic logic;
     QTableView* tableView; // Виджет для отображения данных в виде таблицы
 
 private:

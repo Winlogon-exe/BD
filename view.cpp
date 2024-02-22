@@ -3,7 +3,6 @@
 View::View(QWidget *parent)
     : QWidget(parent)
 {
-    logic  = new Logic;
     createUI();
 }
 
@@ -95,12 +94,12 @@ void View::ButtonClicked()
 //подключение сигналов и слотов для обработки событий.
 void View::setupConnect()
 {
-    connect(logic, &Logic::dataChanged, this, &View::showTable);
+    connect(&logic, &Logic::dataChanged, this, &View::showTable);
 }
 
 void View::showTable(QSqlQueryModel *model)
 {
-     qDebug() << "слот вызван";
+    qDebug() << "слот вызван";
     tableView->setModel(model);
     tableView->update();
     tableView->show();
