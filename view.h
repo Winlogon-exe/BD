@@ -12,6 +12,7 @@
 #include <QSqlTableModel>
 #include<QPushButton>
 #include<QLineEdit>
+#include<QLabel>
 #include"logic.h"
 
 class View : public QWidget
@@ -27,26 +28,24 @@ public:
     void setupTableView();
     void setupLayouts();
     void setupConnect();
-
-
-    void loadPage(int page);
-    void showTable();
     QPushButton* createButton(const QString& text,State state);
 
 private slots:
     void ButtonClicked();
+    void showTable();
 
 private:
     Logic logic;
     QTableView* tableView; // Виджет для отображения данных в виде таблицы
 
 private:
-    QPushButton *backButton;
-    QPushButton *nextButton;
-    QPushButton *searchButton;
+    QPushButton* backButton;
+    QPushButton* nextButton;
+    QPushButton* searchButton;
 
-    QLineEdit *searchLineEdit;
-    QComboBox *filterComboBox;
+    QLineEdit*   searchLineEdit;
+    QComboBox*   filterComboBox;
+    QLabel*      page;
 
 };
 

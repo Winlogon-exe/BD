@@ -2,14 +2,17 @@
 #include <QDebug>
 #include<QThread>
 
-Logic::Logic(QObject *parent) : QObject(parent)
+Logic::Logic(QObject *parent) :
+    QObject(parent),
+    currentPage(0),
+    pageSize(30)
 {
-    connect();
-    setupModel();
+    connectToDatabase();
+
 }
 
 //открытие к бд
-void Logic::connect()
+void Logic::connectToDatabase ()
 {
     db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName(dbFilename);
@@ -19,22 +22,21 @@ void Logic::connect()
 
     }
     qDebug() << "База данных успешно открыта.";
+    setupModel();
 }
 
 void Logic::search(QObject* sender)
 {
     State state = buttonStateMap[sender]; // Получаем состояние из отправителя сигнала
-
+    //рефактор
     switch (state)
     {
     case Next:
-        qDebug()<<"next";
+        next();
         break;
-
     case Back:
-        qDebug()<<"back";
+        back();
         break;
-
     case Search:
         qDebug()<<"search";
         break;
@@ -43,6 +45,7 @@ void Logic::search(QObject* sender)
         qDebug()<<"what?";
         break;
     }
+    emit updateDB();
 }
 
 //запрос к бд
@@ -50,17 +53,12 @@ void Logic::setupModel()
 {
     model = new QSqlQueryModel();
     QSqlQuery query(db);
-    int pageNumber = 1;
-    int pageSize = 30;
-    int offset = pageNumber * pageSize;
-
     QString queryString = QString("SELECT * FROM RUvideos LIMIT %1 OFFSET %2").arg(pageSize).arg(offset);
     query.prepare(queryString);
 
     if (query.exec())
     {
         model->setQuery(query);
-        qDebug() << "Запрос к БД выполнен успешно.";
     }
     else
     {
@@ -68,17 +66,42 @@ void Logic::setupModel()
     }
 }
 
-//закрытие бд
-void Logic::disconnect()
+void Logic::disconnectFromDatabase()
 {
     if (db.isOpen())
     {
         db.close();
-        qDebug() << "База данных успешно закрыта.";
+        qDebug() << "База данных  закрыта.";
 
     }
     qDebug() << "База данных уже закрыта или не была открыта.";
 }
+
+//закрытие бд
+void Logic::updateOffset()
+{
+   offset = currentPage * pageSize; //  смещение
+}
+
+void Logic::next()
+{
+    currentPage++;
+    updateOffset();
+    setupModel(); // новый запрос
+    qDebug() << "next";
+}
+
+void Logic::back()
+{
+    if (currentPage > 0)
+    {
+        currentPage--;
+        updateOffset(); // Обновляем смещение для предыдущей страницы
+        setupModel(); // новый запрос
+    }
+    qDebug()<<"back";
+}
+
 
 QSqlQueryModel *Logic::getModel() const
 {

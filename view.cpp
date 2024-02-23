@@ -64,6 +64,7 @@ void View::setupLayouts()
 //создание и настройка кнопок и других элементов управления.
 void View::setupButtons()
 {
+
     //поля для поиска
     searchLineEdit = new QLineEdit(this);
     searchLineEdit->setPlaceholderText(tr("Введите запрос..."));
@@ -78,6 +79,8 @@ void View::setupButtons()
     backButton = createButton(tr("Назад"),Back);
     searchButton = createButton(tr("Поиск"),Search);
 
+
+    //рефактор
     backButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     nextButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     searchButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -103,7 +106,7 @@ void View::ButtonClicked()
 //подключение сигналов и слотов для обработки событий.
 void View::setupConnect()
 {
-
+    connect(&logic,&Logic::updateDB,this,&View::showTable);
 }
 
 //если сделать это слотом и сигналом обновлять в логике не работает (почему?)
@@ -111,6 +114,5 @@ void View::showTable()
 {
     QSqlQueryModel *model = logic.getModel();
     tableView->setModel(model);
-    tableView->update();
     tableView->show();
 }

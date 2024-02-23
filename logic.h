@@ -24,23 +24,36 @@ class Logic : public QObject
     Q_OBJECT
 
 public:
-   explicit Logic(QObject *parent = nullptr);
+    explicit Logic(QObject *parent = nullptr);
 
 public:
-    void connect();
-    void disconnect();
-    void search(QObject* sender);
+    void connectToDatabase();
+    void disconnectFromDatabase();
+    void search(QObject *sender);
 
-    void setButtonState(QObject* button, State state);
+    void setButtonState(QObject *button, State state);
+
     void setupModel();
+    void updateOffset();
+    void next();
+    void back();
     QSqlQueryModel *getModel() const;
 
+signals:
+    // Сигнал для обновления базы данных
+    void updateDB();
+
 private:
-    std::map<QObject*, State> buttonStateMap;
     const QString dbFilename = "D:/QT_PROJECTS/BD/test.db";
+
+    int currentPage; // Текущая страница
+    int pageSize; // Размер страницы
+    int offset = currentPage * pageSize; // Смещение
+
+    std::map<QObject *, State> buttonStateMap;
     QSqlQueryModel *model;
     QSqlDatabase db;
     State state;
-};
+};;
 
 #endif // LOGIC_H
