@@ -60,7 +60,7 @@ void Logic::loadDataFromDB()
 
     if (query.exec())
     {
-        model->setQuery(query);
+        model->setQuery(std::move(query));
     }
     else
     {
@@ -74,7 +74,6 @@ void Logic::disconnectFromDatabase()
     {
         db.close();
         QMessageBox::information(nullptr, QObject::tr("Ошибка"), QObject::tr("БД закрыта"));
-
     }
     QMessageBox::information(nullptr, QObject::tr("Ошибка"), QObject::tr("БД уже закрыта"));
 }
