@@ -33,6 +33,7 @@ public:
 private slots:
     void ButtonClicked();
     void showTable();
+    void showLabel(int currentPage);
 
 private:
     Logic logic;

@@ -42,6 +42,7 @@ public:
 signals:
     // Сигнал для обновления базы данных
     void updateDB();
+    void updateLabel(int currentPage);
 
 private:
     const QString dbFilename = "D:/QT_PROJECTS/BD/test.db";

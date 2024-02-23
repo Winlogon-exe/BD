@@ -8,11 +8,10 @@ Logic::Logic(QObject *parent) :
     pageSize(30)
 {
     connectToDatabase();
-
 }
 
 //открытие к бд
-void Logic::connectToDatabase ()
+void Logic::connectToDatabase()
 {
     db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName(dbFilename);
@@ -46,6 +45,7 @@ void Logic::search(QObject* sender)
         break;
     }
     emit updateDB();
+    emit updateLabel(currentPage);
 }
 
 //запрос к бд
