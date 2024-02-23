@@ -21,15 +21,13 @@ public:
 public:
     void connect();
     void disconnect();
-    QSqlQueryModel* setupModel(int pageNumber, int pageSize);
+    QSqlQueryModel* setupModel();
     QSqlQueryModel *getModel() const;
 
 private:
     const QString dbFilename = "D:/QT_PROJECTS/BD/test.db";
     QSqlDatabase db;
     QSqlQueryModel *model;
-
-
 };
 
 #endif // LOGIC_H

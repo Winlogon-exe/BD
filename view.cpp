@@ -1,10 +1,9 @@
 #include "view.h"
 
 View::View(QWidget *parent)
-    : QWidget(parent), currentPage(0), pageSize(10)
+    : QWidget(parent)
 {
     createUI();
-    loadPage(currentPage);
 }
 
 void View::createUI()
@@ -93,16 +92,8 @@ QPushButton* View::createButton(const QString& text)
 
 void View::ButtonClicked()
 {
-    QPushButton* button = qobject_cast<QPushButton*>(sender());
-    if (button == backButton && currentPage > 0)
-    {
-        loadPage(--currentPage);
-    }
-    else if
-        (button == nextButton)
-    {
-        loadPage(++currentPage);
-    }
+
+
 }
 
 //подключение сигналов и слотов для обработки событий.
@@ -115,7 +106,7 @@ void View::setupConnect()
 void View::showTable()
 {
     qDebug() << "слот вызван";
-    QSqlQueryModel *model = logic.setupModel(page,pageSize);
+    QSqlQueryModel *model = logic.getModel();
     tableView->setModel(model);
     tableView->update();
     tableView->show();

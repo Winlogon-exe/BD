@@ -48,10 +48,6 @@ private:
     QLineEdit *searchLineEdit;
     QComboBox *filterComboBox;
 
-
-    int page;
-    int pageSize;
-    int totalRecords;
 };
 
 #endif // VIEW_H

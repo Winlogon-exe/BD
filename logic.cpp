@@ -5,6 +5,7 @@
 Logic::Logic(QObject *parent) : QObject(parent)
 {
     connect();
+    setupModel();
 }
 
 //открытие к бд
@@ -21,7 +22,7 @@ void Logic::connect()
 }
 
 //запрос к бд
-QSqlQueryModel* Logic::setupModel(int pageNumber, int pageSize)
+QSqlQueryModel* Logic::setupModel()
 {
     model = new QSqlQueryModel();
     QSqlQuery query(db);
