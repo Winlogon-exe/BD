@@ -31,7 +31,7 @@ public:
 
     void loadPage(int page);
     void showTable();
-    QPushButton* createButton(const QString& text);
+    QPushButton* createButton(const QString& text,State state);
 
 private slots:
     void ButtonClicked();

@@ -11,6 +11,14 @@
 #include<QSqlQueryModel>
 #include <QSqlTableModel>
 
+enum State
+{
+    Next,
+    Back,
+    Search
+};
+
+
 class Logic : public QObject
 {
     Q_OBJECT
@@ -21,13 +29,18 @@ public:
 public:
     void connect();
     void disconnect();
-    QSqlQueryModel* setupModel();
+    void search(QObject* sender);
+
+    void setButtonState(QObject* button, State state);
+    void setupModel();
     QSqlQueryModel *getModel() const;
 
 private:
+    std::map<QObject*, State> buttonStateMap;
     const QString dbFilename = "D:/QT_PROJECTS/BD/test.db";
-    QSqlDatabase db;
     QSqlQueryModel *model;
+    QSqlDatabase db;
+    State state;
 };
 
 #endif // LOGIC_H

@@ -21,12 +21,42 @@ void Logic::connect()
     qDebug() << "База данных успешно открыта.";
 }
 
+void Logic::search(QObject* sender)
+{
+    State state = buttonStateMap[sender]; // Получаем состояние из отправителя сигнала
+
+    switch (state)
+    {
+    case Next:
+        qDebug()<<"next";
+        break;
+
+    case Back:
+        qDebug()<<"back";
+        break;
+
+    case Search:
+        qDebug()<<"search";
+        break;
+
+    default:
+        qDebug()<<"what?";
+        break;
+    }
+}
+
 //запрос к бд
-QSqlQueryModel* Logic::setupModel()
+void Logic::setupModel()
 {
     model = new QSqlQueryModel();
     QSqlQuery query(db);
-    query.prepare("SELECT * FROM RUvideos"); // Замените "вашаТаблица" на имя вашей таблицы
+    int pageNumber = 1;
+    int pageSize = 30;
+    int offset = pageNumber * pageSize;
+
+    QString queryString = QString("SELECT * FROM RUvideos LIMIT %1 OFFSET %2").arg(pageSize).arg(offset);
+    query.prepare(queryString);
+
     if (query.exec())
     {
         model->setQuery(query);
@@ -36,7 +66,6 @@ QSqlQueryModel* Logic::setupModel()
     {
         qDebug() << "Ошибка при выполнении запроса к БД:" << query.lastError().text();
     }
-    return model;
 }
 
 //закрытие бд
@@ -54,4 +83,9 @@ void Logic::disconnect()
 QSqlQueryModel *Logic::getModel() const
 {
     return model;
+}
+
+void Logic::setButtonState(QObject* button, State state)
+{
+    buttonStateMap[button] = state;
 }

@@ -17,6 +17,7 @@ void View::setupDisplay()
 {
     setWindowTitle("DB");
     this->resize(800, 500);
+
     //после дисплея - кнопки
     setupButtons();
 }
@@ -26,6 +27,7 @@ void View::setupTableView()
 {
     tableView = new QTableView(this);
     tableView->setMinimumSize(500, 300);
+
     //после БД - слои
     setupLayouts();
 }
@@ -54,6 +56,7 @@ void View::setupLayouts()
     mainLayout->addLayout(buttonLayout);
 
     this->setLayout(mainLayout);
+
     //после слоев - показываем БД
     showTable();
 }
@@ -71,29 +74,30 @@ void View::setupButtons()
     filterComboBox->addItem(tr("Фильтр 2"));
 
     // Создание и настройка кнопок
-    backButton = createButton(tr("Назад"));
-    nextButton = createButton(tr("Вперед"));
-    searchButton = createButton(tr("Поиск"));
+    nextButton = createButton(tr("Вперед"),Next);
+    backButton = createButton(tr("Назад"),Back);
+    searchButton = createButton(tr("Поиск"),Search);
 
     backButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     nextButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     searchButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+
     //после кнопок - БД
     setupTableView();
 }
 
-QPushButton* View::createButton(const QString& text)
+QPushButton* View::createButton(const QString& text,State state)
 {
     QPushButton* button = new QPushButton(text, this);
     button->setObjectName(text);
+    logic.setButtonState(button,state);
     connect(button, &QPushButton::clicked, this, &View::ButtonClicked);
     return button;
 }
 
 void View::ButtonClicked()
 {
-
-
+    logic.search(sender());
 }
 
 //подключение сигналов и слотов для обработки событий.
@@ -105,7 +109,6 @@ void View::setupConnect()
 //если сделать это слотом и сигналом обновлять в логике не работает (почему?)
 void View::showTable()
 {
-    qDebug() << "слот вызван";
     QSqlQueryModel *model = logic.getModel();
     tableView->setModel(model);
     tableView->update();
