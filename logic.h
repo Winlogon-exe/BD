@@ -21,18 +21,15 @@ public:
 public:
     void connect();
     void disconnect();
-    void setupModel();
-    void loadData(int pageNumber, int pageSize);
-
+    QSqlQueryModel* setupModel(int pageNumber, int pageSize);
     QSqlQueryModel *getModel() const;
 
-signals:
-    void dataChanged(QSqlQueryModel *model);
-
 private:
-    const QString dbFilename = "D:/bd/123.db";
+    const QString dbFilename = "D:/QT_PROJECTS/BD/test.db";
     QSqlDatabase db;
     QSqlQueryModel *model;
+
+
 };
 
 #endif // LOGIC_H

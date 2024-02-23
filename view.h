@@ -28,11 +28,13 @@ public:
     void setupLayouts();
     void setupConnect();
 
+
+    void loadPage(int page);
+    void showTable();
     QPushButton* createButton(const QString& text);
 
 private slots:
     void ButtonClicked();
-    void showTable(QSqlQueryModel *model);
 
 private:
     Logic logic;
@@ -45,6 +47,11 @@ private:
 
     QLineEdit *searchLineEdit;
     QComboBox *filterComboBox;
+
+
+    int page;
+    int pageSize;
+    int totalRecords;
 };
 
 #endif // VIEW_H

@@ -5,7 +5,6 @@
 Logic::Logic(QObject *parent) : QObject(parent)
 {
     connect();
-    setupModel();
 }
 
 //открытие к бд
@@ -19,15 +18,14 @@ void Logic::connect()
 
     }
     qDebug() << "База данных успешно открыта.";
-
 }
 
 //запрос к бд
-void Logic::setupModel()
+QSqlQueryModel* Logic::setupModel(int pageNumber, int pageSize)
 {
     model = new QSqlQueryModel();
     QSqlQuery query(db);
-    query.prepare("SELECT * FROM products"); // Замените "вашаТаблица" на имя вашей таблицы
+    query.prepare("SELECT * FROM RUvideos"); // Замените "вашаТаблица" на имя вашей таблицы
     if (query.exec())
     {
         model->setQuery(query);
@@ -37,8 +35,7 @@ void Logic::setupModel()
     {
         qDebug() << "Ошибка при выполнении запроса к БД:" << query.lastError().text();
     }
-
-   emit dataChanged(model); // Испускаем сигнал с новой моделью
+    return model;
 }
 
 //закрытие бд
