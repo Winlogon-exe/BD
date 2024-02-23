@@ -10,6 +10,9 @@
 #include <QApplication>
 #include<QSqlQueryModel>
 #include <QSqlTableModel>
+#include<QMessageBox>
+#include <QDebug>
+#include<QThread>
 
 enum State
 {
@@ -17,7 +20,6 @@ enum State
     Back,
     Search
 };
-
 
 class Logic : public QObject
 {
@@ -31,9 +33,10 @@ public:
     void disconnectFromDatabase();
     void search(QObject *sender);
 
+
     void setButtonState(QObject *button, State state);
 
-    void setupModel();
+    void loadDataFromDB();
     void updateOffset();
     void next();
     void back();

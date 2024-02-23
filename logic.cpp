@@ -1,6 +1,4 @@
 #include "logic.h"
-#include <QDebug>
-#include<QThread>
 
 Logic::Logic(QObject *parent) :
     QObject(parent),
@@ -21,7 +19,7 @@ void Logic::connectToDatabase()
 
     }
     qDebug() << "База данных успешно открыта.";
-    setupModel();
+    loadDataFromDB();
 }
 
 void Logic::search(QObject* sender)
@@ -49,11 +47,15 @@ void Logic::search(QObject* sender)
 }
 
 //запрос к бд
-void Logic::setupModel()
+//рефактор
+void Logic::loadDataFromDB()
 {
     model = new QSqlQueryModel();
     QSqlQuery query(db);
-    QString queryString = QString("SELECT * FROM RUvideos LIMIT %1 OFFSET %2").arg(pageSize).arg(offset);
+    QString queryString = QString("SELECT * FROM RUvideos LIMIT %1 OFFSET %2")
+                              .arg(pageSize)
+                              .arg(offset);
+
     query.prepare(queryString);
 
     if (query.exec())
@@ -62,7 +64,7 @@ void Logic::setupModel()
     }
     else
     {
-        qDebug() << "Ошибка при выполнении запроса к БД:" << query.lastError().text();
+        QMessageBox::critical(nullptr, QObject::tr("Ошибка"), QObject::tr("Ошибка в запросе "));
     }
 }
 
@@ -71,10 +73,10 @@ void Logic::disconnectFromDatabase()
     if (db.isOpen())
     {
         db.close();
-        qDebug() << "База данных  закрыта.";
+        QMessageBox::information(nullptr, QObject::tr("Ошибка"), QObject::tr("БД закрыта"));
 
     }
-    qDebug() << "База данных уже закрыта или не была открыта.";
+    QMessageBox::information(nullptr, QObject::tr("Ошибка"), QObject::tr("БД уже закрыта"));
 }
 
 //закрытие бд
@@ -87,7 +89,7 @@ void Logic::next()
 {
     currentPage++;
     updateOffset();
-    setupModel(); // новый запрос
+    loadDataFromDB(); // новый запрос
     qDebug() << "next";
 }
 
@@ -97,11 +99,10 @@ void Logic::back()
     {
         currentPage--;
         updateOffset(); // Обновляем смещение для предыдущей страницы
-        setupModel(); // новый запрос
+        loadDataFromDB(); // новый запрос
     }
     qDebug()<<"back";
 }
-
 
 QSqlQueryModel *Logic::getModel() const
 {

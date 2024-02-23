@@ -76,17 +76,21 @@ void View::setupButtons()
     filterComboBox->addItem(tr("Фильтр 1"));
     filterComboBox->addItem(tr("Фильтр 2"));
 
+    //возможно рефактор?
     // Создание и настройка кнопок
     nextButton = createButton(tr("Вперед"),Next);
     backButton = createButton(tr("Назад"),Back);
     searchButton = createButton(tr("Поиск"),Search);
 
+    QList<QPushButton*> allButton =
+    {
+        nextButton,backButton,searchButton
+    };
 
-    //рефактор
-    backButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    nextButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    searchButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-
+    for(const auto& button:allButton)
+    {
+        button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    }
     //после кнопок - БД
     setupTableView();
 }
