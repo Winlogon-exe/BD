@@ -1,5 +1,5 @@
 #include "view.h"
-
+#include"highlightdelegate.h"
 View::View(QWidget *parent)
     : QWidget(parent)
 {
@@ -106,7 +106,11 @@ QPushButton* View::createButton(const QString& text,State state)
 
 void View::ButtonClicked()
 {
+    //свернуть
     QString searchText = searchLineEdit->text();
+    HighlightDelegate *delegate = new HighlightDelegate(searchText);
+    tableView->setItemDelegate(delegate);
+
     logic.processRequest(sender(),searchText);
 }
 
@@ -117,7 +121,7 @@ void View::setupConnect()
     connect(&logic,&Logic::updateLabel,this,&View::showLabel);
 }
 
-//получать модель через геттер или параметр(как лучше?)
+//получать модель через геттер или параметр сиганала (как лучше?)
 void View::showTable()
 {
     QSqlQueryModel *model = logic.getModel();
