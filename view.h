@@ -13,6 +13,7 @@
 #include<QPushButton>
 #include<QLineEdit>
 #include<QLabel>
+#include"highlightdelegate.h"
 #include"logic.h"
 
 class View : public QWidget
@@ -29,7 +30,6 @@ public:
     void setupLayouts();
     void setupConnect();
 
-    void performSearch();
     QPushButton* createButton(const QString& text,State state);
 
 private slots:
@@ -46,6 +46,7 @@ private:
     QPushButton* nextButton;
     QPushButton* searchButton;
 
+    HighlightDelegate *delegate;
     QLineEdit*   searchLineEdit;
     QComboBox*   filterComboBox;
     QLabel*      page;

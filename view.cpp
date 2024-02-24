@@ -1,5 +1,5 @@
 #include "view.h"
-#include"highlightdelegate.h"
+
 View::View(QWidget *parent)
     : QWidget(parent)
 {
@@ -57,8 +57,7 @@ void View::setupLayouts()
     mainLayout->addLayout(buttonLayout);
 
     this->setLayout(mainLayout);
-
-    //после слоев - показываем БД
+    //показывем первую страницу при запуске
     showTable();
 }
 
@@ -108,10 +107,10 @@ void View::ButtonClicked()
 {
     //свернуть
     QString searchText = searchLineEdit->text();
-    HighlightDelegate *delegate = new HighlightDelegate(searchText);
+    delegate = new HighlightDelegate(searchText);
     tableView->setItemDelegate(delegate);
 
-    logic.processRequest(sender(),searchText);
+    logic.processState(sender(),searchText);
 }
 
 //подключение сигналов и слотов для обработки событий.
@@ -132,9 +131,4 @@ void View::showTable()
 void View::showLabel(int currentPage)
 {
     page->setText(QString::number(currentPage));
-}
-
-void View::performSearch()
-{
-
 }

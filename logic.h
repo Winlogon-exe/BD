@@ -1,18 +1,17 @@
 #ifndef LOGIC_H
 #define LOGIC_H
 
+#include <QObject>
 #include <QtSql/QSql>
-#include <QtSql/QSqlDatabase>
-#include<QDebug>
 #include <QtSql/QSqlDatabase>
 #include <QtSql/QSqlQuery>
 #include <QtSql/QSqlError>
 #include <QApplication>
-#include<QSqlQueryModel>
+#include <QSqlQueryModel>
 #include <QSqlTableModel>
-#include<QMessageBox>
+#include <QMessageBox>
 #include <QDebug>
-#include<QThread>
+#include <QThread>
 
 enum State
 {
@@ -31,34 +30,32 @@ public:
 public:
     void connectToDatabase();
     void disconnectFromDatabase();
-    void processRequest(QObject *sender,const QString &searchText);
-
-
+    void processState(QObject *sender, const QString &searchText);  // Обработка состояния
     void setButtonState(QObject *button, State state);
 
-    void loadDataFromDB();
+    void executeRequest(const QString &queryString);  // Выполнение SQL-запроса
+    void createRequest();  // Создание запроса
     void searchDataFromDB(const QString &searchText);
-    void updateOffset();
-    void next();
-    void back();
+
+    void nextPage();
+    void backPage();
     QSqlQueryModel *getModel() const;
 
 signals:
-    // Сигнал для обновления базы данных
-    void updateDB();
-    void updateLabel(int currentPage);
+    // Сигналы класса
+    void updateDB();  // Сигнал для обновления базы данных
+    void updateLabel(int currentPage);  // Сигнал для обновления метки с номером текущей страницы
 
 private:
     const QString dbFilename = "D:/QT_PROJECTS/BD/test.db";
+    int currentPage;  // Текущая страница
+    int pageSize;  // Размер страницы
+    int offset;  // Смещение
 
-    int currentPage; // Текущая страница
-    int pageSize; // Размер страницы
-    int offset = currentPage * pageSize; // Смещение
-
-    std::map<QObject *, State> buttonStateMap;
+    std::map<QObject*, State> buttonStateMap;
     QSqlQueryModel *model;
     QSqlDatabase db;
     State state;
-};;
+};
 
 #endif // LOGIC_H
