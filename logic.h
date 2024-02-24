@@ -31,13 +31,13 @@ public:
 public:
     void connectToDatabase();
     void disconnectFromDatabase();
-    void search(QObject *sender);
+    void processRequest(QObject *sender,const QString &searchText);
 
 
     void setButtonState(QObject *button, State state);
 
     void loadDataFromDB();
-    void searchDataFromDB();
+    void searchDataFromDB(const QString &searchText);
     void updateOffset();
     void next();
     void back();

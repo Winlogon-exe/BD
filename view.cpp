@@ -106,7 +106,8 @@ QPushButton* View::createButton(const QString& text,State state)
 
 void View::ButtonClicked()
 {
-    logic.search(sender());
+    QString searchText = searchLineEdit->text();
+    logic.processRequest(sender(),searchText);
 }
 
 //подключение сигналов и слотов для обработки событий.
@@ -116,7 +117,7 @@ void View::setupConnect()
     connect(&logic,&Logic::updateLabel,this,&View::showLabel);
 }
 
-//если сделать это слотом и сигналом обновлять в логике не работает (почему?)
+//получать модель через геттер или параметр(как лучше?)
 void View::showTable()
 {
     QSqlQueryModel *model = logic.getModel();
@@ -131,6 +132,5 @@ void View::showLabel(int currentPage)
 
 void View::performSearch()
 {
-    QString searchText = searchLineEdit->text();
-    //logic.loadDataFromDB(searchText);
+
 }

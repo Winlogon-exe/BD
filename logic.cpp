@@ -1,4 +1,5 @@
 #include "logic.h"
+#include<QLineEdit>
 
 Logic::Logic(QObject *parent) :
     QObject(parent),
@@ -22,7 +23,7 @@ void Logic::connectToDatabase()
     loadDataFromDB();
 }
 
-void Logic::search(QObject* sender)
+void Logic::processRequest(QObject* sender,const QString &searchText)
 {
     State state = buttonStateMap[sender]; // Получаем состояние из отправителя сигнала
     //рефактор
@@ -35,7 +36,7 @@ void Logic::search(QObject* sender)
         back();
         break;
     case Search:
-        searchDataFromDB();
+        searchDataFromDB(searchText);
         break;
 
     default:
@@ -44,6 +45,7 @@ void Logic::search(QObject* sender)
     }
 
     emit updateLabel(currentPage);
+    emit updateDB();
 }
 
 //запрос к бд
@@ -67,12 +69,53 @@ void Logic::loadDataFromDB()
     {
         QMessageBox::critical(nullptr, QObject::tr("Ошибка"), QObject::tr("Ошибка в запросе "));
     }
-     emit updateDB();
 }
 
-void Logic::searchDataFromDB()
+void Logic::searchDataFromDB(const QString &searchText)
 {
+    // Получение списка полей таблицы
+    QSqlQuery fieldQuery(db);
+    fieldQuery.exec("PRAGMA table_info(RUvideos);");
 
+    QStringList fields;
+    while (fieldQuery.next())
+    {
+        QString fieldName = fieldQuery.value(1).toString(); // Индекс 1 содержит имя поля
+        fields << fieldName;
+    }
+
+    // Формирование строки условия поиска
+    QString searchCondition;
+    for (const auto &field: fields)
+    {
+        if (!searchCondition.isEmpty())
+        {
+            searchCondition += " OR ";
+        }
+        // Приведение каждого поля к тексту и поиск
+        searchCondition += QString("CAST(%1 AS TEXT) LIKE '%%2%'").arg(field).arg(searchText);
+    }
+
+    // Выполнение поискового запроса
+    model = new QSqlQueryModel();
+    QString queryString = QString("SELECT * FROM RUvideos");
+    if (!searchCondition.isEmpty())
+    {
+        queryString += " WHERE " + searchCondition;
+    }
+    queryString += QString(" LIMIT %1 OFFSET %2").arg(pageSize).arg(offset);
+
+    QSqlQuery query(db);
+    query.prepare(queryString);
+
+    if (query.exec())
+    {
+        model->setQuery(std::move(query));
+    }
+    else
+    {
+        QMessageBox::critical(nullptr, QObject::tr("Ошибка"), QObject::tr("Ошибка в запросе: %1").arg(query.lastError().text()));
+    }
 }
 
 void Logic::disconnectFromDatabase()
@@ -86,8 +129,6 @@ void Logic::disconnectFromDatabase()
 }
 
 
-
-//закрытие бд
 void Logic::updateOffset()
 {
    offset = currentPage * pageSize; //  смещение
