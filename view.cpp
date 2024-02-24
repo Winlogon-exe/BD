@@ -128,3 +128,9 @@ void View::showLabel(int currentPage)
 {
     page->setText(QString::number(currentPage));
 }
+
+void View::performSearch()
+{
+    QString searchText = searchLineEdit->text();
+    //logic.loadDataFromDB(searchText);
+}

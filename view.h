@@ -28,6 +28,8 @@ public:
     void setupTableView();
     void setupLayouts();
     void setupConnect();
+
+    void performSearch();
     QPushButton* createButton(const QString& text,State state);
 
 private slots:

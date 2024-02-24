@@ -35,14 +35,14 @@ void Logic::search(QObject* sender)
         back();
         break;
     case Search:
-        qDebug()<<"search";
+        searchDataFromDB();
         break;
 
     default:
         qDebug()<<"what?";
         break;
     }
-    emit updateDB();
+
     emit updateLabel(currentPage);
 }
 
@@ -61,11 +61,18 @@ void Logic::loadDataFromDB()
     if (query.exec())
     {
         model->setQuery(std::move(query));
+        qDebug()<<"Запрос";
     }
     else
     {
         QMessageBox::critical(nullptr, QObject::tr("Ошибка"), QObject::tr("Ошибка в запросе "));
     }
+     emit updateDB();
+}
+
+void Logic::searchDataFromDB()
+{
+
 }
 
 void Logic::disconnectFromDatabase()
@@ -77,6 +84,8 @@ void Logic::disconnectFromDatabase()
     }
     QMessageBox::information(nullptr, QObject::tr("Ошибка"), QObject::tr("БД уже закрыта"));
 }
+
+
 
 //закрытие бд
 void Logic::updateOffset()

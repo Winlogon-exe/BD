@@ -37,6 +37,7 @@ public:
     void setButtonState(QObject *button, State state);
 
     void loadDataFromDB();
+    void searchDataFromDB();
     void updateOffset();
     void next();
     void back();
