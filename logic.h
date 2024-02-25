@@ -28,14 +28,18 @@ public:
     explicit Logic(QObject *parent = nullptr);
 
 public:
+    // Методы класса
     void connectToDatabase();
     void disconnectFromDatabase();
-    void processState(QObject *sender, const QString &searchText);  // Обработка состояния
-    void setButtonState(QObject *button, State state);
+    void processState(QObject *sender, const QString &searchText);
 
-    void executeRequest(const QString &queryString);  // Выполнение SQL-запроса
-    void createRequest();  // Создание запроса
+    void setButtonState(QObject *button, State state);
+    void executeRequest(const QString &queryString);
+    void createRequest();
+
     void searchDataFromDB(const QString &searchText);
+    QString  createSearchCondition(const QStringList &fields, const QString &searchText);
+    QStringList getAllTablesFromDB(const QString &tableName);
 
     void nextPage();
     void backPage();
@@ -43,19 +47,21 @@ public:
 
 signals:
     // Сигналы класса
-    void updateDB();  // Сигнал для обновления базы данных
-    void updateLabel(int currentPage);  // Сигнал для обновления метки с номером текущей страницы
+    void updateDB();
+    void updateLabel(int currentPage);
 
 private:
+    // Приватные члены класса
     const QString dbFilename = "D:/QT_PROJECTS/BD/test.db";
-    int currentPage;  // Текущая страница
-    int pageSize;  // Размер страницы
-    int offset;  // Смещение
+    int currentPage;
+    int pageSize;
+    int offset;
 
     std::map<QObject*, State> buttonStateMap;
     QSqlQueryModel *model;
     QSqlDatabase db;
     State state;
 };
+
 
 #endif // LOGIC_H

@@ -50,6 +50,13 @@ void Logic::processState(QObject* sender,const QString &searchText)
     emit updateDB();
 }
 
+//формирование запроса
+void Logic::createRequest()
+{
+    QString queryString = QString("SELECT * FROM RUvideos LIMIT %1 OFFSET %2").arg(pageSize).arg(currentPage * pageSize);
+    executeRequest(queryString);
+}
+
 //добавление запроса в model
 void Logic::executeRequest(const QString &queryString)
 {
@@ -59,7 +66,7 @@ void Logic::executeRequest(const QString &queryString)
     if (query.exec())
     {
         model->setQuery(std::move(query));
-        qDebug()<<"Запрос";
+        qDebug() << "Запрос выполнен";
     }
     else
     {
@@ -67,59 +74,54 @@ void Logic::executeRequest(const QString &queryString)
     }
 }
 
-//формирование запроса
-void Logic::createRequest()
-{
-    QString queryString = QString("SELECT * FROM RUvideos LIMIT %1 OFFSET %2").arg(pageSize).arg(currentPage * pageSize);
-    executeRequest(queryString);
-}
-
 void Logic::searchDataFromDB(const QString &searchText)
 {
-    // Получение списка полей таблицы
-    QSqlQuery fieldQuery(db);
-    fieldQuery.exec("PRAGMA table_info(RUvideos);");
+    // Получаем список полей для поиска
+    QStringList fields = getAllTablesFromDB("RUvideos");
 
-    QStringList fields;
-    while (fieldQuery.next())
-    {
-        QString fieldName = fieldQuery.value(1).toString(); // Индекс 1 содержит имя поля
-        fields << fieldName;
-    }
+    // Формируем условие поиска, используя LIKE для каждого поля
+    QString searchCondition = createSearchCondition(fields, searchText);
 
-    // Формирование строки условия поиска
-    QString searchCondition;
-    for (const auto &field: fields)
-    {
-        if (!searchCondition.isEmpty())
-        {
-            searchCondition += " OR ";
-        }
-        // Приведение каждого поля к тексту и поиск
-        searchCondition += QString("CAST(%1 AS TEXT) LIKE '%%2%'").arg(field).arg(searchText);
-    }
-
-    // Выполнение поискового запроса
-    model = new QSqlQueryModel();
-    QString queryString = QString("SELECT * FROM RUvideos");
+    // Строим запрос с условием поиска, если оно не пустое
+    QString queryString = "SELECT * FROM RUvideos";
     if (!searchCondition.isEmpty())
     {
         queryString += " WHERE " + searchCondition;
     }
-    queryString += QString(" LIMIT %1 OFFSET %2").arg(pageSize).arg(offset);
 
-    QSqlQuery query(db);
-    query.prepare(queryString);
+    // Добавляем пагинацию к запросу
+    queryString += QString(" LIMIT %1 OFFSET %2").arg(pageSize).arg(currentPage * pageSize);
 
-    if (query.exec())
-    {
-        model->setQuery(std::move(query));
-    }
-    else
-    {
-        QMessageBox::critical(nullptr, QObject::tr("Ошибка"), QObject::tr("Ошибка в запросе: %1").arg(query.lastError().text()));
-    }
+    // Выполняем запрос
+    executeRequest(queryString);
 }
+
+QStringList Logic::getAllTablesFromDB(const QString &tableName)
+{
+    QSqlQuery fieldQuery(db);
+    fieldQuery.exec("PRAGMA table_info(" + tableName + ");");
+
+    QStringList fields;
+    while (fieldQuery.next())
+    {
+        fields << fieldQuery.value(1).toString();
+    }
+    return fields;
+}
+
+QString Logic::createSearchCondition(const QStringList &fields, const QString &searchText)
+{
+    QString searchCondition;
+    for (const auto &field : fields)
+    {
+        if (!searchCondition.isEmpty())
+            searchCondition += " OR ";
+
+        searchCondition += QString("CAST(%1 AS TEXT) LIKE '%%2%'").arg(field).arg(searchText);
+    }
+    return searchCondition;
+}
+
 
 void Logic::nextPage()
 {

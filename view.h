@@ -29,6 +29,7 @@ public:
     void setupTableView();
     void setupLayouts();
     void setupConnect();
+    void paintSearch();
 
     QPushButton* createButton(const QString& text,State state);
 
@@ -38,19 +39,19 @@ private slots:
     void showLabel(int currentPage);
 
 private:
-    Logic logic;
-    QTableView* tableView; // Виджет для отображения данных в виде таблицы
+    QString             searchText;
+    QTableView*         tableView;
+    HighlightDelegate*  delegate;
+    QLabel*             page;
+    Logic               logic;
 
 private:
     QPushButton* backButton;
     QPushButton* nextButton;
     QPushButton* searchButton;
 
-    HighlightDelegate *delegate;
     QLineEdit*   searchLineEdit;
     QComboBox*   filterComboBox;
-    QLabel*      page;
-
 };
 
 #endif // VIEW_H

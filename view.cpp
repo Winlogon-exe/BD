@@ -103,13 +103,16 @@ QPushButton* View::createButton(const QString& text,State state)
     return button;
 }
 
-void View::ButtonClicked()
+void View::paintSearch()
 {
-    //свернуть
-    QString searchText = searchLineEdit->text();
+    searchText = searchLineEdit->text();
     delegate = new HighlightDelegate(searchText);
     tableView->setItemDelegate(delegate);
+}
 
+void View::ButtonClicked()
+{
+    paintSearch();
     logic.processState(sender(),searchText);
 }
 
