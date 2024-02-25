@@ -76,6 +76,7 @@ void Logic::executeRequest(const QString &queryString)
 
 void Logic::searchDataFromDB(const QString &searchText)
 {
+    currentPage = 0; // поиск начинается с 0 страницы
     // Получаем список полей для поиска
     QStringList fields = getAllTablesFromDB("RUvideos");
 
@@ -96,10 +97,11 @@ void Logic::searchDataFromDB(const QString &searchText)
     executeRequest(queryString);
 }
 
+//получаем все таблицы из бд
 QStringList Logic::getAllTablesFromDB(const QString &tableName)
 {
     QSqlQuery fieldQuery(db);
-    fieldQuery.exec("PRAGMA table_info(" + tableName + ");");
+    fieldQuery.exec("PRAGMA table_info(RUvideos);");
 
     QStringList fields;
     while (fieldQuery.next())
@@ -109,6 +111,7 @@ QStringList Logic::getAllTablesFromDB(const QString &tableName)
     return fields;
 }
 
+//условие поиска исходя из таблиц
 QString Logic::createSearchCondition(const QStringList &fields, const QString &searchText)
 {
     QString searchCondition;

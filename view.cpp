@@ -57,7 +57,7 @@ void View::setupLayouts()
     mainLayout->addLayout(buttonLayout);
 
     this->setLayout(mainLayout);
-    //показывем первую страницу при запуске
+    //показывем 0 страницу при запуске
     showTable();
 }
 
@@ -68,18 +68,18 @@ void View::setupButtons()
 
     //поля для поиска
     searchLineEdit = new QLineEdit(this);
-    searchLineEdit->setPlaceholderText(tr("Введите запрос..."));
+    searchLineEdit->setPlaceholderText("Введите запрос...");
 
     // Создание фильтра
     filterComboBox = new QComboBox(this);
-    filterComboBox->addItem(tr("Фильтр 1"));
-    filterComboBox->addItem(tr("Фильтр 2"));
+    filterComboBox->addItem("Фильтр 1");
+    filterComboBox->addItem("Фильтр 2");
 
     //возможно рефактор?
     // Создание и настройка кнопок
-    nextButton = createButton(tr("Вперед"),Next);
-    backButton = createButton(tr("Назад"),Back);
-    searchButton = createButton(tr("Поиск"),Search);
+    nextButton = createButton("Вперед",Next);
+    backButton = createButton("Назад",Back);
+    searchButton = createButton("Поиск",Search);
 
     QList<QPushButton*> allButton =
     {
