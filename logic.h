@@ -52,7 +52,7 @@ signals:
 
 private:
     // Приватные члены класса
-    const QString dbFilename = "D:/QT_PROJECTS/BD/test.db";
+    const QString dbFilename = "D:/QT_PROJECTS/BD/123.db";
     int currentPage;
     int pageSize;
     int offset;

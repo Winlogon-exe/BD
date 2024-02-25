@@ -53,7 +53,7 @@ void Logic::processState(QObject* sender,const QString &searchText)
 //формирование запроса
 void Logic::createRequest()
 {
-    QString queryString = QString("SELECT * FROM RUvideos LIMIT %1 OFFSET %2").arg(pageSize).arg(currentPage * pageSize);
+    QString queryString = QString("SELECT * FROM popular_tracks LIMIT %1 OFFSET %2").arg(pageSize).arg(currentPage * pageSize);
     executeRequest(queryString);
 }
 
@@ -78,13 +78,13 @@ void Logic::searchDataFromDB(const QString &searchText)
 {
     currentPage = 0; // поиск начинается с 0 страницы
     // Получаем список полей для поиска
-    QStringList fields = getAllTablesFromDB("RUvideos");
+    QStringList fields = getAllTablesFromDB("popular_tracks");
 
     // Формируем условие поиска, используя LIKE для каждого поля
     QString searchCondition = createSearchCondition(fields, searchText);
 
     // Строим запрос с условием поиска, если оно не пустое
-    QString queryString = "SELECT * FROM RUvideos";
+    QString queryString = "SELECT * FROM popular_tracks";
     if (!searchCondition.isEmpty())
     {
         queryString += " WHERE " + searchCondition;
@@ -101,7 +101,7 @@ void Logic::searchDataFromDB(const QString &searchText)
 QStringList Logic::getAllTablesFromDB(const QString &tableName)
 {
     QSqlQuery fieldQuery(db);
-    fieldQuery.exec("PRAGMA table_info(RUvideos);");
+    fieldQuery.exec("PRAGMA table_info(popular_tracks);");
 
     QStringList fields;
     while (fieldQuery.next())
@@ -124,7 +124,6 @@ QString Logic::createSearchCondition(const QStringList &fields, const QString &s
     }
     return searchCondition;
 }
-
 
 void Logic::nextPage()
 {
