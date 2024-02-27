@@ -1,5 +1,5 @@
 #include "view.h"
-
+#include<QHeaderView>
 View::View(QWidget *parent)
     : QWidget(parent)
 {
@@ -26,7 +26,9 @@ void View::setupDisplay()
 void View::setupTableView()
 {
     tableView = new QTableView(this);
-    tableView->setMinimumSize(500, 300);
+    tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    // tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    // tableView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
     //после БД - слои
     setupLayouts();
@@ -35,7 +37,6 @@ void View::setupTableView()
 //настройка компоновки виджетов в окне.
 void View::setupLayouts()
 {
-    // Компоновка для верхнего поля ввода
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     QHBoxLayout *topLayout = new QHBoxLayout();
     topLayout->addWidget(filterComboBox);
@@ -44,12 +45,10 @@ void View::setupLayouts()
     topLayout->addWidget(page);
     mainLayout->addLayout(topLayout);
 
-    // Компоновка с сеткой для таблицы
     QGridLayout *gridLayout = new QGridLayout();
     gridLayout->addWidget(tableView, 0, 0, 1, 1);
     mainLayout->addLayout(gridLayout);
 
-    // Компоновка для кнопок внизу
     QHBoxLayout *buttonLayout = new QHBoxLayout();
     buttonLayout->addWidget(backButton);
     buttonLayout->addWidget(nextButton);
@@ -57,7 +56,6 @@ void View::setupLayouts()
     mainLayout->addLayout(buttonLayout);
 
     this->setLayout(mainLayout);
-    //показывем 0 страницу при запуске
     showTable();
 }
 
