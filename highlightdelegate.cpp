@@ -16,21 +16,23 @@ void HighlightDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
             QRect rect = option.rect;
             painter->save();
 
-            // Настройка внешнего вида подсветки с прозрачностью и смещением
-            QColor highlightColor = QColor("yellow").lighter(160);
-            highlightColor.setAlpha(128); // Установка прозрачности (0 - полностью прозрачный, 255 - полностью непрозрачный)
+            QColor highlightColor = QColor("red").lighter(160);
+            highlightColor.setAlpha(128);
             QBrush brush(highlightColor);
             painter->setBrush(brush);
             painter->setPen(Qt::NoPen);
 
-            // Вычисление размеров подсветки
             QFontMetrics metrics(painter->font());
-            int width = metrics.horizontalAdvance(m_searchText);
-            int height = metrics.height();
-            int yOffset = 10; // Смещение вниз на 10 пикселя
-            QRect highlightRect(rect.left() + metrics.horizontalAdvance(text.left(startPos)), rect.top() + yOffset, width, height);
+            int textWidth = metrics.horizontalAdvance(m_searchText);
+            int textHeight = metrics.ascent();
 
-            // Отрисовка подсветки
+            // Выравнивание подсветки по горизонтали
+            int textStartPos = metrics.horizontalAdvance(text.left(startPos)) + 3; // Добавляем отступ 5 пикселей к начальной позиции
+            // Корректировка вертикальной позиции подсветки
+            int yOffset = (rect.height() - textHeight) / 2; // Вычисление смещения по Y для выравнивания по центру
+
+            QRect highlightRect(rect.left() + textStartPos, rect.top() + yOffset, textWidth, textHeight);
+
             painter->drawRect(highlightRect);
 
             painter->restore();

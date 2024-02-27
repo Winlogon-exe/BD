@@ -56,6 +56,7 @@ void View::setupLayouts()
     mainLayout->addLayout(buttonLayout);
 
     this->setLayout(mainLayout);
+    //показываем 0 страницу
     showTable();
 }
 
@@ -88,19 +89,20 @@ void View::setupButtons()
     {
         button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     }
-    //после кнопок - БД
+    //после кнопок - настройка БД
     setupTableView();
 }
 
 QPushButton* View::createButton(const QString& text,State state)
 {
     QPushButton* button = new QPushButton(text, this);
-    button->setObjectName(text);
+    //button->setObjectName(text);
     logic.setButtonState(button,state);
     connect(button, &QPushButton::clicked, this, &View::ButtonClicked);
     return button;
 }
 
+//выделение текста
 void View::paintSearch()
 {
     searchText = searchLineEdit->text();
@@ -114,7 +116,7 @@ void View::ButtonClicked()
     logic.processState(sender(),searchText);
 }
 
-//подключение сигналов и слотов для обработки событий.
+//подключение сигналов и слотов.
 void View::setupConnect()
 {
     connect(&logic,&Logic::updateDB,this,&View::showTable);
@@ -124,11 +126,12 @@ void View::setupConnect()
 //получать модель через геттер или параметр сиганала (как лучше?)
 void View::showTable()
 {
-    QSqlQueryModel *model = logic.getModel();
-    tableView->setModel(model);
+   // QSqlQueryModel *model = logic.getModel();
+    tableView->setModel(logic.getModel());
     tableView->show();
 }
 
+//вывод страниц
 void View::showLabel(int currentPage)
 {
     page->setText(QString::number(currentPage));

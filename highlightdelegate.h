@@ -8,7 +8,6 @@ class HighlightDelegate : public QStyledItemDelegate {
 
 public:
     explicit HighlightDelegate(const QString& searchText, QObject *parent = nullptr);
-
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
 private:

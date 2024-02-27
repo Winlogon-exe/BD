@@ -52,7 +52,7 @@ void Logic::processState(QObject* sender,const QString &searchText)
     emit updateDB();
 }
 
-//формирование запроса
+//изменение запроса
 void Logic::createRequest()
 {
     QString queryString = QString("SELECT * FROM popular_tracks LIMIT %1 OFFSET %2").arg(pageSize).arg(currentPage * pageSize);
@@ -75,13 +75,13 @@ void Logic::executeRequest(const QString &queryString)
         QMessageBox::critical(nullptr, QObject::tr("Ошибка"), QObject::tr("Ошибка в запросе "));
     }
 }
-
+//вывод поиска на 1 страницу все или на  пагинацию?
 void Logic::searchDataFromDB(const QString &searchText)
 {
     if(searchText.isEmpty())
         return;
 
-    currentPage = 0; // поиск начинается с 0 страницы
+    //currentPage = 0; // поиск начинается с 0 страницы
 
     // Получаем список полей для поиска
     QStringList fields = getAllTablesFromDB("popular_tracks");
@@ -95,9 +95,7 @@ void Logic::searchDataFromDB(const QString &searchText)
     {
         queryString += " WHERE " + searchCondition;
     }
-
-    //для чего это?
-    queryString += QString(" LIMIT %1 OFFSET %2").arg(pageSize).arg(currentPage * pageSize);
+    //queryString += QString(" LIMIT %1 OFFSET %2").arg(pageSize).arg(currentPage * pageSize);
 
     // Выполняем запрос
     executeRequest(queryString);
