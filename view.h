@@ -6,15 +6,17 @@
 #include <QSqlQueryModel>
 #include <QTableView>
 #include <QSqlDatabase>
-#include<QVBoxLayout>
+#include <QVBoxLayout>
 #include <QtSql>
-#include<QSqlTableModel>
 #include <QSqlTableModel>
-#include<QPushButton>
-#include<QLineEdit>
-#include<QLabel>
-#include"highlightdelegate.h"
-#include"logic.h"
+#include <QPushButton>
+#include <QLineEdit>
+#include <QLabel>
+#include <QHeaderView>
+
+#include "highlightdelegate.h"
+#include "logic.h"
+
 
 class View : public QWidget
 {

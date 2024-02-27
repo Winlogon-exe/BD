@@ -1,5 +1,5 @@
 #include "view.h"
-#include<QHeaderView>
+
 View::View(QWidget *parent)
     : QWidget(parent)
 {
@@ -62,9 +62,10 @@ void View::setupLayouts()
 //создание и настройка кнопок и других элементов управления.
 void View::setupButtons()
 {
+    // кол-во страниц
     page = new QLabel("0");
 
-    //поля для поиска
+    // поля для поиска
     searchLineEdit = new QLineEdit(this);
     searchLineEdit->setPlaceholderText("Введите запрос...");
 
@@ -73,7 +74,6 @@ void View::setupButtons()
     filterComboBox->addItem("Фильтр 1");
     filterComboBox->addItem("Фильтр 2");
 
-    //возможно рефактор?
     // Создание и настройка кнопок
     nextButton = createButton("Вперед",Next);
     backButton = createButton("Назад",Back);

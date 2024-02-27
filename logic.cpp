@@ -11,7 +11,7 @@ Logic::Logic(QObject *parent) :
     connectToDatabase();
 }
 
-//открытие к бд
+//открытие бд
 void Logic::connectToDatabase()
 {
     db = QSqlDatabase::addDatabase("QSQLITE");
@@ -32,14 +32,16 @@ void Logic::processState(QObject* sender,const QString &searchText)
     {
     case Next:
         nextPage();
+        qDebug() << "Next";
         break;
     case Back:
         backPage();
+        qDebug() << "Back";
         break;
     case Search:
         searchDataFromDB(searchText);
+        qDebug() << "Search";
         break;
-
     default:
          qWarning() << "Неизвестное действие:" << state;
         break;
@@ -76,7 +78,11 @@ void Logic::executeRequest(const QString &queryString)
 
 void Logic::searchDataFromDB(const QString &searchText)
 {
+    if(searchText.isEmpty())
+        return;
+
     currentPage = 0; // поиск начинается с 0 страницы
+
     // Получаем список полей для поиска
     QStringList fields = getAllTablesFromDB("popular_tracks");
 
@@ -90,7 +96,7 @@ void Logic::searchDataFromDB(const QString &searchText)
         queryString += " WHERE " + searchCondition;
     }
 
-    // Добавляем пагинацию к запросу
+    //для чего это?
     queryString += QString(" LIMIT %1 OFFSET %2").arg(pageSize).arg(currentPage * pageSize);
 
     // Выполняем запрос
