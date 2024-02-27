@@ -110,12 +110,6 @@ void View::paintSearch()
     tableView->setItemDelegate(delegate);
 }
 
-void View::ButtonClicked()
-{
-    paintSearch();
-    logic.processState(sender(),searchText);
-}
-
 //подключение сигналов и слотов.
 void View::setupConnect()
 {
@@ -123,6 +117,14 @@ void View::setupConnect()
     connect(&logic,&Logic::updateLabel,this,&View::showLabel);
 }
 
+//передача в логику(слот)
+void View::ButtonClicked()
+{
+    paintSearch();
+    logic.processState(sender(),searchText);
+}
+
+//вывод бд (слот)
 //получать модель через геттер или параметр сиганала (как лучше?)
 void View::showTable()
 {
@@ -131,7 +133,7 @@ void View::showTable()
     tableView->show();
 }
 
-//вывод страниц
+//вывод страниц(слот)
 void View::showLabel(int currentPage)
 {
     page->setText(QString::number(currentPage));

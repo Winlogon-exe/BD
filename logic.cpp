@@ -27,7 +27,7 @@ void Logic::connectToDatabase()
 
 void Logic::processState(QObject* sender,const QString &searchText)
 {
-    State state = buttonStateMap[sender]; // Получаем состояние из отправителя сигнала
+    State state = buttonStateMap[sender]; // Получаем кнопку из отправителя сигнала
     switch (state)
     {
     case Next:
@@ -95,13 +95,14 @@ void Logic::searchDataFromDB(const QString &searchText)
     {
         queryString += " WHERE " + searchCondition;
     }
+
     //queryString += QString(" LIMIT %1 OFFSET %2").arg(pageSize).arg(currentPage * pageSize);
 
     // Выполняем запрос
     executeRequest(queryString);
 }
 
-//получаем все таблицы из бд
+//получаем все таблицы из бд для поиска
 QStringList Logic::getAllTablesFromDB(const QString &tableName)
 {
     QSqlQuery fieldQuery(db);
