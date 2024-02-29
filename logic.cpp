@@ -10,23 +10,9 @@ Logic::Logic(QObject *parent) :
     connectToDatabase();
 }
 
-//открытие бд
-void Logic::connectToDatabase()
-{
-    db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName(dbFilename);
-    if (!db.open())
-    {
-        qCritical() << "Ошибка при открытии базы данных:" << db.lastError().text();
-        return;
-    }
-    qInfo() << "База данных успешно открыта.";
-    createRequest();
-}
-
 void Logic::processState(QObject* sender,const QString &searchText)
 {
-    State state = buttonStateMap[sender]; // Получаем кнопку из отправителя сигнала
+    State state = buttonStateMap[sender];
     switch (state)
     {
     case Next:
@@ -49,6 +35,20 @@ void Logic::processState(QObject* sender,const QString &searchText)
     //свернуть?
     emit updateLabel(currentPage);
     emit updateDB();
+}
+
+void Logic::connectToDatabase()
+{
+    db = QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName(dbFilename);
+    if (!db.open())
+    {
+        qCritical() << "Ошибка при открытии базы данных:" << db.lastError().text();
+        return;
+    }
+    qInfo() << "База данных успешно открыта.";
+
+    createRequest();
 }
 
 //изменение запроса
@@ -83,23 +83,22 @@ void Logic::searchDataFromDB(const QString &searchText)
     if(searchText.isEmpty())
         return;
 
-    //currentPage = 0; // поиск начинается с 0 страницы
-
+    currentPage = 0; // поиск начинается с 0 страницы
     // Получаем список полей для поиска
     QStringList fields = getAllFieldsFromTable("popular_tracks");
 
-    // Формируем условие поиска, используя LIKE для каждого поля
+    // Формируем условие поиска
     QString searchCondition = createSearchCondition(fields, searchText);
 
-    // Строим запрос с условием поиска, если оно не пустое
+    //SELECT * FROM popular_tracks WHERE field1 LIKE '%searchText%' OR field2 LIKE '%searchText%' OR ...
+    // Строим запрос с условием поиска
     QString queryString = "SELECT * FROM popular_tracks";
     if (!searchCondition.isEmpty())
     {
         queryString += " WHERE " + searchCondition;
     }
 
-    //queryString += QString(" LIMIT %1 OFFSET %2").arg(pageSize).arg(currentPage * pageSize);
-
+    queryString += QString(" LIMIT %1 OFFSET %2").arg(pageSize).arg(currentPage * pageSize);
     // Выполняем запрос
     executeRequest(queryString);
 }
@@ -109,7 +108,7 @@ void Logic::searchDataFromDB(const QString &searchText)
 QStringList Logic::getAllFieldsFromTable (const QString &tableName)
 {
     QSqlQuery fieldQuery(db);
-    fieldQuery.exec(QString("PRAGMA table_info(%1);").arg(tableName));
+    fieldQuery.exec(QString("PRAGMA table_info(%1)").arg(tableName));
 
     QStringList fields;
     while (fieldQuery.next())
@@ -119,7 +118,7 @@ QStringList Logic::getAllFieldsFromTable (const QString &tableName)
     return fields;
 }
 
-//условие поиска исходя из таблиц
+//условие поиска исходя из полей
 QString Logic::createSearchCondition(const QStringList &fields, const QString &searchText)
 {
     QStringList conditions;

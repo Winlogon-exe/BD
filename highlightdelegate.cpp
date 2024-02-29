@@ -7,7 +7,7 @@ HighlightDelegate::HighlightDelegate(const QString& searchText, QObject *parent)
 //возвращать строку надо?
 void HighlightDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    // Вызываем базовую реализацию для отрисовки стандартного вида элемента.
+    //для отрисовки стандартного вида элемента.
     QStyledItemDelegate::paint(painter, option, index);
 
     // Если текст для поиска не пуст, начинаем поиск и подсветку совпадений.
@@ -19,13 +19,10 @@ void HighlightDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
         // Если нашли совпадение, подсвечиваем его.
         if (startPos >= 0)
         {
-            painter->save(); // Сохраняем текущее состояние рисовальщика
-
             // Настройка стиля подсветки
             QColor highlightColor = QColor("red");
             highlightColor.setAlpha(75); // Делаем цвет полупрозрачным
             painter->setBrush(highlightColor);
-            painter->setPen(Qt::NoPen); // Убираем контур
 
             // Вычисляем размеры текста для подсветки
             QFontMetrics metrics(painter->font());
@@ -38,8 +35,6 @@ void HighlightDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 
             // Рисуем прямоугольник подсветки
             painter->fillRect(highlightRect, highlightColor);
-
-            painter->restore(); // Восстанавливаем состояние рисовальщика
         }
     }
 }

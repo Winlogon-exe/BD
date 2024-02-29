@@ -13,10 +13,9 @@
 #include <QLineEdit>
 #include <QLabel>
 #include <QHeaderView>
-
+#include <QToolBar>
 #include "highlightdelegate.h"
 #include "logic.h"
-
 
 class View : public QWidget
 {
@@ -32,7 +31,7 @@ public:
     void setupLayouts();
     void setupConnect();
     void paintSearch();
-
+    void setupToolbar();
     QPushButton* createButton(const QString& text,State state);
 
 private slots:
@@ -41,10 +40,12 @@ private slots:
     void s_showLabel(int currentPage);
 
 private:
+
     QString             searchText;
-    QTableView*         tableView;
-    HighlightDelegate*  delegate;
-    QLabel*             page;
+    QTableView          *tableView;
+    HighlightDelegate   *delegate;
+    QLabel              *page;
+    QVBoxLayout         *mainLayout;
     Logic               logic;
 
 private:

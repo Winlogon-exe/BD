@@ -10,6 +10,7 @@ void View::createUI()
 {
     setupConnect();
     setupDisplay();
+    setupToolbar();
 }
 
 // настройка отображения основного окна.
@@ -17,47 +18,21 @@ void View::setupDisplay()
 {
     setWindowTitle("DB");
     this->resize(800, 500);
-
-    //после дисплея - кнопки
     setupButtons();
 }
 
-//создание и настройка таблицы
-void View::setupTableView()
+void View::setupToolbar()
 {
-    tableView = new QTableView(this);
-    tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    // tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    // tableView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    QToolBar *toolbar = new QToolBar(this);
 
-    //после БД - слои
-    setupLayouts();
-}
+    // Создаем действия для панели инструментов
+    QAction *action1 = toolbar->addAction("Действие 1");
+    QAction *action2 = toolbar->addAction("Действие 2");
 
-//настройка компоновки виджетов в окне.
-void View::setupLayouts()
-{
-    QVBoxLayout *mainLayout = new QVBoxLayout(this);
-    QHBoxLayout *topLayout = new QHBoxLayout();
-    topLayout->addWidget(filterComboBox);
-    topLayout->addWidget(searchLineEdit);
-    topLayout->addWidget(searchButton);
-    topLayout->addWidget(page);
-    mainLayout->addLayout(topLayout);
-
-    QGridLayout *gridLayout = new QGridLayout();
-    gridLayout->addWidget(tableView, 0, 0, 1, 1);
-    mainLayout->addLayout(gridLayout);
-
-    QHBoxLayout *buttonLayout = new QHBoxLayout();
-    buttonLayout->addWidget(backButton);
-    buttonLayout->addWidget(nextButton);
-    buttonLayout->setAlignment(Qt::AlignCenter);
-    mainLayout->addLayout(buttonLayout);
-
-    this->setLayout(mainLayout);
-    //показываем 0 страницу
-    s_showTable();
+    // Добавляем действия на панель инструментов
+    toolbar->addAction(action1);
+    toolbar->addAction(action2);
+    mainLayout->insertWidget(0, toolbar);
 }
 
 //создание и настройка кнопок и других элементов управления.
@@ -72,9 +47,9 @@ void View::setupButtons()
 
     // Создание фильтра(какие фильтры нужны?)
     filterComboBox = new QComboBox(this);
+    filterComboBox->addItem("default");
     filterComboBox->addItem("ID");
     filterComboBox->addItem("Name");
-    //filterComboBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
     // Создание и настройка кнопок
     //контейнер?
@@ -92,8 +67,43 @@ void View::setupButtons()
         button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     }
 
-    //после кнопок - настройка БД
     setupTableView();
+}
+
+//создание и настройка таблицы
+void View::setupTableView()
+{
+    tableView = new QTableView(this);
+    tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    setupLayouts();
+}
+
+//настройка компоновки виджетов в окне.
+void View::setupLayouts()
+{
+    mainLayout = new QVBoxLayout(this);
+    QHBoxLayout *topLayout = new QHBoxLayout();
+    topLayout->addWidget(filterComboBox);
+    topLayout->addWidget(searchLineEdit);
+    topLayout->addWidget(searchButton);
+    topLayout->addWidget(page);
+
+    mainLayout->addLayout(topLayout);
+
+    QGridLayout *gridLayout = new QGridLayout();
+    gridLayout->addWidget(tableView, 0, 0, 1, 1);
+    mainLayout->addLayout(gridLayout);
+
+    QHBoxLayout *buttonLayout = new QHBoxLayout();
+    buttonLayout->addWidget(backButton);
+    buttonLayout->addWidget(nextButton);
+    buttonLayout->setAlignment(Qt::AlignCenter);
+    mainLayout->addLayout(buttonLayout);
+
+    this->setLayout(mainLayout);
+
+    //показываем 0 страницу
+    s_showTable();
 }
 
 QPushButton* View::createButton(const QString& text,State state)
