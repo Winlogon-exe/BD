@@ -3,6 +3,7 @@
 View::View(QWidget *parent)
     : QWidget(parent)
 {
+    qDebug()<<QThread::currentThread()<< QObject::thread();
     createUI();
 }
 
@@ -110,7 +111,7 @@ QPushButton* View::createButton(const QString& text,State state)
 {
     QPushButton* button = new QPushButton(text, this);
     //button->setObjectName(text);
-    //logic.setButtonState(button,state);
+    logic.setButtonState(button,state);
     connect(button, &QPushButton::clicked, this, &View::s_ButtonClicked);
     return button;
 }
