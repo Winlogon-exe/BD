@@ -8,28 +8,18 @@ Logic::Logic(QObject *parent) :
 
 {
     connectToDatabase();
+    funcmap[Next]  = [this](){nextPage();};
+    funcmap[Back]  = [this](){backPage();};
+   // funcmap[Search]  = [this](){searchDataFromDB();};
 }
 
-void Logic::processState(QObject* sender,const QString &searchText)
+void Logic::processState(QObject* sender,const QString &search)
 {
     State state = buttonStateMap[sender];
-    switch (state)
+    auto it = funcmap.find(state);
+    if (it != funcmap.end())
     {
-    case Next:
-        nextPage();
-        qDebug() << "Next";
-        break;
-    case Back:
-        backPage();
-        qDebug() << "Back";
-        break;
-    case Search:
-        searchDataFromDB(searchText);
-        qDebug() << "Search";
-        break;
-    default:
-         qWarning() << "Неизвестное действие:";
-        break;
+        it->second();
     }
 
     //свернуть?
@@ -163,6 +153,7 @@ QSqlQueryModel *Logic::getModel() const
     return model;
 }
 
+//кнопка с состоянием
 void Logic::setButtonState(QObject* button, State state)
 {
     buttonStateMap[button] = state;

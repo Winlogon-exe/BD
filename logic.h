@@ -29,7 +29,6 @@ public:
     explicit Logic(QObject *parent = nullptr);
 
 public:
-    // Методы класса
     void connectToDatabase();
     void disconnectFromDatabase();
     void processState(QObject *sender, const QString &searchText);
@@ -47,18 +46,18 @@ public:
     QSqlQueryModel *getModel() const;
 
 signals:
-    // Сигналы класса
     void updateDB();
     void updateLabel(int currentPage);
 
 private:
-    // Приватные члены класса
     const QString dbFilename = "C:/Qt/projects/BD/123.db";
+    QString searchText;
     int currentPage;
     int pageSize;
     int offset;
 
     std::map<QObject*, State> buttonStateMap;
+    std::map<State,std::function<void()>> funcmap;
     QSqlQueryModel *model;
     QSqlDatabase db;
     State state;
