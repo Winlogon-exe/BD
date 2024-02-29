@@ -125,7 +125,8 @@ QString Logic::createSearchCondition(const QStringList &fields, const QString &s
     QStringList conditions;
     for (const auto &field : fields)
     {
-        conditions << QString("CAST(%1 AS TEXT) LIKE '%%2%'").arg(field).arg(searchText);
+        conditions << QString("%1 LIKE '%%2%'").arg(field).arg(searchText);
+
     }
     return conditions.join(" OR ");
 }
@@ -134,7 +135,6 @@ void Logic::nextPage()
 {
     currentPage++;
     createRequest();
-    qDebug() << "Следующая страница";
 }
 
 void Logic::backPage()
@@ -143,7 +143,6 @@ void Logic::backPage()
     {
         currentPage--;
         createRequest();
-        qDebug() << "Предыдущая страница";
     }
 }
 
