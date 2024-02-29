@@ -1,5 +1,4 @@
 #include "logic.h"
-#include<QLineEdit>
 
 Logic::Logic(QObject *parent) :
     QObject(parent),
@@ -43,7 +42,7 @@ void Logic::processState(QObject* sender,const QString &searchText)
         qDebug() << "Search";
         break;
     default:
-         qWarning() << "Неизвестное действие:" << state;
+         qWarning() << "Неизвестное действие:";
         break;
     }
 
@@ -55,7 +54,9 @@ void Logic::processState(QObject* sender,const QString &searchText)
 //изменение запроса
 void Logic::createRequest()
 {
-    QString queryString = QString("SELECT * FROM popular_tracks LIMIT %1 OFFSET %2").arg(pageSize).arg(currentPage * pageSize);
+    QString queryString = QString("SELECT * FROM popular_tracks LIMIT %1 OFFSET %2")
+                              .arg(pageSize)
+                              .arg(currentPage * pageSize);
     executeRequest(queryString);
 }
 
@@ -75,6 +76,7 @@ void Logic::executeRequest(const QString &queryString)
         QMessageBox::critical(nullptr, QObject::tr("Ошибка"), QObject::tr("Ошибка в запросе "));
     }
 }
+
 //вывод поиска на 1 страницу все или на  пагинацию?
 void Logic::searchDataFromDB(const QString &searchText)
 {
@@ -84,7 +86,7 @@ void Logic::searchDataFromDB(const QString &searchText)
     //currentPage = 0; // поиск начинается с 0 страницы
 
     // Получаем список полей для поиска
-    QStringList fields = getAllTablesFromDB("popular_tracks");
+    QStringList fields = getAllFieldsFromTable("popular_tracks");
 
     // Формируем условие поиска, используя LIKE для каждого поля
     QString searchCondition = createSearchCondition(fields, searchText);
@@ -102,11 +104,12 @@ void Logic::searchDataFromDB(const QString &searchText)
     executeRequest(queryString);
 }
 
-//получаем все таблицы из бд для поиска
-QStringList Logic::getAllTablesFromDB(const QString &tableName)
+//получаем все поля из бд для поиска
+//если бд не будет изменяться тогда лучше один раз достать и сохранить?
+QStringList Logic::getAllFieldsFromTable (const QString &tableName)
 {
     QSqlQuery fieldQuery(db);
-    fieldQuery.exec("PRAGMA table_info(popular_tracks);");
+    fieldQuery.exec(QString("PRAGMA table_info(%1);").arg(tableName));
 
     QStringList fields;
     while (fieldQuery.next())
@@ -119,15 +122,12 @@ QStringList Logic::getAllTablesFromDB(const QString &tableName)
 //условие поиска исходя из таблиц
 QString Logic::createSearchCondition(const QStringList &fields, const QString &searchText)
 {
-    QString searchCondition;
+    QStringList conditions;
     for (const auto &field : fields)
     {
-        if (!searchCondition.isEmpty())
-            searchCondition += " OR ";
-
-        searchCondition += QString("CAST(%1 AS TEXT) LIKE '%%2%'").arg(field).arg(searchText);
+        conditions << QString("CAST(%1 AS TEXT) LIKE '%%2%'").arg(field).arg(searchText);
     }
-    return searchCondition;
+    return conditions.join(" OR ");
 }
 
 void Logic::nextPage()
@@ -154,7 +154,10 @@ void Logic::disconnectFromDatabase()
         db.close();
         qInfo() << "База данных закрыта.";
     }
-    qWarning() << "База данных уже закрыта.";
+    else
+    {
+        qWarning() << "База данных уже закрыта.";
+    }
 }
 
 QSqlQueryModel *Logic::getModel() const

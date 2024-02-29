@@ -1,41 +1,45 @@
 #include "HighlightDelegate.h"
-#include <QPainter>
 
-HighlightDelegate::HighlightDelegate(const QString& searchText, QObject *parent)
-    : QStyledItemDelegate(parent), m_searchText(searchText) {}
+HighlightDelegate::HighlightDelegate(const QString& searchText, QObject *parent):
+    QStyledItemDelegate(parent),
+    m_searchText(searchText) {}
 
+//возвращать строку надо?
 void HighlightDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    QStyledItemDelegate::paint(painter, option, index); // Отрисовка базового вида ячейки
+    // Вызываем базовую реализацию для отрисовки стандартного вида элемента.
+    QStyledItemDelegate::paint(painter, option, index);
 
+    // Если текст для поиска не пуст, начинаем поиск и подсветку совпадений.
     if (!m_searchText.isEmpty())
     {
-        QString text = index.data().toString();
+        const QString text = index.data().toString();
         int startPos = text.indexOf(m_searchText, 0, Qt::CaseInsensitive);
-        if (startPos >= 0) {
-            QRect rect = option.rect;
-            painter->save();
 
-            QColor highlightColor = QColor("red").lighter(160);
-            highlightColor.setAlpha(128);
-            QBrush brush(highlightColor);
-            painter->setBrush(brush);
-            painter->setPen(Qt::NoPen);
+        // Если нашли совпадение, подсвечиваем его.
+        if (startPos >= 0)
+        {
+            painter->save(); // Сохраняем текущее состояние рисовальщика
 
+            // Настройка стиля подсветки
+            QColor highlightColor = QColor("red");
+            highlightColor.setAlpha(75); // Делаем цвет полупрозрачным
+            painter->setBrush(highlightColor);
+            painter->setPen(Qt::NoPen); // Убираем контур
+
+            // Вычисляем размеры текста для подсветки
             QFontMetrics metrics(painter->font());
             int textWidth = metrics.horizontalAdvance(m_searchText);
-            int textHeight = metrics.ascent();
+            int yOffset = (option.rect.height() - metrics.height()) / 2; // Выравнивание по вертикали
 
-            // Выравнивание подсветки по горизонтали
-            int textStartPos = metrics.horizontalAdvance(text.left(startPos)) + 3; // Добавляем отступ 5 пикселей к начальной позиции
-            // Корректировка вертикальной позиции подсветки
-            int yOffset = (rect.height() - textHeight) / 2; // Вычисление смещения по Y для выравнивания по центру
+            // Рассчитываем положение и размер прямоугольника подсветки
+            int textStartPos = metrics.horizontalAdvance(text.left(startPos))+5;
+            QRect highlightRect(option.rect.left() + textStartPos, option.rect.top() + yOffset, textWidth, metrics.height());
 
-            QRect highlightRect(rect.left() + textStartPos, rect.top() + yOffset, textWidth, textHeight);
+            // Рисуем прямоугольник подсветки
+            painter->fillRect(highlightRect, highlightColor);
 
-            painter->drawRect(highlightRect);
-
-            painter->restore();
+            painter->restore(); // Восстанавливаем состояние рисовальщика
         }
     }
 }

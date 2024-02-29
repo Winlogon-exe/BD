@@ -12,6 +12,7 @@
 #include <QMessageBox>
 #include <QDebug>
 #include <QThread>
+#include<QLineEdit>
 
 enum State
 {
@@ -39,7 +40,7 @@ public:
 
     void searchDataFromDB(const QString &searchText);
     QString  createSearchCondition(const QStringList &fields, const QString &searchText);
-    QStringList getAllTablesFromDB(const QString &tableName);
+    QStringList getAllFieldsFromTable (const QString &tableName);
 
     void nextPage();
     void backPage();

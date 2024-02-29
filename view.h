@@ -36,9 +36,9 @@ public:
     QPushButton* createButton(const QString& text,State state);
 
 private slots:
-    void ButtonClicked();
-    void showTable();
-    void showLabel(int currentPage);
+    void s_ButtonClicked();
+    void s_showTable();
+    void s_showLabel(int currentPage);
 
 private:
     QString             searchText;

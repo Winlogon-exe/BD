@@ -57,7 +57,7 @@ void View::setupLayouts()
 
     this->setLayout(mainLayout);
     //показываем 0 страницу
-    showTable();
+    s_showTable();
 }
 
 //создание и настройка кнопок и других элементов управления.
@@ -70,12 +70,14 @@ void View::setupButtons()
     searchLineEdit = new QLineEdit(this);
     searchLineEdit->setPlaceholderText("Введите запрос...");
 
-    // Создание фильтра
+    // Создание фильтра(какие фильтры нужны?)
     filterComboBox = new QComboBox(this);
-    filterComboBox->addItem("Фильтр 1");
-    filterComboBox->addItem("Фильтр 2");
+    filterComboBox->addItem("ID");
+    filterComboBox->addItem("Name");
+    //filterComboBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
     // Создание и настройка кнопок
+    //контейнер?
     nextButton = createButton("Вперед",Next);
     backButton = createButton("Назад",Back);
     searchButton = createButton("Поиск",Search);
@@ -89,6 +91,7 @@ void View::setupButtons()
     {
         button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     }
+
     //после кнопок - настройка БД
     setupTableView();
 }
@@ -98,7 +101,7 @@ QPushButton* View::createButton(const QString& text,State state)
     QPushButton* button = new QPushButton(text, this);
     //button->setObjectName(text);
     logic.setButtonState(button,state);
-    connect(button, &QPushButton::clicked, this, &View::ButtonClicked);
+    connect(button, &QPushButton::clicked, this, &View::s_ButtonClicked);
     return button;
 }
 
@@ -113,28 +116,28 @@ void View::paintSearch()
 //подключение сигналов и слотов.
 void View::setupConnect()
 {
-    connect(&logic,&Logic::updateDB,this,&View::showTable);
-    connect(&logic,&Logic::updateLabel,this,&View::showLabel);
+    connect(&logic,&Logic::updateDB,this,&View::s_showTable);
+    connect(&logic,&Logic::updateLabel,this,&View::s_showLabel);
 }
 
-//передача в логику(слот)
-void View::ButtonClicked()
+//передача в логику
+void View::s_ButtonClicked()
 {
     paintSearch();
     logic.processState(sender(),searchText);
 }
 
-//вывод бд (слот)
-//получать модель через геттер или параметр сиганала (как лучше?)
-void View::showTable()
+//вывод бд
+//получать модель через геттер или параметр сигнала (как лучше?)
+void View::s_showTable()
 {
    // QSqlQueryModel *model = logic.getModel();
     tableView->setModel(logic.getModel());
     tableView->show();
 }
 
-//вывод страниц(слот)
-void View::showLabel(int currentPage)
+//вывод страниц
+void View::s_showLabel(int currentPage)
 {
     page->setText(QString::number(currentPage));
 }

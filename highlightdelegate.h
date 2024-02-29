@@ -2,8 +2,12 @@
 #define HIGHLIGHTDELEGATE_H
 
 #include <QStyledItemDelegate>
+#include <QPainter>
+#include <QStyleOptionViewItem>
 
-class HighlightDelegate : public QStyledItemDelegate {
+// Делегат для подсветки текста в представлениях модели/представления Qt.
+class HighlightDelegate : public QStyledItemDelegate
+{
     Q_OBJECT
 
 public:
@@ -11,7 +15,7 @@ public:
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
 private:
-    QString m_searchText;
+    QString m_searchText; // Текст для поиска и подсветки.
 };
 
 #endif // HIGHLIGHTDELEGATE_H
