@@ -7,24 +7,9 @@ Logic::Logic(QObject *parent) :
     model(new QSqlQueryModel())
 
 {
-    connectToDatabase();
     initMap();
-}
-
-void Logic::processState(QObject* sender,const QString &search)
-{
-    State state = buttonStateMap[sender];
-    auto it = funcmap.find(state);
-    searchText = search;
-
-    if (it != funcmap.end())
-    {
-        it->second();
-    }
-
-    //свернуть?
-    emit updateLabel(currentPage);
-    emit updateDB();
+    initThread();
+    connectToDatabase();
 }
 
 void Logic::initMap()
@@ -32,6 +17,18 @@ void Logic::initMap()
     funcmap[Next]    = [this](){nextPage();};
     funcmap[Back]    = [this](){backPage();};
     funcmap[Search]  = [this](){searchDataFromDB();};
+}
+
+void Logic::initThread()
+{
+    // Подключаем слот loadNextThreePages к сигналу updateDB, чтобы он выполнялся в отдельном потоке
+    connect(this, &Logic::updateDB, this, &Logic::loadNextThreePages);
+
+    // Помещаем объект Logic в workerThread
+    this->moveToThread(&workerThread);
+
+    // Запускаем поток
+    workerThread.start();
 }
 
 void Logic::connectToDatabase()
@@ -46,6 +43,48 @@ void Logic::connectToDatabase()
     qInfo() << "База данных успешно открыта.";
 
     createRequest();
+}
+
+void Logic::processState(QObject* sender,const QString &search)
+{
+    State state = buttonStateMap[sender];
+    auto it = funcmap.find(state);
+    searchText = search;
+
+    if (it != funcmap.end())
+    {
+        it->second();
+    }
+
+    //свернуть?
+    emit updateDB();
+    emit updateLabel(currentPage);
+}
+
+void Logic::loadNextThreePages()
+{
+    int startPage = currentPage;
+    for (int i = startPage; i < startPage + 3; ++i)
+    {
+        // Проверяем, необходимо ли загружать следующую страницу
+        mutex.lock();
+        if (currentPage != i)
+        {
+            mutex.unlock();
+            break;
+        }
+        mutex.unlock();
+
+        QString queryString = QString("SELECT * FROM popular_tracks LIMIT %1 OFFSET %2")
+                                  .arg(pageSize)
+                                  .arg(i * pageSize);
+
+        QThread::msleep(2000); // Задержка в 1 секунду
+
+        qDebug() << "Loading page" << i << "in thread:" << QThread::currentThreadId();
+
+        executeRequest(queryString);
+    }
 }
 
 //изменение запроса
@@ -74,7 +113,6 @@ void Logic::executeRequest(const QString &queryString)
     }
 }
 
-//вывод поиска на 1 страницу все или на  пагинацию?
 void Logic::searchDataFromDB()
 {
     if(searchText.isEmpty())
@@ -82,6 +120,7 @@ void Logic::searchDataFromDB()
 
     // поиск начинается с 0 страницы
     currentPage = 0;
+
     // Получаем список полей для поиска
     QStringList fields = getAllFieldsFromTable("popular_tracks");
 
@@ -103,7 +142,6 @@ void Logic::searchDataFromDB()
 }
 
 //получаем все поля из бд для поиска
-//если бд не будет изменяться тогда лучше один раз достать и сохранить?
 QStringList Logic::getAllFieldsFromTable(const QString &tableName)
 {
     QSqlQuery fieldQuery(db);
@@ -166,4 +204,16 @@ QSqlQueryModel *Logic::getModel() const
 void Logic::setButtonState(QObject* button, State state)
 {
     buttonStateMap[button] = state;
+}
+
+void Logic::stopWorkerThread()
+{
+    // Завершаем поток
+    workerThread.quit();
+    workerThread.wait(); // Дожидаемся фактического завершения работы потока
+}
+
+Logic::~Logic()
+{
+    stopWorkerThread();
 }

@@ -109,7 +109,6 @@ void View::setupLayouts()
 QPushButton* View::createButton(const QString& text,State state)
 {
     QPushButton* button = new QPushButton(text, this);
-    //button->setObjectName(text);
     logic.setButtonState(button,state);
     connect(button, &QPushButton::clicked, this, &View::s_ButtonClicked);
     return button;
@@ -126,7 +125,7 @@ void View::paintSearch()
 //подключение сигналов и слотов.
 void View::setupConnect()
 {
-    connect(&logic,&Logic::updateDB,this,&View::s_showTable);
+    //connect(&logic,&Logic::updateDB,this,&View::s_showTable);
     connect(&logic,&Logic::updateLabel,this,&View::s_showLabel);
 }
 
@@ -138,10 +137,8 @@ void View::s_ButtonClicked()
 }
 
 //вывод бд
-//получать модель через геттер или параметр сигнала (как лучше?)
 void View::s_showTable()
 {
-   // QSqlQueryModel *model = logic.getModel();
     tableView->setModel(logic.getModel());
     tableView->show();
 }
