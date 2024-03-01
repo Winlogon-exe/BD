@@ -51,12 +51,8 @@ void Logic::processState(QObject* sender,const QString &search)
     {
         it->second();
     }
-
-    //свернуть?
-   // emit updateDB();
     emit updateLabel(currentPage);
 }
-
 
 void Logic::executeDatabaseQuery(const QString &queryString)
 {

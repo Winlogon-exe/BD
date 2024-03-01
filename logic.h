@@ -45,6 +45,7 @@ public:
     void processState(QObject *sender, const QString &searchText);
     void setButtonState(QObject *button, State state);
     void executeRequest(const QString &queryString);
+    void executeDatabaseQuery(const QString &queryString);
 
 signals:
     void updateDB();
@@ -67,7 +68,8 @@ private:
     QSqlDatabase db;
     State state;
     QThread workerThread;
-    QMutex mutex;
+    QMutex queueMutex;
+    QQueue<QString> requestQueue;
 };
 
 #endif // LOGIC_H
