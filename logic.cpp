@@ -27,6 +27,7 @@ void Logic::initThread()
     workerThread.start();
 }
 
+//сделать bool
 void Logic::connectToDatabase()
 {
     db = QSqlDatabase::addDatabase("QSQLITE");
@@ -38,7 +39,7 @@ void Logic::connectToDatabase()
     }
     qInfo() << "База данных успешно открыта.";
 
-    createRequest();
+    createRequest(currentPage);
 }
 
 void Logic::processState(QObject* sender,const QString &search)
@@ -58,19 +59,22 @@ void Logic::processState(QObject* sender,const QString &search)
 void Logic::loadNextThreePages()
 {
     queueMutex.lock();
-    while (!requestQueue.isEmpty())
+    if (!requestQueue.isEmpty())
     {
         QString queryString = requestQueue.dequeue();
         queueMutex.unlock();
 
         executeDatabaseQuery(queryString);
 
-        QThread::msleep(2000);
-
-        queueMutex.lock();
+        // После выполнения запроса вызвать метод снова для обработки следующего запроса, если он есть в очереди
+        loadNextThreePages();
     }
-    queueMutex.unlock();
+    else
+    {
+        queueMutex.unlock();
+    }
 }
+
 
 void Logic::executeDatabaseQuery(const QString &queryString)
 {
@@ -90,11 +94,11 @@ void Logic::executeDatabaseQuery(const QString &queryString)
 
 }
 
-void Logic::createRequest()
+void Logic::createRequest(int page)
 {
     QString queryString = QString("SELECT * FROM popular_tracks LIMIT %1 OFFSET %2")
                               .arg(pageSize)
-                              .arg(currentPage * pageSize);
+                              .arg(page * pageSize);
     executeRequest(queryString);
 }
 
@@ -163,15 +167,41 @@ QString Logic::createSearchCondition(const QStringList &fields)
 void Logic::nextPage()
 {
     currentPage++;
-    createRequest();
+
+    // Загрузить данные только если текущая страница кратна 3
+    if (currentPage % 3 == 0)
+    {
+        for (int i = currentPage; i < currentPage + 3; ++i)
+        {
+            createRequest(i);
+        }
+    }
+    else
+    {
+        // В противном случае просто создать запрос для следующей страницы
+        createRequest(currentPage);
+    }
 }
+
 
 void Logic::backPage()
 {
     if (currentPage > 0)
     {
         currentPage--;
-        createRequest();
+
+        // Если предыдущая страница кратна 3, загрузить предыдущие 3 страницы данных
+        if ((currentPage + 1) % 3 == 0)
+        {
+            for (int i = currentPage - 2; i <= currentPage; ++i)
+            {
+                createRequest(i);
+            }
+        }
+        else
+        {
+            createRequest(currentPage);
+        }
     }
 }
 

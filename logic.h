@@ -35,7 +35,7 @@ public:
     void connectToDatabase();
 
     void processState(QObject *sender, const QString &searchText);
-    void createRequest();
+    void createRequest(int page);
     void executeRequest(const QString &queryString);
 
     void executeDatabaseQuery(const QString &queryString);
