@@ -13,8 +13,7 @@ enum State
 {
     Next,
     Back,
-    Search,
-    Filtr
+    Search
 };
 
 class Logic : public QObject
@@ -26,26 +25,27 @@ public:
     ~Logic();
 
 public:
-    void connectToDatabase();
-    void disconnectFromDatabase();
-    void createRequest();
+    QStringList getAllFieldsFromTable(const QString &tableName);
+    QString createSearchCondition(const QStringList &fields);
+    QSqlQueryModel *getModel() const;
 
+public:
     void initMap();
     void initThread();
-    void searchDataFromDB();
-
-    QString createSearchCondition(const QStringList &fields);
-    QStringList getAllFieldsFromTable(const QString &tableName);
-    void nextPage();
-
-    void backPage();
-    QSqlQueryModel *getModel() const;
-    void stopWorkerThread();
+    void connectToDatabase();
 
     void processState(QObject *sender, const QString &searchText);
-    void setButtonState(QObject *button, State state);
+    void createRequest();
     void executeRequest(const QString &queryString);
+
     void executeDatabaseQuery(const QString &queryString);
+    void searchDataFromDB();
+    void nextPage();
+    void backPage();
+
+    void setButtonState(QObject *button, State state);
+    void disconnectFromDatabase();
+    void stopWorkerThread();
 
 signals:
     void updateDB();
@@ -62,14 +62,14 @@ private:
 private:
     const QString dbFilename = "C:/Qt/projects/BD/123.db";
     std::map<State, std::function<void()>> funcmap;
-    std::map<QObject *, State> buttonStateMap;
-    QSqlQueryModel *model;
-    QString searchText;
-    QSqlDatabase db;
-    State state;
-    QThread workerThread;
-    QMutex queueMutex;
+    std::map<QObject*, State> buttonStateMap;
     QQueue<QString> requestQueue;
+    QSqlQueryModel *model;
+    QThread workerThread;
+    QString searchText;
+    QMutex queueMutex;
+    State state;
+    QSqlDatabase db;
 };
 
 #endif // LOGIC_H

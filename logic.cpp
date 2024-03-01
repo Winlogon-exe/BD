@@ -7,8 +7,8 @@ Logic::Logic(QObject *parent) :
     model(new QSqlQueryModel())
 
 {
-    initMap();
     initThread();
+    initMap();
     connectToDatabase();
 }
 
@@ -21,7 +21,7 @@ void Logic::initMap()
 
 void Logic::initThread()
 {
-    // Подключаем слот loadNextThreePages к сигналу updateDB, чтобы он выполнялся в отдельном потоке
+    //без connect функция вызывается в основном потоке?
     connect(this, &Logic::updateDB, this, &Logic::loadNextThreePages);
     this->moveToThread(&workerThread);
     workerThread.start();
@@ -52,11 +52,25 @@ void Logic::processState(QObject* sender,const QString &search)
         it->second();
     }
 
-    //свернуть?
-   // emit updateDB();
     emit updateLabel(currentPage);
 }
 
+void Logic::loadNextThreePages()
+{
+    queueMutex.lock();
+    while (!requestQueue.isEmpty())
+    {
+        QString queryString = requestQueue.dequeue();
+        queueMutex.unlock();
+
+        executeDatabaseQuery(queryString);
+
+        QThread::msleep(2000);
+
+        queueMutex.lock();
+    }
+    queueMutex.unlock();
+}
 
 void Logic::executeDatabaseQuery(const QString &queryString)
 {
@@ -73,25 +87,9 @@ void Logic::executeDatabaseQuery(const QString &queryString)
     {
         QMessageBox::critical(nullptr, QObject::tr("Ошибка"), QObject::tr("Ошибка в запросе "));
     }
+
 }
 
-void Logic::loadNextThreePages()
-{
-    queueMutex.lock();
-    while (!requestQueue.isEmpty())
-    {
-        QString queryString = requestQueue.dequeue();
-        queueMutex.unlock();
-
-        executeDatabaseQuery(queryString);
-        QThread::msleep(2000);
-
-        queueMutex.lock();
-    }
-    queueMutex.unlock();
-}
-
-//изменение запроса
 void Logic::createRequest()
 {
     QString queryString = QString("SELECT * FROM popular_tracks LIMIT %1 OFFSET %2")
@@ -100,7 +98,6 @@ void Logic::createRequest()
     executeRequest(queryString);
 }
 
-//добавление запроса в model
 void Logic::executeRequest(const QString &queryString)
 {
     queueMutex.lock();
@@ -137,9 +134,9 @@ void Logic::searchDataFromDB()
     executeRequest(queryString);
 }
 
-//получаем все поля из бд для поиска
 QStringList Logic::getAllFieldsFromTable(const QString &tableName)
 {
+    //получаем все поля из бд для поиска
     QSqlQuery fieldQuery(db);
     fieldQuery.exec(QString("PRAGMA table_info(%1)").arg(tableName));
 
@@ -151,9 +148,9 @@ QStringList Logic::getAllFieldsFromTable(const QString &tableName)
     return fields;
 }
 
-//условие поиска исходя из полей
 QString Logic::createSearchCondition(const QStringList &fields)
 {
+    //условие поиска исходя из полей
     QStringList conditions;
     for (const auto &field : fields)
     {
@@ -196,17 +193,16 @@ QSqlQueryModel *Logic::getModel() const
     return model;
 }
 
-//кнопка с состоянием
 void Logic::setButtonState(QObject* button, State state)
 {
+    //каждой кнопке делаем состояние
     buttonStateMap[button] = state;
 }
 
 void Logic::stopWorkerThread()
 {
-    // Завершаем поток
     workerThread.quit();
-    workerThread.wait(); // Дожидаемся фактического завершения работы потока
+    workerThread.wait();
 }
 
 Logic::~Logic()

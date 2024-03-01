@@ -31,7 +31,6 @@ public:
     void setupLayouts();
     void setupConnect();
     void paintSearch();
-    void setupToolbar();
     QPushButton* createButton(const QString& text,State state);
 
 private slots:
@@ -40,7 +39,6 @@ private slots:
     void s_showLabel(int currentPage);
 
 private:
-
     QString             searchText;
     QTableView          *tableView;
     HighlightDelegate   *delegate;

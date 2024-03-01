@@ -10,7 +10,6 @@ void View::createUI()
 {
     setupConnect();
     setupDisplay();
-    setupToolbar();
 }
 
 // настройка отображения основного окна.
@@ -19,20 +18,6 @@ void View::setupDisplay()
     setWindowTitle("DB");
     this->resize(800, 500);
     setupButtons();
-}
-
-void View::setupToolbar()
-{
-    QToolBar *toolbar = new QToolBar(this);
-
-    // Создаем действия для панели инструментов
-    QAction *action1 = toolbar->addAction("Действие 1");
-    QAction *action2 = toolbar->addAction("Действие 2");
-
-    // Добавляем действия на панель инструментов
-    toolbar->addAction(action1);
-    toolbar->addAction(action2);
-    mainLayout->insertWidget(0, toolbar);
 }
 
 //создание и настройка кнопок и других элементов управления.
@@ -45,7 +30,7 @@ void View::setupButtons()
     searchLineEdit = new QLineEdit(this);
     searchLineEdit->setPlaceholderText("Введите запрос...");
 
-    // Создание фильтра(какие фильтры нужны?)
+    // Создание фильтра(поиск по фильтру)
     filterComboBox = new QComboBox(this);
     filterComboBox->addItem("default");
     filterComboBox->addItem("ID");
@@ -99,7 +84,6 @@ void View::setupLayouts()
     buttonLayout->addWidget(nextButton);
     buttonLayout->setAlignment(Qt::AlignCenter);
     mainLayout->addLayout(buttonLayout);
-
     this->setLayout(mainLayout);
 
     //показываем 0 страницу
