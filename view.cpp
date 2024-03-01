@@ -3,7 +3,6 @@
 View::View(QWidget *parent)
     : QWidget(parent)
 {
-    qDebug()<<QThread::currentThread()<< QObject::thread();
     createUI();
 }
 

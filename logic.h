@@ -36,9 +36,10 @@ public:
     void setButtonState(QObject *button, State state);
     void executeRequest(const QString &queryString);
     void createRequest();
+    void initMap();
 
-    void searchDataFromDB(const QString &searchText);
-    QString  createSearchCondition(const QStringList &fields, const QString &searchText);
+    void searchDataFromDB();
+    QString  createSearchCondition(const QStringList &fields);
     QStringList getAllFieldsFromTable (const QString &tableName);
 
     void nextPage();

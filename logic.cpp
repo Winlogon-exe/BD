@@ -8,15 +8,15 @@ Logic::Logic(QObject *parent) :
 
 {
     connectToDatabase();
-    funcmap[Next]  = [this](){nextPage();};
-    funcmap[Back]  = [this](){backPage();};
-   // funcmap[Search]  = [this](){searchDataFromDB();};
+    initMap();
 }
 
 void Logic::processState(QObject* sender,const QString &search)
 {
     State state = buttonStateMap[sender];
     auto it = funcmap.find(state);
+    searchText = search;
+
     if (it != funcmap.end())
     {
         it->second();
@@ -25,6 +25,13 @@ void Logic::processState(QObject* sender,const QString &search)
     //свернуть?
     emit updateLabel(currentPage);
     emit updateDB();
+}
+
+void Logic::initMap()
+{
+    funcmap[Next]    = [this](){nextPage();};
+    funcmap[Back]    = [this](){backPage();};
+    funcmap[Search]  = [this](){searchDataFromDB();};
 }
 
 void Logic::connectToDatabase()
@@ -68,19 +75,19 @@ void Logic::executeRequest(const QString &queryString)
 }
 
 //вывод поиска на 1 страницу все или на  пагинацию?
-void Logic::searchDataFromDB(const QString &searchText)
+void Logic::searchDataFromDB()
 {
     if(searchText.isEmpty())
         return;
 
-    currentPage = 0; // поиск начинается с 0 страницы
+    // поиск начинается с 0 страницы
+    currentPage = 0;
     // Получаем список полей для поиска
     QStringList fields = getAllFieldsFromTable("popular_tracks");
 
     // Формируем условие поиска
-    QString searchCondition = createSearchCondition(fields, searchText);
+    QString searchCondition = createSearchCondition(fields);
 
-    //SELECT * FROM popular_tracks WHERE field1 LIKE '%searchText%' OR field2 LIKE '%searchText%' OR ...
     // Строим запрос с условием поиска
     QString queryString = "SELECT * FROM popular_tracks";
     if (!searchCondition.isEmpty())
@@ -89,13 +96,15 @@ void Logic::searchDataFromDB(const QString &searchText)
     }
 
     queryString += QString(" LIMIT %1 OFFSET %2").arg(pageSize).arg(currentPage * pageSize);
+
     // Выполняем запрос
+    //SELECT * FROM popular_tracks WHERE field1 LIKE '%searchText%' OR field2 LIKE '%searchText%' OR ...
     executeRequest(queryString);
 }
 
 //получаем все поля из бд для поиска
 //если бд не будет изменяться тогда лучше один раз достать и сохранить?
-QStringList Logic::getAllFieldsFromTable (const QString &tableName)
+QStringList Logic::getAllFieldsFromTable(const QString &tableName)
 {
     QSqlQuery fieldQuery(db);
     fieldQuery.exec(QString("PRAGMA table_info(%1)").arg(tableName));
@@ -109,7 +118,7 @@ QStringList Logic::getAllFieldsFromTable (const QString &tableName)
 }
 
 //условие поиска исходя из полей
-QString Logic::createSearchCondition(const QStringList &fields, const QString &searchText)
+QString Logic::createSearchCondition(const QStringList &fields)
 {
     QStringList conditions;
     for (const auto &field : fields)
