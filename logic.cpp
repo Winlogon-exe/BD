@@ -97,7 +97,7 @@ void Logic::executeDatabaseQuery(const QString &queryString)
 void Logic::createRequest(int page)
 {
     QString queryString = QString("SELECT * FROM popular_tracks LIMIT %1 OFFSET %2")
-                              .arg(pageSize)
+                              .arg(pageSize* 3)
                               .arg(page * pageSize);
     executeRequest(queryString);
 }
@@ -169,7 +169,6 @@ void Logic::nextPage()
     currentPage++;
     createRequest(currentPage);
 }
-
 
 void Logic::backPage()
 {
