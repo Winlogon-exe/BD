@@ -167,20 +167,7 @@ QString Logic::createSearchCondition(const QStringList &fields)
 void Logic::nextPage()
 {
     currentPage++;
-
-    // Загрузить данные только если текущая страница кратна 3
-    if (currentPage % 3 == 0)
-    {
-        for (int i = currentPage; i < currentPage + 3; ++i)
-        {
-            createRequest(i);
-        }
-    }
-    else
-    {
-        // В противном случае просто создать запрос для следующей страницы
-        createRequest(currentPage);
-    }
+    createRequest(currentPage);
 }
 
 
@@ -188,20 +175,8 @@ void Logic::backPage()
 {
     if (currentPage > 0)
     {
-        currentPage--;
-
-        // Если предыдущая страница кратна 3, загрузить предыдущие 3 страницы данных
-        if ((currentPage + 1) % 3 == 0)
-        {
-            for (int i = currentPage - 2; i <= currentPage; ++i)
-            {
-                createRequest(i);
-            }
-        }
-        else
-        {
-            createRequest(currentPage);
-        }
+       currentPage--;
+       createRequest(currentPage);
     }
 }
 
