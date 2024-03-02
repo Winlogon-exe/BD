@@ -42,6 +42,8 @@ public:
     void searchDataFromDB();
     void nextPage();
     void backPage();
+    void preLoadPages();
+    void preloadRequest(const QString &queryString);
 
     void setButtonState(QObject *button, State state);
     void disconnectFromDatabase();
@@ -60,10 +62,13 @@ private:
     int offset;
 
 private:
-    const QString dbFilename = "C:/Qt/projects/BD/123.db";
+    const QString dbFilename = "D:/QT_PROJECTS/BD/123.db";
     std::map<State, std::function<void()>> funcmap;
-    std::map<QObject*, State> buttonStateMap;
+
+    std::map<QObject*, State> buttonStateMap;   
     QQueue<QString> requestQueue;
+    QList<QSqlQueryModel*> preloadedModels;
+
     QSqlQueryModel *model;
     QThread workerThread;
     QString searchText;
