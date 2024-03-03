@@ -33,7 +33,7 @@ void Logic::connectToDatabase()
     if (!db.open())
     {
         showError(db.lastError().text());
-        return;
+        return;     
     }
     qInfo() << "База данных успешно открыта.";
 
@@ -50,7 +50,6 @@ void Logic::processState(QObject* sender,const QString &search)
     {
         it->second();
     }
-
     emit updateLabel(currentPage);
 }
 
@@ -59,20 +58,16 @@ void Logic::executeRequest()
 {
     model->clear(); // Очищаем модель от предыдущих данных
 
-    // Проверяем, есть ли в кеше данные для текущей страницы
-    if (dataCache.contains(currentPage))
+    // Извлекаем данные для текущей страницы из кеша
+    const auto &pageData = dataCache[currentPage];
+    for (const auto &rowMap : pageData)
     {
-        // Извлекаем данные для текущей страницы из кеша
-        const auto &pageData = dataCache[currentPage];
-        for (const auto &rowMap : pageData)
+        QList<QStandardItem *> items;
+        for (const auto &value : rowMap)
         {
-            QList<QStandardItem *> items;
-            for (const auto &value : rowMap)
-            {
-                items.append(new QStandardItem(value.toString()));
-            }
-            model->appendRow(items);
+            items.append(new QStandardItem(value.toString()));
         }
+        model->appendRow(items);
     }
 }
 
@@ -89,13 +84,12 @@ void Logic::addData(const QString &queryString, int targetPage)
     }
 
     QList<QVariantMap> pageData; // Данные для целевой страницы
-
     while (query.next())
     {
         QVariantMap rowData;
-        for (int column = 0; column < query.record().count(); ++column)
-        {
-            rowData[query.record().fieldName(column)] = query.value(column);
+        QSqlRecord record = query.record();
+        foreach(const QString &fieldName, record.fieldNames()) {
+            rowData[fieldName] = query.value(fieldName);
         }
         pageData.append(rowData); // Добавляем строку данных в список текущей страницы
     }
@@ -104,6 +98,7 @@ void Logic::addData(const QString &queryString, int targetPage)
     dataCache[targetPage] = pageData;
     executeRequest();
 }
+
 
 void Logic::createRequest()
 {
