@@ -57,21 +57,25 @@ void Logic::processState(QObject* sender,const QString &search)
 //тут нужно извлечь данные и обновить model;
 void Logic::executeRequest()
 {
-    model->clear();
+    model->clear(); // Очищаем модель от предыдущих данных
 
-    //содержит ли dataCache данные для текущей страницы (currentPage).
-
-    const auto &pageData = dataCache[currentPage];
-    for (const auto &rowMap : pageData)
+    // Проверяем, есть ли в кеше данные для текущей страницы
+    if (dataCache.contains(currentPage))
     {
-        QList<QStandardItem *> items;
-        for (auto it = rowMap.constBegin(); it != rowMap.constEnd(); ++it)
+        // Извлекаем данные для текущей страницы из кеша
+        const auto &pageData = dataCache[currentPage];
+        for (const auto &rowMap : pageData)
         {
-            items.append(new QStandardItem(it.value().toString()));
+            QList<QStandardItem *> items;
+            for (const auto &value : rowMap)
+            {
+                items.append(new QStandardItem(value.toString()));
+            }
+            model->appendRow(items);
         }
-        model->appendRow(items);
     }
 }
+
 
 //выполнение запроса и добавления в кеш
 void Logic::addData(const QString &queryString)
@@ -85,31 +89,24 @@ void Logic::addData(const QString &queryString)
         return;
     }
 
-    int totalRowsFetched = 0;
+    QList<QVariantMap> pageData; // Данные для текущей страницы
+
     while (query.next())
     {
-        // Определение страницы для текущей записи
-        int targetPage =3;
-        if (!dataCache.contains(targetPage))
-        {
-            dataCache[targetPage] = QList<QVariantMap>();
-        }
-
-        // Добавление строки данных в кэш целевой страницы
         QVariantMap rowData;
         for (int column = 0; column < query.record().count(); ++column)
         {
             rowData[query.record().fieldName(column)] = query.value(column);
         }
-
-        dataCache[targetPage].append(rowData);
-        ++totalRowsFetched;
+        pageData.append(rowData); // Добавляем строку данных в список текущей страницы
     }
 
-    // Обновление модели данными из кэша для текущей страницы
+    // Сохраняем данные текущей страницы в кеше
+    dataCache[currentPage] = pageData;
+
+    // Обновляем модель данными из кеша для текущей страницы
     executeRequest();
 }
-
 
 void Logic::createRequest()
 {
