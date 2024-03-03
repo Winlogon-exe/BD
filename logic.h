@@ -53,9 +53,6 @@ signals:
     void updateDB();
     void updateLabel(int currentPage);
 
-private slots:
-    void loadNextThreePages();
-
 private:
     int currentPage;
     int pageSize;
@@ -66,8 +63,8 @@ private:
     std::map<State, std::function<void()>> funcmap;
 
     std::map<QObject*, State> buttonStateMap;   
-    QQueue<QString> requestQueue;
-    QList<QSqlQueryModel*> preloadedModels;
+    //QQueue<QString> requestQueue;
+    QVector<QSqlQueryModel*> preloadedModels;
 
     QSqlQueryModel *model;
     QThread workerThread;

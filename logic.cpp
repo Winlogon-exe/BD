@@ -21,8 +21,6 @@ void Logic::initMap()
 
 void Logic::initThread()
 {
-    //без connect функция вызывается в основном потоке?
-    connect(this, &Logic::updateDB, this, &Logic::loadNextThreePages);
     this->moveToThread(&workerThread);
     workerThread.start();
 }
@@ -56,26 +54,6 @@ void Logic::processState(QObject* sender,const QString &search)
     emit updateLabel(currentPage);
 }
 
-void Logic::loadNextThreePages()
-{
-    queueMutex.lock();
-    if (!requestQueue.isEmpty())
-    {
-        QString queryString = requestQueue.dequeue();
-        queueMutex.unlock();
-
-        executeDatabaseQuery(queryString);
-
-        // После выполнения запроса вызвать метод снова для обработки следующего запроса, если он есть в очереди
-        loadNextThreePages();
-    }
-    else
-    {
-        queueMutex.unlock();
-    }
-}
-
-
 void Logic::executeDatabaseQuery(const QString &queryString)
 {
     QSqlQuery query(db);
@@ -97,17 +75,9 @@ void Logic::executeDatabaseQuery(const QString &queryString)
 void Logic::createRequest(int page)
 {
     QString queryString = QString("SELECT * FROM popular_tracks LIMIT %1 OFFSET %2")
-                              .arg(pageSize* 3)
+                              .arg(pageSize)
                               .arg(page * pageSize);
-    executeRequest(queryString);
-}
-
-void Logic::executeRequest(const QString &queryString)
-{
-    queueMutex.lock();
-    requestQueue.enqueue(queryString);
-    queueMutex.unlock();
-    emit updateDB();
+    executeDatabaseQuery(queryString);
 }
 
 void Logic::searchDataFromDB()
@@ -135,7 +105,7 @@ void Logic::searchDataFromDB()
 
     // Выполняем запрос
     //SELECT * FROM popular_tracks WHERE field1 LIKE '%searchText%' OR field2 LIKE '%searchText%' OR ...
-    executeRequest(queryString);
+    executeDatabaseQuery(queryString);
 }
 
 QStringList Logic::getAllFieldsFromTable(const QString &tableName)
