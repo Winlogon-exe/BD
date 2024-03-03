@@ -89,7 +89,7 @@ void Logic::addData(const QString &queryString)
     while (query.next())
     {
         // Определение страницы для текущей записи
-        int targetPage = currentPage + (totalRowsFetched / pageSize);
+        int targetPage =3;
         if (!dataCache.contains(targetPage))
         {
             dataCache[targetPage] = QList<QVariantMap>();
