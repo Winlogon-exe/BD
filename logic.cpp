@@ -75,7 +75,10 @@ void Logic::executeRequest()
         QList<QStandardItem *> items;
         for (const auto &value : rowMap)
         {
-            items.append(new QStandardItem(value.toString()));
+            //4 поля
+            QStandardItem *item = new QStandardItem();
+            item->setData(value.toString(), Qt::DisplayRole); // Устанавливаем данные для отображения
+            items.append(item);
         }
         model->appendRow(items);
     }

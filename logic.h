@@ -45,6 +45,7 @@ public:
     void addData(const QString &queryString, int targetPage);
     void setButtonState(QObject *button, State state);
     void preloadPages(int startPage, int pageCount);
+
     void searchDataFromDB();
     void nextPage();
     void backPage();
@@ -60,11 +61,11 @@ signals:
 private:
     int currentPage;
     int pageSize;
-    int offset;
     int preload;
+    int offset;
 
 private:
-    const QString dbFilename = "D:/QT_PROJECTS/BD123.db";
+    const QString dbFilename = "D:/QT_PROJECTS/BD/123.db";
     std::map<State, std::function<void()>> funcmap;
     std::map<QObject*, State> buttonStateMap;
 
@@ -74,8 +75,8 @@ private:
     QThread workerThread;
     QString searchText;
     QMutex queueMutex;
-    State state;
     QSqlDatabase db;
+    State state;
 };
 
 #endif // LOGIC_H
