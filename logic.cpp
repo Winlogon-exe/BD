@@ -99,11 +99,12 @@ void Logic::addData(const QString &queryString, int targetPage)
     QList<QVariantMap> pageData; // Данные для целевой страницы
     while (query.next())
     {
+        QSqlRecord record = query.record();
         QVariantMap rowData;
-        for (int column = 0; column < query.record().count(); ++column)
-        {
-            rowData[query.record().fieldName(column)] = query.value(column);
-        }
+        // for(int column = 0; column < record.count(); ++column)
+        // {
+        //     rowData.insert(record.fieldName(column), record.value(column));
+        // }
         pageData.append(rowData); // Добавляем строку данных в список текущей страницы
     }
 
