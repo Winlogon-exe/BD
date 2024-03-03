@@ -2,6 +2,7 @@
 
 Logic::Logic(QObject *parent) :
     QObject(parent),
+    offset(0),
     currentPage(0),
     pageSize(30),
     preload(3),
@@ -101,10 +102,10 @@ void Logic::addData(const QString &queryString, int targetPage)
     {
         QSqlRecord record = query.record();
         QVariantMap rowData;
-        // for(int column = 0; column < record.count(); ++column)
-        // {
-        //     rowData.insert(record.fieldName(column), record.value(column));
-        // }
+        for(int column = 0; column < record.count(); ++column)
+        {
+            rowData.insert(record.fieldName(column), record.value(column));
+        }
         pageData.append(rowData); // Добавляем строку данных в список текущей страницы
     }
 
@@ -261,4 +262,5 @@ void Logic::showError(const QString &errorText)
 Logic::~Logic()
 {
     stopWorkerThread();
+    dataCache.clear();
 }
