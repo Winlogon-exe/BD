@@ -60,80 +60,56 @@ void Logic::executeRequest()
     model->clear();
 
     //содержит ли dataCache данные для текущей страницы (currentPage).
-    if (dataCache.contains(currentPage))
+
+    const auto &pageData = dataCache[currentPage];
+    for (const auto &rowMap : pageData)
     {
-        const auto &pageData = dataCache[currentPage];
-        for (const auto &rowMap : pageData)
+        QList<QStandardItem *> items;
+        for (auto it = rowMap.constBegin(); it != rowMap.constEnd(); ++it)
         {
-            QList<QStandardItem *> items;
-            for (auto it = rowMap.constBegin(); it != rowMap.constEnd(); ++it)
-            {
-                items.append(new QStandardItem(it.value().toString()));
-            }
-            model->appendRow(items);
+            items.append(new QStandardItem(it.value().toString()));
         }
+        model->appendRow(items);
     }
 }
 
 //выполнение запроса и добавления в кеш
-void Logic::addData(const QString &queryString) {
+void Logic::addData(const QString &queryString)
+{
     QSqlQuery query(db);
     query.prepare(queryString);
 
-    if (!query.exec()) {
+    if (!query.exec())
+    {
         showError(query.lastError().text());
         return;
     }
 
-    int row = 0;
-    while (query.next()) {
-        // Определение текущей страницы на основе row и pageSize
-        int currentPage = row / pageSize;
-
-        // Создание новой страницы в кеше, если необходимо
-        if (!dataCache.contains(currentPage)) {
-            dataCache[currentPage] = QList<QVariantMap>();
+    int totalRowsFetched = 0;
+    while (query.next())
+    {
+        // Определение страницы для текущей записи
+        int targetPage = currentPage + (totalRowsFetched / pageSize);
+        if (!dataCache.contains(targetPage))
+        {
+            dataCache[targetPage] = QList<QVariantMap>();
         }
 
-        // Добавление строки данных в текущую страницу кеша
+        // Добавление строки данных в кэш целевой страницы
         QVariantMap rowData;
-        for (int column = 0; column < query.record().count(); ++column) {
+        for (int column = 0; column < query.record().count(); ++column)
+        {
             rowData[query.record().fieldName(column)] = query.value(column);
         }
 
-        dataCache[currentPage].append(rowData);
-        ++row;
+        dataCache[targetPage].append(rowData);
+        ++totalRowsFetched;
     }
 
-    // После заполнения кеша вызываем executeRequest для обновления модели данными из кеша
+    // Обновление модели данными из кэша для текущей страницы
     executeRequest();
 }
 
-
-// QList<QVariantMap> Logic::fetchPageData(QSqlQuery &query)
-// {
-//     QList<QVariantMap> pageData;
-
-//     int startRow = currentPage * pageSize; // Начальная строка для текущей страницы
-//     int endRow = (currentPage + 1) * pageSize; // Конечная строка для текущей страницы
-
-//     while (query.next() && startRow < endRow)
-//     {
-//         QVariantMap rowData;
-
-//         for (int column = 0; column < query.record().count(); ++column)
-//         {
-//             QString columnName = query.record().fieldName(column);
-//             QVariant value = query.value(column);
-//             rowData[columnName] = value;
-//         }
-
-//         pageData.append(rowData);
-//         ++startRow;
-//     }
-
-//     return pageData;
-// }
 
 void Logic::createRequest()
 {
