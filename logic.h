@@ -8,6 +8,7 @@
 #include <QDebug>
 #include <QThread>
 #include <QMutex>
+#include<QStandardItemModel>
 
 enum State
 {
@@ -27,7 +28,7 @@ public:
 public:
     QStringList getAllFieldsFromTable(const QString &tableName);
     QString createSearchCondition(const QStringList &fields);
-    QSqlQueryModel *getModel() const;
+    QStandardItemModel *getModel() const;
 
 public:
     void initMap();
@@ -36,13 +37,12 @@ public:
 
     void processState(QObject *sender, const QString &searchText);
     void createRequest(int page);
-    void executeRequest(const QString &queryString);
+    void executeRequest();
 
     void addData(const QString &queryString);
     void searchDataFromDB();
     void nextPage();
     void backPage();
-
 
     void setButtonState(QObject *button, State state);
     void disconnectFromDatabase();
@@ -56,16 +56,15 @@ private:
     int currentPage;
     int pageSize;
     int offset;
-    QList<QVariantMap> data;
+    QList<QVariantMap> cachedData;
 private:
     const QString dbFilename = "D:/QT_PROJECTS/BD/123.db";
     std::map<State, std::function<void()>> funcmap;
 
     std::map<QObject*, State> buttonStateMap;   
-    //QQueue<QString> requestQueue;
     QVector<QSqlQueryModel*> preloadedModels;
 
-    QSqlQueryModel *model;
+    QStandardItemModel *model;
     QThread workerThread;
     QString searchText;
     QMutex queueMutex;

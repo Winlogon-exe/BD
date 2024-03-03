@@ -4,7 +4,7 @@ Logic::Logic(QObject *parent) :
     QObject(parent),
     currentPage(0),
     pageSize(30),
-    model(new QSqlQueryModel())
+    model(new QStandardItemModel ())
 
 {
     initThread();
@@ -54,17 +54,20 @@ void Logic::processState(QObject* sender,const QString &search)
     emit updateLabel(currentPage);
 }
 
-//тут нужно извлечь данные и обновить  QSqlQueryModel *model;
-void Logic::executeRequest(const QString &queryString)
+//тут нужно извлечь данные и обновить model;
+void Logic::executeRequest()
 {
-    model->setQuery(queryString, db);
-
-    if (model->lastError().isValid())
+    model->clear();
+    for (const QVariantMap &rowMap : cachedData)
     {
-        QMessageBox::critical(nullptr, QObject::tr("Ошибка"), model->lastError().text());
+        QList<QStandardItem *> items;
+        for (auto it = rowMap.constBegin(); it != rowMap.constEnd(); ++it)
+        {
+            items.append(new QStandardItem(it.value().toString()));
+        }
+        model->appendRow(items);
     }
 }
-
 
 //тут нужно выполнить запрос и добавить данные в контенейр
 void Logic::addData(const QString &queryString)
@@ -78,13 +81,27 @@ void Logic::addData(const QString &queryString)
         QMessageBox::critical(nullptr, QObject::tr("Ошибка"), QObject::tr("Ошибка в запросе: ") + query.lastError().text());
         return;
     }
-    executeRequest(queryString);
+
+    // Очищаем предыдущие данные
+    cachedData.clear();
+
+    // Загружаем данные в контейнер
+    while (query.next())
+    {
+        QVariantMap row;
+        for (int i = 0; i < query.record().count(); ++i)
+        {
+            row[query.record().fieldName(i)] = query.value(i);
+        }
+        cachedData.append(row);
+    }
+    executeRequest();
 }
 
 void Logic::createRequest(int page)
 {
     QString queryString = QString("SELECT * FROM popular_tracks LIMIT %1 OFFSET %2")
-                              .arg(pageSize)
+                              .arg(pageSize*3)
                               .arg(page * pageSize);
     addData(queryString);
 }
@@ -171,7 +188,7 @@ void Logic::disconnectFromDatabase()
     }
 }
 
-QSqlQueryModel *Logic::getModel() const
+ QStandardItemModel *Logic::getModel() const
 {
     return model;
 }
