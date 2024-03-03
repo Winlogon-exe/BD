@@ -54,22 +54,31 @@ void Logic::processState(QObject* sender,const QString &search)
     emit updateLabel(currentPage);
 }
 
-void Logic::executeDatabaseQuery(const QString &queryString)
+//тут нужно извлечь данные и обновить  QSqlQueryModel *model;
+void Logic::executeRequest(const QString &queryString)
+{
+    model->setQuery(queryString, db);
+
+    if (model->lastError().isValid())
+    {
+        QMessageBox::critical(nullptr, QObject::tr("Ошибка"), model->lastError().text());
+    }
+}
+
+
+//тут нужно выполнить запрос и добавить данные в контенейр
+void Logic::addData(const QString &queryString)
 {
     QSqlQuery query(db);
     query.prepare(queryString);
 
-    if (query.exec())
+    // Выполняем запрос
+    if (!query.exec())
     {
-        // Обновляем модель данными из запроса
-        model->setQuery(std::move(query));
-        qDebug() << "Запрос выполнен";
+        QMessageBox::critical(nullptr, QObject::tr("Ошибка"), QObject::tr("Ошибка в запросе: ") + query.lastError().text());
+        return;
     }
-    else
-    {
-        QMessageBox::critical(nullptr, QObject::tr("Ошибка"), QObject::tr("Ошибка в запросе "));
-    }
-
+    executeRequest(queryString);
 }
 
 void Logic::createRequest(int page)
@@ -77,7 +86,7 @@ void Logic::createRequest(int page)
     QString queryString = QString("SELECT * FROM popular_tracks LIMIT %1 OFFSET %2")
                               .arg(pageSize)
                               .arg(page * pageSize);
-    executeDatabaseQuery(queryString);
+    addData(queryString);
 }
 
 void Logic::searchDataFromDB()
@@ -105,7 +114,7 @@ void Logic::searchDataFromDB()
 
     // Выполняем запрос
     //SELECT * FROM popular_tracks WHERE field1 LIKE '%searchText%' OR field2 LIKE '%searchText%' OR ...
-    executeDatabaseQuery(queryString);
+    addData(queryString);
 }
 
 QStringList Logic::getAllFieldsFromTable(const QString &tableName)

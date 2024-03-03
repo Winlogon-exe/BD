@@ -38,12 +38,11 @@ public:
     void createRequest(int page);
     void executeRequest(const QString &queryString);
 
-    void executeDatabaseQuery(const QString &queryString);
+    void addData(const QString &queryString);
     void searchDataFromDB();
     void nextPage();
     void backPage();
-    void preLoadPages();
-    void preloadRequest(const QString &queryString);
+
 
     void setButtonState(QObject *button, State state);
     void disconnectFromDatabase();
@@ -57,7 +56,7 @@ private:
     int currentPage;
     int pageSize;
     int offset;
-
+    QList<QVariantMap> data;
 private:
     const QString dbFilename = "D:/QT_PROJECTS/BD/123.db";
     std::map<State, std::function<void()>> funcmap;
