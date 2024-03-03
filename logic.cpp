@@ -4,7 +4,7 @@ Logic::Logic(QObject *parent) :
     QObject(parent),
     currentPage(0),
     pageSize(30),
-    model(new QStandardItemModel ())
+    model(new QStandardItemModel())
 
 {
     initThread();
@@ -32,7 +32,7 @@ void Logic::connectToDatabase()
     db.setDatabaseName(dbFilename);
     if (!db.open())
     {
-        qCritical() << "Ошибка при открытии базы данных:" << db.lastError().text();
+        showError(db.lastError().text());
         return;
     }
     qInfo() << "База данных успешно открыта.";
@@ -76,42 +76,64 @@ void Logic::executeRequest()
 }
 
 //выполнение запроса и добавления в кеш
-void Logic::addData(const QString &queryString)
-{
-    requestData.clear();
+void Logic::addData(const QString &queryString) {
     QSqlQuery query(db);
     query.prepare(queryString);
 
-    if (!query.exec())
-    {
-        QMessageBox::critical(nullptr, QObject::tr("Ошибка"), QObject::tr("Ошибка в запросе: ") + query.lastError().text());
+    if (!query.exec()) {
+        showError(query.lastError().text());
         return;
     }
 
-    // while (query.next())
-    // {
-    //     QVariantMap row;
-    //     for (int i = 0; i < query.record().count(); ++i)
-    //     {
-    //         row[query.record().fieldName(i)] = query.value(i);
-    //     }
-    //     requestData.append(row);
-    // }
+    int row = 0;
+    while (query.next()) {
+        // Определение текущей страницы на основе row и pageSize
+        int currentPage = row / pageSize;
 
-    for (int i = 0; i < 3; ++i)
-    {
-        int start = i * pageSize;
-        int end = start + pageSize;
-        QList<QVariantMap> pageData = requestData.mid(start, pageSize);
-
-        if (!pageData.isEmpty())
-        {
-            dataCache[currentPage + i] = pageData;
+        // Создание новой страницы в кеше, если необходимо
+        if (!dataCache.contains(currentPage)) {
+            dataCache[currentPage] = QList<QVariantMap>();
         }
+
+        // Добавление строки данных в текущую страницу кеша
+        QVariantMap rowData;
+        for (int column = 0; column < query.record().count(); ++column) {
+            rowData[query.record().fieldName(column)] = query.value(column);
+        }
+
+        dataCache[currentPage].append(rowData);
+        ++row;
     }
 
+    // После заполнения кеша вызываем executeRequest для обновления модели данными из кеша
     executeRequest();
 }
+
+
+// QList<QVariantMap> Logic::fetchPageData(QSqlQuery &query)
+// {
+//     QList<QVariantMap> pageData;
+
+//     int startRow = currentPage * pageSize; // Начальная строка для текущей страницы
+//     int endRow = (currentPage + 1) * pageSize; // Конечная строка для текущей страницы
+
+//     while (query.next() && startRow < endRow)
+//     {
+//         QVariantMap rowData;
+
+//         for (int column = 0; column < query.record().count(); ++column)
+//         {
+//             QString columnName = query.record().fieldName(column);
+//             QVariant value = query.value(column);
+//             rowData[columnName] = value;
+//         }
+
+//         pageData.append(rowData);
+//         ++startRow;
+//     }
+
+//     return pageData;
+// }
 
 void Logic::createRequest()
 {
@@ -168,6 +190,7 @@ QStringList Logic::getAllFieldsFromTable(const QString &tableName)
 
 QString Logic::createSearchCondition(const QStringList &fields)
 {
+    qDebug() << "Запрос на загрузку данных для страницы" << currentPage;
     //условие поиска исходя из полей
     QStringList conditions;
     for (const auto &field : fields)
@@ -180,15 +203,18 @@ QString Logic::createSearchCondition(const QStringList &fields)
 
 void Logic::nextPage()
 {
+    //для проверки наличия следующей страницы в кэше
     if (dataCache.contains(currentPage + 1))
     {
         currentPage++;
         executeRequest(); // Используем данные из кэша
+        qDebug() << "Страница" << currentPage << "загружена из кэша.";
     }
     else
     {
         currentPage++;
         createRequest(); // Загружаем новые данные
+        qDebug() << "Страница" << currentPage << "загружается заново.";
     }
 }
 
@@ -196,8 +222,9 @@ void Logic::backPage()
 {
     if (currentPage > 0)
     {
+        qDebug() << "Страница" << currentPage << "загружена из кэша.";
         currentPage--;
-        executeRequest(); // Предполагаем, что данные для предыдущих страниц всегда будут в кэше
+        executeRequest(); //данные для предыдущих страниц всегда будут в кэше
     }
 }
 
@@ -229,6 +256,11 @@ void Logic::stopWorkerThread()
 {
     workerThread.quit();
     workerThread.wait();
+}
+
+void Logic::showError(const QString &errorText)
+{
+    QMessageBox::critical(nullptr, QObject::tr("Ошибка"), QObject::tr("Ошибка в запросе: ") + errorText);
 }
 
 Logic::~Logic()

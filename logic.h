@@ -43,10 +43,12 @@ public:
     void searchDataFromDB();
     void nextPage();
     void backPage();
+    QList<QVariantMap> fetchPageData(QSqlQuery &query);
 
     void setButtonState(QObject *button, State state);
     void disconnectFromDatabase();
     void stopWorkerThread();
+    void showError(const QString &error);
 
 signals:
     void updateDB();
