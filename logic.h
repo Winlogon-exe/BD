@@ -61,7 +61,7 @@ private:
     int offset;
 
 private:
-    const QString dbFilename = "D:/QT_PROJECTS/BD123.db";
+    const QString dbFilename = "D:/QT_PROJECTS/BD/123.db";
     std::map<State, std::function<void()>> funcmap;
     std::map<QObject*, State> buttonStateMap;
 

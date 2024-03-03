@@ -84,12 +84,13 @@ void Logic::addData(const QString &queryString, int targetPage)
     }
 
     QList<QVariantMap> pageData; // Данные для целевой страницы
+    QSqlRecord record = query.record(); // Получаем запись из результата запроса
     while (query.next())
     {
         QVariantMap rowData;
-        QSqlRecord record = query.record();
-        foreach(const QString &fieldName, record.fieldNames()) {
-            rowData[fieldName] = query.value(fieldName);
+        for (int column = 0; column < record.count(); ++column)
+        {
+            rowData[record.fieldName(column)] = query.value(column);
         }
         pageData.append(rowData); // Добавляем строку данных в список текущей страницы
     }
