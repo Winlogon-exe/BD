@@ -37,7 +37,7 @@ void Logic::connectToDatabase()
     }
     qInfo() << "База данных успешно открыта.";
 
-    createRequest(currentPage);
+    createRequest();
 }
 
 void Logic::processState(QObject* sender,const QString &search)
@@ -58,51 +58,69 @@ void Logic::processState(QObject* sender,const QString &search)
 void Logic::executeRequest()
 {
     model->clear();
-    for (const QVariantMap &rowMap : cachedData)
+
+    //содержит ли dataCache данные для текущей страницы (currentPage).
+    if (dataCache.contains(currentPage))
     {
-        QList<QStandardItem *> items;
-        for (auto it = rowMap.constBegin(); it != rowMap.constEnd(); ++it)
+        const auto &pageData = dataCache[currentPage];
+        for (const auto &rowMap : pageData)
         {
-            items.append(new QStandardItem(it.value().toString()));
+            QList<QStandardItem *> items;
+            for (auto it = rowMap.constBegin(); it != rowMap.constEnd(); ++it)
+            {
+                items.append(new QStandardItem(it.value().toString()));
+            }
+            model->appendRow(items);
         }
-        model->appendRow(items);
     }
 }
 
-//тут нужно выполнить запрос и добавить данные в контенейр
+//выполнение запроса и добавления в кеш
 void Logic::addData(const QString &queryString)
 {
+    requestData.clear();
     QSqlQuery query(db);
     query.prepare(queryString);
 
-    // Выполняем запрос
     if (!query.exec())
     {
         QMessageBox::critical(nullptr, QObject::tr("Ошибка"), QObject::tr("Ошибка в запросе: ") + query.lastError().text());
         return;
     }
 
-    // Очищаем предыдущие данные
-    cachedData.clear();
+    // while (query.next())
+    // {
+    //     QVariantMap row;
+    //     for (int i = 0; i < query.record().count(); ++i)
+    //     {
+    //         row[query.record().fieldName(i)] = query.value(i);
+    //     }
+    //     requestData.append(row);
+    // }
 
-    // Загружаем данные в контейнер
-    while (query.next())
+    for (int i = 0; i < 3; ++i)
     {
-        QVariantMap row;
-        for (int i = 0; i < query.record().count(); ++i)
+        int start = i * pageSize;
+        int end = start + pageSize;
+        QList<QVariantMap> pageData = requestData.mid(start, pageSize);
+
+        if (!pageData.isEmpty())
         {
-            row[query.record().fieldName(i)] = query.value(i);
+            dataCache[currentPage + i] = pageData;
         }
-        cachedData.append(row);
     }
+
     executeRequest();
 }
 
-void Logic::createRequest(int page)
+void Logic::createRequest()
 {
+    int queryPageSize = pageSize * 3; // Три страницы за раз
+    int queryOffset = currentPage * pageSize; // Начинаем с текущей страницы
     QString queryString = QString("SELECT * FROM popular_tracks LIMIT %1 OFFSET %2")
-                              .arg(pageSize*3)
-                              .arg(page * pageSize);
+                              .arg(queryPageSize)
+                              .arg(queryOffset);
+
     addData(queryString);
 }
 
@@ -162,16 +180,24 @@ QString Logic::createSearchCondition(const QStringList &fields)
 
 void Logic::nextPage()
 {
-    currentPage++;
-    createRequest(currentPage);
+    if (dataCache.contains(currentPage + 1))
+    {
+        currentPage++;
+        executeRequest(); // Используем данные из кэша
+    }
+    else
+    {
+        currentPage++;
+        createRequest(); // Загружаем новые данные
+    }
 }
 
 void Logic::backPage()
 {
     if (currentPage > 0)
     {
-       currentPage--;
-       createRequest(currentPage);
+        currentPage--;
+        executeRequest(); // Предполагаем, что данные для предыдущих страниц всегда будут в кэше
     }
 }
 
@@ -188,7 +214,7 @@ void Logic::disconnectFromDatabase()
     }
 }
 
- QStandardItemModel *Logic::getModel() const
+QStandardItemModel *Logic::getModel() const
 {
     return model;
 }

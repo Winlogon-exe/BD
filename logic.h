@@ -36,7 +36,7 @@ public:
     void connectToDatabase();
 
     void processState(QObject *sender, const QString &searchText);
-    void createRequest(int page);
+    void createRequest();
     void executeRequest();
 
     void addData(const QString &queryString);
@@ -56,15 +56,16 @@ private:
     int currentPage;
     int pageSize;
     int offset;
-    QList<QVariantMap> cachedData;
+
 private:
     const QString dbFilename = "D:/QT_PROJECTS/BD/123.db";
     std::map<State, std::function<void()>> funcmap;
+    std::map<QObject*, State> buttonStateMap;
 
-    std::map<QObject*, State> buttonStateMap;   
-    QVector<QSqlQueryModel*> preloadedModels;
-
+    QList<QVariantMap> requestData;
+    QMap<int, QList<QVariantMap>> dataCache;
     QStandardItemModel *model;
+
     QThread workerThread;
     QString searchText;
     QMutex queueMutex;
