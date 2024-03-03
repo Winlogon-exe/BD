@@ -4,19 +4,13 @@ Logic::Logic(QObject *parent) :
     QObject(parent),
     currentPage(0),
     pageSize(30),
+    preload(3),
     model(new QStandardItemModel())
 
 {
     initThread();
     initMap();
-    connectToDatabase();
-}
-
-void Logic::initMap()
-{
-    funcmap[Next]    = [this](){nextPage();};
-    funcmap[Back]    = [this](){backPage();};
-    funcmap[Search]  = [this](){searchDataFromDB();};
+    initDB();
 }
 
 void Logic::initThread()
@@ -25,19 +19,36 @@ void Logic::initThread()
     workerThread.start();
 }
 
+void Logic::initMap()
+{
+    funcmap[Next]    = [this](){ nextPage(); };
+    funcmap[Back]    = [this](){ backPage(); };
+    funcmap[Search]  = [this](){ searchDataFromDB(); };
+}
+
+void Logic::initDB()
+{
+    if(connectToDatabase())
+    {
+        createNewPagesRequest();
+    }
+    else
+    {
+        showError(db.lastError().text());
+    }
+}
+
 //сделать bool
-void Logic::connectToDatabase()
+bool Logic::connectToDatabase()
 {
     db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName(dbFilename);
     if (!db.open())
-    {
-        showError(db.lastError().text());
-        return;     
+    {        
+        return false;
     }
     qInfo() << "База данных успешно открыта.";
-
-    createRequest();
+    return true;
 }
 
 void Logic::processState(QObject* sender,const QString &search)
@@ -53,12 +64,11 @@ void Logic::processState(QObject* sender,const QString &search)
     emit updateLabel(currentPage);
 }
 
-//тут нужно извлечь данные и обновить model;
+//достаем из кеша
 void Logic::executeRequest()
 {
-    model->clear(); // Очищаем модель от предыдущих данных
+    model->clear();
 
-    // Извлекаем данные для текущей страницы из кеша
     const auto &pageData = dataCache[currentPage];
     for (const auto &rowMap : pageData)
     {
@@ -71,7 +81,7 @@ void Logic::executeRequest()
     }
 }
 
-//выполнение запроса и добавления в кеш
+//сохранение данных в кеше
 void Logic::addData(const QString &queryString, int targetPage)
 {
     QSqlQuery query(db);
@@ -84,13 +94,12 @@ void Logic::addData(const QString &queryString, int targetPage)
     }
 
     QList<QVariantMap> pageData; // Данные для целевой страницы
-    QSqlRecord record = query.record(); // Получаем запись из результата запроса
     while (query.next())
     {
         QVariantMap rowData;
-        for (int column = 0; column < record.count(); ++column)
+        for (int column = 0; column < query.record().count(); ++column)
         {
-            rowData[record.fieldName(column)] = query.value(column);
+            rowData[query.record().fieldName(column)] = query.value(column);
         }
         pageData.append(rowData); // Добавляем строку данных в список текущей страницы
     }
@@ -101,18 +110,19 @@ void Logic::addData(const QString &queryString, int targetPage)
 }
 
 
-void Logic::createRequest()
+QString Logic::buildQueryString(int page)
 {
-    // Загружаем данные для текущей страницы
-    int queryOffset = currentPage * pageSize;
-    QString queryString = QString("SELECT * FROM popular_tracks LIMIT %1 OFFSET %2")
-                              .arg(pageSize)
-                              .arg(queryOffset);
-    addData(queryString, currentPage);
+    offset = page * pageSize;
+    return QString("SELECT * FROM popular_tracks LIMIT %1 OFFSET %2")
+        .arg(pageSize)
+        .arg(offset);
+}
 
-    // Предварительно загружаем данные для следующих страниц
-    int preloadPageCount = 3;
-    preloadPages(currentPage, preloadPageCount);
+void Logic::createNewPagesRequest()
+{
+    QString queryString = buildQueryString(currentPage);
+    addData(queryString, currentPage);
+    preloadPages(currentPage, preload);
 }
 
 void Logic::preloadPages(int startPage, int pageCount)
@@ -120,10 +130,7 @@ void Logic::preloadPages(int startPage, int pageCount)
     for (int i = 0; i < pageCount; ++i)
     {
         int page = startPage + i;
-        int offset = page * pageSize;
-        QString queryString = QString("SELECT * FROM popular_tracks LIMIT %1 OFFSET %2")
-                                  .arg(pageSize)
-                                  .arg(offset);
+        QString queryString = buildQueryString(page);
         addData(queryString, page);
     }
 }
@@ -191,14 +198,13 @@ void Logic::nextPage()
     // Проверяем, есть ли данные для следующей страницы в кеше
     if (dataCache.contains(currentPage))
     {
-        // Если данные есть, используем их
         executeRequest(); // Используем данные из кэша
         qDebug() << "Страница" << currentPage << "загружена из кэша.";
     }
     else
     {
         // Если данных нет, загружаем их
-        createRequest(); // Загружаем данные для текущей и следующей страницы
+        createNewPagesRequest();
         qDebug() << "Загрузка данных для страницы " << currentPage;
     }
 }

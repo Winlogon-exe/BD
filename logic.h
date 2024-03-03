@@ -28,40 +28,43 @@ public:
 public:
     QStringList getAllFieldsFromTable(const QString &tableName);
     QString createSearchCondition(const QStringList &fields);
+    QList<QVariantMap> fetchPageData(QSqlQuery &query);
     QStandardItemModel *getModel() const;
+    QString buildQueryString(int page);
 
 public:
-    void initMap();
+    bool connectToDatabase();
     void initThread();
-    void connectToDatabase();
+    void initMap();
+    void initDB();
 
     void processState(QObject *sender, const QString &searchText);
-    void createRequest();
+    void createNewPagesRequest();
     void executeRequest();
 
     void addData(const QString &queryString, int targetPage);
+    void setButtonState(QObject *button, State state);
+    void preloadPages(int startPage, int pageCount);
     void searchDataFromDB();
     void nextPage();
     void backPage();
-    void preloadPages(int startPage, int pageCount);
-    QList<QVariantMap> fetchPageData(QSqlQuery &query);
 
-    void setButtonState(QObject *button, State state);
-    void disconnectFromDatabase();
-    void stopWorkerThread();
     void showError(const QString &error);
+    void stopWorkerThread();
+    void disconnectFromDatabase();
 
 signals:
-    void updateDB();
     void updateLabel(int currentPage);
+    void updateDB();
 
 private:
     int currentPage;
     int pageSize;
     int offset;
+    int preload;
 
 private:
-    const QString dbFilename = "D:/QT_PROJECTS/BD/123.db";
+    const QString dbFilename = "D:/QT_PROJECTS/BD123.db";
     std::map<State, std::function<void()>> funcmap;
     std::map<QObject*, State> buttonStateMap;
 
