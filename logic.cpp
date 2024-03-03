@@ -76,9 +76,8 @@ void Logic::executeRequest()
     }
 }
 
-
 //выполнение запроса и добавления в кеш
-void Logic::addData(const QString &queryString)
+void Logic::addData(const QString &queryString, int targetPage)
 {
     QSqlQuery query(db);
     query.prepare(queryString);
@@ -89,7 +88,7 @@ void Logic::addData(const QString &queryString)
         return;
     }
 
-    QList<QVariantMap> pageData; // Данные для текущей страницы
+    QList<QVariantMap> pageData; // Данные для целевой страницы
 
     while (query.next())
     {
@@ -101,22 +100,36 @@ void Logic::addData(const QString &queryString)
         pageData.append(rowData); // Добавляем строку данных в список текущей страницы
     }
 
-    // Сохраняем данные текущей страницы в кеше
-    dataCache[currentPage] = pageData;
-
-    // Обновляем модель данными из кеша для текущей страницы
+    // Сохраняем данные целевой страницы в кеше
+    dataCache[targetPage] = pageData;
     executeRequest();
 }
 
 void Logic::createRequest()
 {
-    int queryPageSize = pageSize * 3; // Три страницы за раз
-    int queryOffset = currentPage * pageSize; // Начинаем с текущей страницы
+    // Загружаем данные для текущей страницы
+    int queryOffset = currentPage * pageSize;
     QString queryString = QString("SELECT * FROM popular_tracks LIMIT %1 OFFSET %2")
-                              .arg(queryPageSize)
+                              .arg(pageSize)
                               .arg(queryOffset);
+    addData(queryString, currentPage);
 
-    addData(queryString);
+    // Предварительно загружаем данные для следующих страниц
+    int preloadPageCount = 3;
+    preloadPages(currentPage, preloadPageCount);
+}
+
+void Logic::preloadPages(int startPage, int pageCount)
+{
+    for (int i = 0; i < pageCount; ++i)
+    {
+        int page = startPage + i;
+        int offset = page * pageSize;
+        QString queryString = QString("SELECT * FROM popular_tracks LIMIT %1 OFFSET %2")
+                                  .arg(pageSize)
+                                  .arg(offset);
+        addData(queryString, page);
+    }
 }
 
 void Logic::searchDataFromDB()
@@ -144,7 +157,7 @@ void Logic::searchDataFromDB()
 
     // Выполняем запрос
     //SELECT * FROM popular_tracks WHERE field1 LIKE '%searchText%' OR field2 LIKE '%searchText%' OR ...
-    addData(queryString);
+    addData(queryString,currentPage);
 }
 
 QStringList Logic::getAllFieldsFromTable(const QString &tableName)
@@ -176,18 +189,21 @@ QString Logic::createSearchCondition(const QStringList &fields)
 
 void Logic::nextPage()
 {
-    //для проверки наличия следующей страницы в кэше
-    if (dataCache.contains(currentPage + 1))
+    // Переход на следующую страницу
+    currentPage++;
+
+    // Проверяем, есть ли данные для следующей страницы в кеше
+    if (dataCache.contains(currentPage))
     {
-        currentPage++;
+        // Если данные есть, используем их
         executeRequest(); // Используем данные из кэша
         qDebug() << "Страница" << currentPage << "загружена из кэша.";
     }
     else
     {
-        currentPage++;
-        createRequest(); // Загружаем новые данные
-        qDebug() << "Страница" << currentPage << "загружается заново.";
+        // Если данных нет, загружаем их
+        createRequest(); // Загружаем данные для текущей и следующей страницы
+        qDebug() << "Загрузка данных для страницы " << currentPage;
     }
 }
 

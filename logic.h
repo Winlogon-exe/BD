@@ -39,10 +39,11 @@ public:
     void createRequest();
     void executeRequest();
 
-    void addData(const QString &queryString);
+    void addData(const QString &queryString, int targetPage);
     void searchDataFromDB();
     void nextPage();
     void backPage();
+    void preloadPages(int startPage, int pageCount);
     QList<QVariantMap> fetchPageData(QSqlQuery &query);
 
     void setButtonState(QObject *button, State state);
