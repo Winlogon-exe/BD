@@ -95,7 +95,7 @@ void Logic::executeRequest()
 }
 
 //сохранение данных в кеше
-void Logic::addData(const QString &queryString, int targetPage)
+void Logic::addDataToCache(const QString &queryString, int targetPage)
 {
     QSqlQuery query(db);
     query.prepare(queryString);
@@ -135,7 +135,7 @@ QString Logic::buildQueryString(int page)
 void Logic::createNewPagesRequest()
 {
     QString queryString = buildQueryString(currentPage);
-    addData(queryString, currentPage);
+    addDataToCache(queryString, currentPage);
     preloadPages(currentPage, preload);
 }
 
@@ -145,7 +145,7 @@ void Logic::preloadPages(int startPage, int pageCount)
     {
         int page = startPage + i;
         QString queryString = buildQueryString(page);
-        addData(queryString, page);
+        addDataToCache(queryString, page);
     }
 }
 
@@ -174,7 +174,7 @@ void Logic::searchDataFromDB()
 
     // Выполняем запрос
     //SELECT * FROM popular_tracks WHERE field1 LIKE '%searchText%' OR field2 LIKE '%searchText%' OR ...
-    addData(queryString,currentPage);
+    addDataToCache(queryString,currentPage);
 }
 
 QStringList Logic::getAllFieldsFromTable(const QString &tableName)

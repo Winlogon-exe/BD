@@ -43,7 +43,7 @@ public:
     void createNewPagesRequest();
     void executeRequest();
 
-    void addData(const QString &queryString, int targetPage);
+    void addDataToCache(const QString &queryString, int targetPage);
     void setButtonState(QObject *button, State state);
     void preloadPages(int startPage, int pageCount);
 
