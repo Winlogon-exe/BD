@@ -109,7 +109,7 @@ void View::paintSearch()
 //подключение сигналов и слотов.
 void View::setupConnect()
 {
-    connect(&logic,&Logic::updateDB,this,&View::s_showTable);
+    //connect(&logic,&Logic::updateDB,this,&View::s_showTable);
     connect(&logic,&Logic::updateLabel,this,&View::s_showLabel);
 }
 

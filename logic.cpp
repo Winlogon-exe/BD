@@ -10,7 +10,7 @@ Logic::Logic(QObject *parent) :
     sqlmodel(new QSqlQueryModel())
 
 {
-    dataCache.setMaxCost(100); // Установка максимального размера кэша
+    dataCache.setMaxCost(10); // Установка максимального размера кэша
     initThread();
     initMap();
     initDB();
@@ -71,16 +71,23 @@ void Logic::processState(QObject* sender,const QString &search)
 void Logic::executeRequest()
 {
     model->clear();
+    QList<QVariantMap>* pageData = dataCache.object(currentPage); // Получаем из кэша
 
-    const auto &pageData = dataCache[currentPage];
-    for (const auto &rowMap : pageData)
+    if (!pageData)
+    {
+        // Обработка случая, когда данные отсутствуют в кэше
+        createNewPagesRequest();
+        qDebug() << "Данные для страницы" << currentPage << "не найдены в кэше.";
+        return;
+    }
+
+    for (const auto &rowMap : *pageData)
     {
         QList<QStandardItem *> items;
         for (const auto &value : rowMap)
         {
-            //4 поля
             QStandardItem *item = new QStandardItem();
-            item->setData(value.toString(), Qt::DisplayRole); // Устанавливаем данные для отображения
+            item->setData(value.toString(), Qt::DisplayRole);
             items.append(item);
         }
         model->appendRow(items);
@@ -99,7 +106,7 @@ void Logic::addData(const QString &queryString, int targetPage)
         return;
     }
 
-    QList<QVariantMap> pageData; // Данные для целевой страницы
+    QList<QVariantMap>* pageData = new QList<QVariantMap>; // Создаем на куче
     while (query.next())
     {
         QSqlRecord record = query.record();
@@ -108,11 +115,11 @@ void Logic::addData(const QString &queryString, int targetPage)
         {
             rowData.insert(record.fieldName(column), record.value(column));
         }
-        pageData.append(rowData); // Добавляем строку данных в список текущей страницы
+        pageData->append(rowData);// Добавляем строку данных в список текущей страницы
     }
 
     // Сохраняем данные целевой страницы в кеше
-    dataCache[targetPage] = pageData;
+    dataCache.insert(targetPage, pageData); // Вставляем в кэш
     executeRequest();
 }
 
