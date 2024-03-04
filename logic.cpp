@@ -6,9 +6,11 @@ Logic::Logic(QObject *parent) :
     currentPage(0),
     pageSize(30),
     preload(3),
-    model(new QStandardItemModel())
+    model(new QStandardItemModel()),
+    sqlmodel(new QSqlQueryModel())
 
 {
+    dataCache.setMaxCost(100); // Установка максимального размера кэша
     initThread();
     initMap();
     initDB();
@@ -240,6 +242,11 @@ void Logic::disconnectFromDatabase()
 QStandardItemModel *Logic::getModel() const
 {
     return model;
+}
+
+QSqlQueryModel* Logic::getsqlModel() const
+{
+    return sqlmodel;
 }
 
 void Logic::setButtonState(QObject* button, State state)

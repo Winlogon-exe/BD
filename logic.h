@@ -29,8 +29,9 @@ public:
     QStringList getAllFieldsFromTable(const QString &tableName);
     QString createSearchCondition(const QStringList &fields);
     QList<QVariantMap> fetchPageData(QSqlQuery &query);
-    QStandardItemModel *getModel() const;
     QString buildQueryString(int page);
+    QSqlQueryModel     *getsqlModel() const;
+    QStandardItemModel *getModel() const;
 
 public:
     bool connectToDatabase();
@@ -69,8 +70,9 @@ private:
     std::map<State, std::function<void()>> funcmap;
     std::map<QObject*, State> buttonStateMap;
 
-    QMap<int, QList<QVariantMap>> dataCache;
+    QCache<int, QList<QVariantMap>> dataCache;
     QStandardItemModel *model;
+    QSqlQueryModel *sqlmodel;
 
     QThread workerThread;
     QString searchText;
