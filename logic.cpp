@@ -115,7 +115,7 @@ void Logic::nextPage()
     {
         currentPage++;
         modelCenter->setQuery(modelRight->query());
-          preloadPreviousPages();
+        preloadPreviousPages();
         preloadNextPages();
     }
 }
@@ -126,7 +126,7 @@ void Logic::backPage()
     {
         currentPage--;
         modelCenter->setQuery(modelLeft->query());
-        // preloadPreviousPages();
+        preloadPreviousPages();
         preloadNextPages();
     }
 }
