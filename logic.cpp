@@ -10,10 +10,10 @@ Logic::Logic(QObject *parent) :
     sqlmodel(new QSqlQueryModel())
 
 {
-    dataCache.setMaxCost(10); // Установка максимального размера кэша
     initThread();
     initMap();
     initDB();
+    dataCache.setMaxCost(10); // Установка максимального размера кэша
 }
 
 void Logic::initThread()
@@ -67,11 +67,12 @@ void Logic::processState(QObject* sender,const QString &search)
     emit updateLabel(currentPage);
 }
 
-//достаем из кеша
+//достаем из кеша и добавляем в модель
 void Logic::executeRequest()
 {
     model->clear();
-    QList<QVariantMap>* pageData = dataCache.object(currentPage); // Получаем из кэша
+    // Получаем из кэша (ключ - текущая страница)
+    QList<QVariantMap>* pageData = dataCache.object(currentPage);
 
     if (!pageData)
     {
@@ -106,7 +107,7 @@ void Logic::addDataToCache(const QString &queryString, int targetPage)
         return;
     }
 
-    QList<QVariantMap>* pageData = new QList<QVariantMap>; // Создаем на куче
+    QList<QVariantMap>* pageData = new QList<QVariantMap>;
     while (query.next())
     {
         QSqlRecord record = query.record();
@@ -119,7 +120,7 @@ void Logic::addDataToCache(const QString &queryString, int targetPage)
     }
 
     // Сохраняем данные целевой страницы в кеше
-    dataCache.insert(targetPage, pageData); // Вставляем в кэш
+    dataCache.insert(targetPage, pageData);
     executeRequest();
 }
 
