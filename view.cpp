@@ -28,7 +28,7 @@ void View::setupButtons()
 
     // поля для поиска
     searchLineEdit = new QLineEdit(this);
-    searchLineEdit->setPlaceholderText("Введите запрос...");
+    searchLineEdit->setPlaceholderText("Поиск...");
 
     // Создание фильтра(поиск по фильтру)
     filterComboBox = new QComboBox(this);

@@ -2,10 +2,10 @@
 
 Logic::Logic(QObject *parent) :
     QObject(parent),
-    offset(0),
     currentPage(0),
     pageSize(30),
     preload(3),
+    offset(0),
     model(new QStandardItemModel()),
     sqlmodel(new QSqlQueryModel())
 
