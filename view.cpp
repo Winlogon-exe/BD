@@ -128,7 +128,7 @@ void View::s_showTable()
 }
 
 //вывод страниц
-void View::s_showLabel(int currentPage)
-{
-    page->setText(QString::number(currentPage));
+void View::s_showLabel(int currentPage, int totalPages) {
+    QString pageInfo = QString("%1/%2").arg(currentPage).arg(totalPages);
+    page->setText(pageInfo);
 }

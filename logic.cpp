@@ -6,6 +6,7 @@ Logic::Logic(QObject *parent) :
     pageSize(30),
     preload(3),
     offset(0),
+    totalPages(0),
     model(new QStandardItemModel()),
     sqlmodel(new QSqlQueryModel())
 
@@ -34,6 +35,7 @@ void Logic::initDB()
     if(connectToDatabase())
     {
         createNewPagesRequest();
+        calculateTotalPages();
     }
     else
     {
@@ -63,8 +65,18 @@ void Logic::processState(QObject* sender,const QString &search)
     if (it != funcmap.end())
     {
         it->second();
+    }  
+    emit updateLabel(currentPage, totalPages);
+}
+
+void Logic::calculateTotalPages()
+{
+    QSqlQuery query("SELECT COUNT(*) FROM popular_tracks");
+    int totalRecords = 0;
+    if (query.next()) {
+        totalRecords = query.value(0).toInt();
     }
-    emit updateLabel(currentPage);
+    totalPages = (totalRecords + pageSize) / pageSize;
 }
 
 //достаем из кеша и добавляем в модель

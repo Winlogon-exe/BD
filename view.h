@@ -36,7 +36,7 @@ public:
 private slots:
     void s_ButtonClicked();
     void s_showTable();
-    void s_showLabel(int currentPage);
+    void s_showLabel(int currentPage, int totalPages);
 
 private:
     QString             searchText;

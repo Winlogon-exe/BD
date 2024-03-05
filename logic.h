@@ -51,12 +51,13 @@ public:
     void nextPage();
     void backPage();
 
+    void calculateTotalPages();
     void showError(const QString &error);
     void stopWorkerThread();
     void disconnectFromDatabase();
 
 signals:
-    void updateLabel(int currentPage);
+    void updateLabel(int currentPage, int totalPages);
     void updateDB();
 
 private:
@@ -64,6 +65,7 @@ private:
     int pageSize;
     int preload;
     int offset;
+    int totalPages;
 
 private:
     const QString dbFilename = "C:/Qt/projects/BD/123.db";
