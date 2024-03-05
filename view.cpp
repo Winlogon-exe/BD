@@ -32,9 +32,13 @@ void View::setupButtons()
 
     // Создание фильтра(поиск по фильтру)
     filterComboBox = new QComboBox(this);
-    filterComboBox->addItem("default");
-    filterComboBox->addItem("ID");
-    filterComboBox->addItem("Name");
+
+    //получать поля из бд?
+    filters = {"All","ID","Name","Popularity","Artists"};
+    for(auto const fil:filters)
+    {
+         filterComboBox->addItem(fil);
+    }
 
     // Создание и настройка кнопок
     //контейнер?
@@ -128,7 +132,8 @@ void View::s_showTable()
 }
 
 //вывод страниц
-void View::s_showLabel(int currentPage, int totalPages) {
+void View::s_showLabel(int currentPage, int totalPages)
+{
     QString pageInfo = QString("%1/%2").arg(currentPage).arg(totalPages);
     page->setText(pageInfo);
 }

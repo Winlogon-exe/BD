@@ -14,7 +14,7 @@ Logic::Logic(QObject *parent) :
     initThread();
     initMap();
     initDB();
-    dataCache.setMaxCost(10); // Установка максимального размера кэша
+    dataCache.setMaxCost(10); // макс размер кеша
 }
 
 void Logic::initThread()
@@ -69,15 +69,7 @@ void Logic::processState(QObject* sender,const QString &search)
     emit updateLabel(currentPage, totalPages);
 }
 
-void Logic::calculateTotalPages()
-{
-    QSqlQuery query("SELECT COUNT(*) FROM popular_tracks");
-    int totalRecords = 0;
-    if (query.next()) {
-        totalRecords = query.value(0).toInt();
-    }
-    totalPages = (totalRecords + pageSize) / pageSize;
-}
+
 
 //достаем из кеша и добавляем в модель
 void Logic::executeRequest()
@@ -94,6 +86,7 @@ void Logic::executeRequest()
         return;
     }
 
+    //заполняет модель
     for (const auto &rowMap : *pageData)
     {
         QList<QStandardItem *> items;
@@ -219,7 +212,6 @@ QString Logic::createSearchCondition(const QStringList &fields)
 
 void Logic::nextPage()
 {
-    // Переход на следующую страницу
     currentPage++;
 
     // Проверяем, есть ли данные для следующей страницы в кеше
@@ -245,6 +237,19 @@ void Logic::backPage()
         executeRequest(); //данные для предыдущих страниц всегда будут в кэше
     }
 }
+
+
+void Logic::calculateTotalPages()
+{
+    QSqlQuery query("SELECT COUNT(*) FROM popular_tracks");
+    int totalRecords = 0;
+    if (query.next())
+    {
+        totalRecords = query.value(0).toInt();
+    }
+    totalPages = (totalRecords + pageSize) / pageSize;
+}
+
 
 void Logic::disconnectFromDatabase()
 {
