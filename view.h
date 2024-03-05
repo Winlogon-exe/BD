@@ -39,6 +39,7 @@ private slots:
     void s_showLabel(int currentPage, int totalPages);
 
 private:
+    std::vector<QString> filters;
     QString             searchText;
     QTableView          *tableView;
     HighlightDelegate   *delegate;

@@ -49,7 +49,7 @@ bool Logic::connectToDatabase()
     db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName(dbFilename);
     if (!db.open())
-    {        
+    {
         return false;
     }
     qInfo() << "База данных успешно открыта.";
@@ -65,11 +65,9 @@ void Logic::processState(QObject* sender,const QString &search)
     if (it != funcmap.end())
     {
         it->second();
-    }  
+    }
     emit updateLabel(currentPage, totalPages);
 }
-
-
 
 //достаем из кеша и добавляем в модель
 void Logic::executeRequest()
@@ -141,13 +139,13 @@ QString Logic::buildQueryString(int page)
 void Logic::createNewPagesRequest()
 {
     QString queryString = buildQueryString(currentPage);
-    addDataToCache(queryString, currentPage);
+    //addDataToCache(queryString, currentPage);
     preloadPages(currentPage, preload);
 }
 
-void Logic::preloadPages(int startPage, int pageCount)
+void Logic::preloadPages(int startPage, int preload)
 {
-    for (int i = 0; i < pageCount; ++i)
+    for (int i = 0; i < preload; ++i)
     {
         int page = startPage + i;
         QString queryString = buildQueryString(page);

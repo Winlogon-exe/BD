@@ -58,7 +58,7 @@ public:
 
 signals:
     void updateLabel(int currentPage, int totalPages);
-    void updateDB();
+   // void updateDB();
 
 private:
     int currentPage;
