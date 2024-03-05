@@ -92,7 +92,8 @@ void Logic::createNewPagesRequest()
 {
     QString queryString = buildQueryString(currentPage);
     executeRequest(queryString, modelCenter);
-    preloadNextPages(); // Предварительная загрузка данных для следующей страницы
+    preloadNextPages();
+    preloadPreviousPages();
 }
 
 //предпологается заполнение modelRight
@@ -120,16 +121,15 @@ void Logic::nextPage()
 
 void Logic::backPage()
 {
-    if (currentPage > 0) {
+    if (currentPage > 0)
+    {
         currentPage--;
-
-        // Обновляем modelCenter данными из modelLeft
         modelCenter->setQuery(modelLeft->query());
+
         preloadPreviousPages();
         preloadNextPages();
     }
 }
-
 
 void Logic::searchDataFromDB()
 {
