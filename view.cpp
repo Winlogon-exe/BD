@@ -127,7 +127,7 @@ void View::s_ButtonClicked()
 //вывод бд
 void View::s_showTable()
 {
-    tableView->setModel(logic.getModel());
+    tableView->setModel(logic.getsqlModel());
     tableView->show();
 }
 

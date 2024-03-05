@@ -30,8 +30,7 @@ public:
     QString createSearchCondition(const QStringList &fields);
     QList<QVariantMap> fetchPageData(QSqlQuery &query);
     QString buildQueryString(int page);
-    QSqlQueryModel     *getsqlModel() const;
-    QStandardItemModel *getModel() const;
+    QSqlQueryModel* getsqlModel() const;
 
 public:
     bool connectToDatabase();
@@ -41,11 +40,12 @@ public:
 
     void processState(QObject *sender, const QString &searchText);
     void createNewPagesRequest();
-    void executeRequest();
+    void executeRequest(const QString &queryString,QSqlQueryModel *model);
 
     void addDataToCache(const QString &queryString, int targetPage);
     void setButtonState(QObject *button, State state);
-    void preloadPages(int startPage, int pageCount);
+    void preloadNextPages();
+    void preloadPreviousPages();
 
     void searchDataFromDB();
     void nextPage();
@@ -72,9 +72,10 @@ private:
     std::map<State, std::function<void()>> funcmap;
     std::map<QObject*, State> buttonStateMap;
 
-    QCache<int, QList<QVariantMap>> dataCache;
-    QStandardItemModel *model;
-    QSqlQueryModel *sqlmodel;
+    QCache<int, QList<QSqlQueryModel*>> dataCache;
+    QSqlQueryModel *modelCenter;
+    QSqlQueryModel *modelRight;
+    QSqlQueryModel *modelLeft;
 
     QThread workerThread;
     QString searchText;

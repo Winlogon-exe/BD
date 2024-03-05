@@ -120,11 +120,11 @@ void Logic::nextPage()
 
 void Logic::backPage()
 {
-    if (currentPage > 0) {
+    if (currentPage > 0) 
+    {
         currentPage--;
-
-        // Обновляем modelCenter данными из modelLeft
         modelCenter->setQuery(modelLeft->query());
+        
         preloadPreviousPages();
         preloadNextPages();
     }
