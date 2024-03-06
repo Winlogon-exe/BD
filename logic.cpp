@@ -6,20 +6,27 @@ Logic::Logic(QObject *parent) :
     pageSize(30),
     preload(1),
     offset(0),
-    totalPages(0),
-    modelCenter(new QSqlQueryModel()),
-    modelRight(new QSqlQueryModel()),
-    modelLeft(new QSqlQueryModel())
+    totalPages(0)
 {
-    initThread();
+    initModels();
     initMap();
     initDB();
+    initThread();
 }
 
 void Logic::initThread()
 {
     this->moveToThread(&workerThread);
     workerThread.start();
+}
+
+void Logic::initModels()
+{
+    models.resize(3);
+    for (int i = 0; i < models.size(); ++i)
+    {
+        models[i] = new QSqlQueryModel();
+    }
 }
 
 void Logic::initMap()
@@ -33,8 +40,8 @@ void Logic::initDB()
 {
     if(connectToDatabase())
     {
-        preloadPages(currentPage,modelCenter);
-        preloadPages(currentPage + preload, modelRight);
+        preloadPages(currentPage, models[center]); // Используем перечисление для доступа к модели
+        preloadPages(currentPage + preload, models[right]);
         calculateTotalPages();
     }
     else
@@ -90,7 +97,7 @@ QString Logic::buildQueryString(int page)
 void Logic::preloadPages(int page, QSqlQueryModel *model)
 {
     QString queryString = buildQueryString(page);
-    executeRequest(queryString, model);
+    executeRequest(queryString, models[center]);
 }
 
 void Logic::nextPage()
@@ -98,13 +105,9 @@ void Logic::nextPage()
     if(currentPage < totalPages)
     {
         currentPage++;
-        modelLeft->setQuery(modelCenter->query());
-
-        modelCenter->setQuery(modelRight->query());
-        preloadPages(currentPage + preload,modelRight);
-
-        // models[0]->setQuery(models[1]->query());
-        // models[1]->setQuery(models[2]->query());
+        models[left]->setQuery(models[center]->query());
+        models[center]->setQuery(models[right]->query());
+        preloadPages(currentPage + preload, models[right]);
     }
 }
 
@@ -113,10 +116,9 @@ void Logic::backPage()
     if (currentPage > 0)
     {
         currentPage--;
-        modelRight->setQuery(modelCenter->query());
-
-        modelCenter->setQuery(modelLeft->query());
-        preloadPages(currentPage - preload,modelLeft);
+        models[right]->setQuery(models[center]->query());
+        models[center]->setQuery(models[left]->query());
+        preloadPages(currentPage - preload, models[left]);
     }
 }
 
@@ -145,7 +147,7 @@ void Logic::searchDataFromDB()
 
     // Выполняем запрос
     //SELECT * FROM popular_tracks WHERE field1 LIKE '%searchText%' OR field2 LIKE '%searchText%' OR ...
-    executeRequest(queryString, modelCenter);
+    executeRequest(queryString, models[center]);
 }
 
 QStringList Logic::getAllFieldsFromTable(const QString &tableName)
@@ -201,7 +203,7 @@ void Logic::disconnectFromDatabase()
 
 QSqlQueryModel* Logic::getsqlModel() const
 {
-    return modelCenter;
+    return models[center];
 }
 
 void Logic::setButtonState(QObject* button, State state)

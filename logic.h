@@ -16,6 +16,12 @@ enum State
     Back,
     Search
 };
+enum Models
+{
+    center,
+    right,
+    left
+};
 
 class Logic : public QObject
 {
@@ -37,6 +43,7 @@ public:
     void initThread();
     void initMap();
     void initDB();
+    void initModels();
 
     void processState(QObject *sender, const QString &searchText);
     void executeRequest(const QString &queryString,QSqlQueryModel *model);
@@ -69,13 +76,7 @@ private:
     const QString dbFilename = "D:/QT_PROJECTS/BD/123.db";
     std::map<State, std::function<void()>> funcmap;
     std::map<QObject*, State> buttonStateMap;
-
-    QCache<int, QList<QSqlQueryModel*>> dataCache;
-    QList<QSqlQueryModel*> models;
-
-    QSqlQueryModel *modelCenter;
-    QSqlQueryModel *modelRight;
-    QSqlQueryModel *modelLeft;
+    QVector<QSqlQueryModel*> models;
 
     QThread workerThread;
     QString searchText;

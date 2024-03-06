@@ -48,6 +48,7 @@ private:
     Logic               logic;
 
 private:
+    QString pageInfo;
     QPushButton* backButton;
     QPushButton* nextButton;
     QPushButton* searchButton;

@@ -71,11 +71,28 @@ void View::setupTableView()
 void View::setupLayouts()
 {
     mainLayout = new QVBoxLayout(this);
+
+    // Layout для верхней части интерфейса, включая фильтр, поиск и кнопки навигации
     QHBoxLayout *topLayout = new QHBoxLayout();
-    topLayout->addWidget(filterComboBox);
+
+
+    topLayout->addWidget(backButton);
+    topLayout->addWidget(nextButton);
+    topLayout->addWidget(page);
+
     topLayout->addWidget(searchLineEdit);
     topLayout->addWidget(searchButton);
-    topLayout->addWidget(page);
+    topLayout->addWidget(filterComboBox);
+
+    // Новый layout для кнопок навигации и отображения страниц
+    // QHBoxLayout *navigationLayout = new QHBoxLayout();
+    // navigationLayout->addWidget(backButton);
+    // navigationLayout->addWidget(page);
+    // navigationLayout->addWidget(nextButton);
+    // navigationLayout->setAlignment(Qt::AlignCenter); // Центрируем кнопки
+
+    // Добавляем новый layout в topLayout
+    //topLayout->addLayout(navigationLayout);
 
     mainLayout->addLayout(topLayout);
 
@@ -83,15 +100,11 @@ void View::setupLayouts()
     gridLayout->addWidget(tableView, 0, 0, 1, 1);
     mainLayout->addLayout(gridLayout);
 
-    QHBoxLayout *buttonLayout = new QHBoxLayout();
-    buttonLayout->addWidget(backButton);
-    buttonLayout->addWidget(nextButton);
-    buttonLayout->setAlignment(Qt::AlignCenter);
-    mainLayout->addLayout(buttonLayout);
     this->setLayout(mainLayout);
 
     //показываем 0 страницу
     s_showTable();
+
 }
 
 QPushButton* View::createButton(const QString& text,State state)
@@ -134,6 +147,6 @@ void View::s_showTable()
 //вывод страниц
 void View::s_showLabel(int currentPage, int totalPages)
 {
-    QString pageInfo = QString("%1/%2").arg(currentPage).arg(totalPages);
+    pageInfo = QString("%1/%2").arg(currentPage).arg(totalPages);
     page->setText(pageInfo);
 }
