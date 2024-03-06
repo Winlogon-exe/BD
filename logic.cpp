@@ -77,7 +77,7 @@ void Logic::executeRequest(const QString &queryString, QSqlQueryModel *model)
         showError(query.lastError().text());
         return;
     }
-    model->setQuery(query);
+    model->setQuery(std::move(query));
 }
 
 QString Logic::buildQueryString(int page)
@@ -131,7 +131,6 @@ void Logic::backPage()
     }
 }
 
-
 void Logic::searchDataFromDB()
 {
     if(searchText.isEmpty())
@@ -157,7 +156,7 @@ void Logic::searchDataFromDB()
 
     // Выполняем запрос
     //SELECT * FROM popular_tracks WHERE field1 LIKE '%searchText%' OR field2 LIKE '%searchText%' OR ...
-
+    executeRequest(queryString, modelCenter);
 }
 
 QStringList Logic::getAllFieldsFromTable(const QString &tableName)

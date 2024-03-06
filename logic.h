@@ -39,11 +39,10 @@ public:
     void initDB();
 
     void processState(QObject *sender, const QString &searchText);
-    void loadCenterModel();
     void executeRequest(const QString &queryString,QSqlQueryModel *model);
-
-    void addDataToCache(const QString &queryString, int targetPage);
     void setButtonState(QObject *button, State state);
+
+    void loadCenterModel();
     void preloadNextPages();
     void preloadPreviousPages();
 
