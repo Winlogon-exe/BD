@@ -16,6 +16,7 @@ enum State
     Back,
     Search
 };
+
 enum Models
 {
     center,

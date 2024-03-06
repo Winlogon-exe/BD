@@ -97,7 +97,7 @@ QString Logic::buildQueryString(int page)
 void Logic::preloadPages(int page, QSqlQueryModel *model)
 {
     QString queryString = buildQueryString(page);
-    executeRequest(queryString, models[center]);
+    executeRequest(queryString, model);
 }
 
 void Logic::nextPage()
@@ -107,6 +107,7 @@ void Logic::nextPage()
         currentPage++;
         models[left]->setQuery(models[center]->query());
         models[center]->setQuery(models[right]->query());
+
         preloadPages(currentPage + preload, models[right]);
     }
 }
@@ -118,6 +119,7 @@ void Logic::backPage()
         currentPage--;
         models[right]->setQuery(models[center]->query());
         models[center]->setQuery(models[left]->query());
+
         preloadPages(currentPage - preload, models[left]);
     }
 }

@@ -35,13 +35,12 @@ void View::setupButtons()
 
     //получать поля из бд?
     filters = {"All","ID","Name","Popularity","Artists"};
-    for(auto const fil:filters)
+    for(auto const &fil:filters)
     {
          filterComboBox->addItem(fil);
     }
 
     // Создание и настройка кнопок
-    //контейнер?
     nextButton = createButton("Вперед",Next);
     backButton = createButton("Назад",Back);
     searchButton = createButton("Поиск",Search);
@@ -75,7 +74,6 @@ void View::setupLayouts()
     // Layout для верхней части интерфейса, включая фильтр, поиск и кнопки навигации
     QHBoxLayout *topLayout = new QHBoxLayout();
 
-
     topLayout->addWidget(backButton);
     topLayout->addWidget(nextButton);
     topLayout->addWidget(page);
@@ -83,16 +81,6 @@ void View::setupLayouts()
     topLayout->addWidget(searchLineEdit);
     topLayout->addWidget(searchButton);
     topLayout->addWidget(filterComboBox);
-
-    // Новый layout для кнопок навигации и отображения страниц
-    // QHBoxLayout *navigationLayout = new QHBoxLayout();
-    // navigationLayout->addWidget(backButton);
-    // navigationLayout->addWidget(page);
-    // navigationLayout->addWidget(nextButton);
-    // navigationLayout->setAlignment(Qt::AlignCenter); // Центрируем кнопки
-
-    // Добавляем новый layout в topLayout
-    //topLayout->addLayout(navigationLayout);
 
     mainLayout->addLayout(topLayout);
 
