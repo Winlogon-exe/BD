@@ -39,7 +39,7 @@ public:
     void initDB();
 
     void processState(QObject *sender, const QString &searchText);
-    void createNewPagesRequest();
+    void loadCenterModel();
     void executeRequest(const QString &queryString,QSqlQueryModel *model);
 
     void addDataToCache(const QString &queryString, int targetPage);
@@ -68,7 +68,7 @@ private:
     int totalPages;
 
 private:
-    const QString dbFilename = "C:/Qt/projects/BD/123.db";
+    const QString dbFilename = "D:/QT_PROJECTS/BD/123.db";
     std::map<State, std::function<void()>> funcmap;
     std::map<QObject*, State> buttonStateMap;
 

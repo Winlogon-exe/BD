@@ -33,7 +33,9 @@ void Logic::initDB()
 {
     if(connectToDatabase())
     {
-        createNewPagesRequest();
+        loadCenterModel(); // Создаем запрос для текущей страницы
+        preloadNextPages();      // Предварительно загружаем данные следующей страницы
+        preloadPreviousPages(); // Предварительно загружаем данные предыдущей страницы
         calculateTotalPages();
     }
     else
@@ -67,17 +69,15 @@ void Logic::processState(QObject* sender,const QString &search)
     emit updateLabel(currentPage, totalPages);
 }
 
-void Logic::executeRequest(const QString &queryString,QSqlQueryModel *model)
-{    
-   QSqlQuery query(db);
-   query.prepare(queryString);
-
-   if (!query.exec())
-   {
-       showError(query.lastError().text());
-       return;
-   }
-   model->setQuery(query);
+void Logic::executeRequest(const QString &queryString, QSqlQueryModel *model)
+{
+    QSqlQuery query(db);
+    if (!query.exec(queryString))
+    {
+        showError(query.lastError().text());
+        return;
+    }
+    model->setQuery(query);
 }
 
 QString Logic::buildQueryString(int page)
@@ -88,21 +88,20 @@ QString Logic::buildQueryString(int page)
         .arg(offset);
 }
 
-void Logic::createNewPagesRequest()
+void Logic::loadCenterModel()
 {
     QString queryString = buildQueryString(currentPage);
     executeRequest(queryString, modelCenter);
-    preloadNextPages();
-    preloadPreviousPages();
 }
 
-//предпологается заполнение modelRight
+//предзаполнение modelRight
 void Logic::preloadNextPages()
 {
     QString queryString = buildQueryString(currentPage + 1);
     executeRequest(queryString, modelRight);
 }
 
+//предзаполнение modelLeft
 void Logic::preloadPreviousPages()
 {
     QString queryString = buildQueryString(currentPage - 1);
@@ -115,8 +114,9 @@ void Logic::nextPage()
     {
         currentPage++;
         modelCenter->setQuery(modelRight->query());
-        preloadPreviousPages();
+
         preloadNextPages();
+        preloadPreviousPages();
     }
 }
 
@@ -126,10 +126,11 @@ void Logic::backPage()
     {
         currentPage--;
         modelCenter->setQuery(modelLeft->query());
+
         preloadPreviousPages();
-        preloadNextPages();
     }
 }
+
 
 void Logic::searchDataFromDB()
 {
