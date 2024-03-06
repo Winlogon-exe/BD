@@ -8,10 +8,10 @@ Logic::Logic(QObject *parent) :
     offset(0),
     totalPages(0)
 {
+    initThread();
     initModels();
     initMap();
     initDB();
-    initThread();
 }
 
 void Logic::initThread()
