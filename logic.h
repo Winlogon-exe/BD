@@ -43,8 +43,7 @@ public:
     void setButtonState(QObject *button, State state);
 
     void loadCenterModel();
-    void preloadNextPages();
-    void preloadPreviousPages();
+    void preloadPages(int page, QSqlQueryModel *model);
 
     void searchDataFromDB();
     void nextPage();
@@ -72,6 +71,8 @@ private:
     std::map<QObject*, State> buttonStateMap;
 
     QCache<int, QList<QSqlQueryModel*>> dataCache;
+    QList<QSqlQueryModel*> models;
+
     QSqlQueryModel *modelCenter;
     QSqlQueryModel *modelRight;
     QSqlQueryModel *modelLeft;

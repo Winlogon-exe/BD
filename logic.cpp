@@ -4,7 +4,7 @@ Logic::Logic(QObject *parent) :
     QObject(parent),
     currentPage(0),
     pageSize(30),
-    preload(3),
+    preload(1),
     offset(0),
     totalPages(0),
     modelCenter(new QSqlQueryModel()),
@@ -33,9 +33,8 @@ void Logic::initDB()
 {
     if(connectToDatabase())
     {
-        loadCenterModel(); // Создаем запрос для текущей страницы
-        preloadNextPages();      // Предварительно загружаем данные следующей страницы
-        preloadPreviousPages(); // Предварительно загружаем данные предыдущей страницы
+        preloadPages(currentPage,modelCenter);
+        preloadPages(currentPage + preload, modelRight);
         calculateTotalPages();
     }
     else
@@ -88,24 +87,10 @@ QString Logic::buildQueryString(int page)
         .arg(offset);
 }
 
-void Logic::loadCenterModel()
+void Logic::preloadPages(int page, QSqlQueryModel *model)
 {
-    QString queryString = buildQueryString(currentPage);
-    executeRequest(queryString, modelCenter);
-}
-
-//предзаполнение modelRight
-void Logic::preloadNextPages()
-{
-    QString queryString = buildQueryString(currentPage + 1);
-    executeRequest(queryString, modelRight);
-}
-
-//предзаполнение modelLeft
-void Logic::preloadPreviousPages()
-{
-    QString queryString = buildQueryString(currentPage - 1);
-    executeRequest(queryString, modelLeft);
+    QString queryString = buildQueryString(page);
+    executeRequest(queryString, model);
 }
 
 void Logic::nextPage()
@@ -113,10 +98,13 @@ void Logic::nextPage()
     if(currentPage < totalPages)
     {
         currentPage++;
-        modelCenter->setQuery(modelRight->query());
+        modelLeft->setQuery(modelCenter->query());
 
-        preloadNextPages();
-        preloadPreviousPages();
+        modelCenter->setQuery(modelRight->query());
+        preloadPages(currentPage + preload,modelRight);
+
+        // models[0]->setQuery(models[1]->query());
+        // models[1]->setQuery(models[2]->query());
     }
 }
 
@@ -125,9 +113,10 @@ void Logic::backPage()
     if (currentPage > 0)
     {
         currentPage--;
-        modelCenter->setQuery(modelLeft->query());
+        modelRight->setQuery(modelCenter->query());
 
-        preloadPreviousPages();
+        modelCenter->setQuery(modelLeft->query());
+        preloadPages(currentPage - preload,modelLeft);
     }
 }
 
