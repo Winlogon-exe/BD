@@ -33,13 +33,13 @@ public:
     void paintSearch();
     QPushButton* createButton(const QString& text,State state);
 
-private slots:
+public slots:
+    void onFieldsRetrieved(const QStringList &fields);
     void s_ButtonClicked();
     void s_showTable();
     void s_showLabel(int currentPage, int totalPages);
 
 private:
-    std::vector<QString> filters;
     QString             searchText;
     QTableView          *tableView;
     HighlightDelegate   *delegate;

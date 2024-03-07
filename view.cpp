@@ -23,22 +23,14 @@ void View::setupDisplay()
 //создание и настройка кнопок и других элементов управления.
 void View::setupButtons()
 {
-    // кол-во страниц
     page = new QLabel("0");
 
-    // поля для поиска
     searchLineEdit = new QLineEdit(this);
     searchLineEdit->setPlaceholderText("Поиск...");
 
     // Создание фильтра(поиск по фильтру)
     filterComboBox = new QComboBox(this);
-
-    //получать поля из бд?
-    filters = {"All","ID","Name","Popularity","Artists"};
-    for(auto const &fil:filters)
-    {
-         filterComboBox->addItem(fil);
-    }
+    onFieldsRetrieved(logic.getFields());
 
     // Создание и настройка кнопок
     nextButton = createButton("Вперед",Next);
@@ -114,8 +106,10 @@ void View::paintSearch()
 //подключение сигналов и слотов.
 void View::setupConnect()
 {
-    //connect(&logic,&Logic::updateDB,this,&View::s_showTable);
     connect(&logic,&Logic::updateLabel,this,&View::s_showLabel);
+
+    //connect(&logic, &Logic::fieldsRetrieved, this, &View::onFieldsRetrieved);
+    //connect(&logic,&Logic::updateDB,this,&View::s_showTable);
 }
 
 //передача в логику
@@ -130,6 +124,18 @@ void View::s_showTable()
 {
     tableView->setModel(logic.getsqlModel());
     tableView->show();
+}
+
+void View::onFieldsRetrieved(const QStringList &fields)
+{
+    qDebug() << "onFieldsRetrieved called with fields:" << fields;
+    filterComboBox->clear();
+    filterComboBox->addItem("All");
+
+    for (const QString &field : fields)
+    {
+        filterComboBox->addItem(field);
+    }
 }
 
 //вывод страниц

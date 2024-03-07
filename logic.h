@@ -38,6 +38,7 @@ public:
     QList<QVariantMap> fetchPageData(QSqlQuery &query);
     QString buildQueryString(int page);
     QSqlQueryModel* getsqlModel() const;
+    QStringList getFields() const;
 
 public:
     bool connectToDatabase();
@@ -45,6 +46,7 @@ public:
     void initMap();
     void initDB();
     void initModels();
+    void FieldsForFilter();
 
     void processState(QObject *sender, const QString &searchText);
     void executeRequest(const QString &queryString,QSqlQueryModel *model);
@@ -64,6 +66,7 @@ public:
 
 signals:
     void updateLabel(int currentPage, int totalPages);
+    //void fieldsRetrieved(const QStringList &fields);
     //void updateDB();
 
 public:
@@ -80,6 +83,8 @@ private:
     std::map<State, std::function<void()>> funcmap;
     std::map<QObject*, State> buttonStateMap;
     QVector<QSqlQueryModel*> models;
+
+    QStringList fields;
 
     QThread workerThread;
     QString searchText;

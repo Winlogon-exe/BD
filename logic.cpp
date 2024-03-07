@@ -40,9 +40,11 @@ void Logic::initDB()
 {
     if(connectToDatabase())
     {
+        FieldsForFilter();
+        calculateTotalPages();
+
         preloadPages(currentPage, models[center]);
         preloadPages(currentPage + preload, models[right]);
-        calculateTotalPages();
     }
     else
     {
@@ -146,9 +148,6 @@ void Logic::searchDataFromDB()
     }
 
     queryString += QString(" LIMIT %1 OFFSET %2").arg(pageSize).arg(currentPage * pageSize);
-
-    // Выполняем запрос
-    //SELECT * FROM popular_tracks WHERE field1 LIKE '%searchText%' OR field2 LIKE '%searchText%' OR ...
     executeRequest(queryString, models[center]);
 }
 
@@ -190,6 +189,29 @@ void Logic::calculateTotalPages()
     totalPages = (totalRecords + pageSize) / pageSize;
 }
 
+
+void Logic::FieldsForFilter()
+{
+    fields = getAllFieldsFromTable("popular_tracks");
+}
+
+void Logic::setButtonState(QObject* button, State state)
+{
+    //каждой кнопке делаем состояние
+    buttonStateMap[button] = state;
+}
+
+void Logic::stopWorkerThread()
+{
+    workerThread.quit();
+    workerThread.wait();
+}
+
+void Logic::showError(const QString &errorText)
+{
+    QMessageBox::critical(nullptr, QObject::tr("Ошибка"), QObject::tr("Ошибка в запросе: ") + errorText);
+}
+
 void Logic::disconnectFromDatabase()
 {
     if (db.isOpen())
@@ -208,21 +230,9 @@ QSqlQueryModel* Logic::getsqlModel() const
     return models[center];
 }
 
-void Logic::setButtonState(QObject* button, State state)
+QStringList Logic::getFields() const
 {
-    //каждой кнопке делаем состояние
-    buttonStateMap[button] = state;
-}
-
-void Logic::stopWorkerThread()
-{
-    workerThread.quit();
-    workerThread.wait();
-}
-
-void Logic::showError(const QString &errorText)
-{
-    QMessageBox::critical(nullptr, QObject::tr("Ошибка"), QObject::tr("Ошибка в запросе: ") + errorText);
+    return fields;
 }
 
 Logic::~Logic()
