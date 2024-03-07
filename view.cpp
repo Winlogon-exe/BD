@@ -92,7 +92,7 @@ void View::setupLayouts()
 
     //показываем 0 страницу
     s_showTable();
-
+    s_showLabel(logic.currentPage,logic.totalPages);
 }
 
 QPushButton* View::createButton(const QString& text,State state)

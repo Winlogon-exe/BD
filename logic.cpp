@@ -40,7 +40,7 @@ void Logic::initDB()
 {
     if(connectToDatabase())
     {
-        preloadPages(currentPage, models[center]); // Используем перечисление для доступа к модели
+        preloadPages(currentPage, models[center]);
         preloadPages(currentPage + preload, models[right]);
         calculateTotalPages();
     }

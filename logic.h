@@ -64,14 +64,16 @@ public:
 
 signals:
     void updateLabel(int currentPage, int totalPages);
-   // void updateDB();
+    //void updateDB();
+
+public:
+    int currentPage;
+    int totalPages;
 
 private:
-    int currentPage;
     int pageSize;
     int preload;
     int offset;
-    int totalPages;
 
 private:
     const QString dbFilename = "D:/QT_PROJECTS/BD/123.db";
