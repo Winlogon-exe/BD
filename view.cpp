@@ -33,8 +33,8 @@ void View::setupButtons()
     onFieldsRetrieved(logic.getFields());
 
     // Создание и настройка кнопок
-    nextButton = createButton("Вперед",Next);
-    backButton = createButton("Назад",Back);
+    nextButton = createButton(">",Next);
+    backButton = createButton("<",Back);
     searchButton = createButton("Поиск",Search);
 
     QList<QPushButton*> allButton =
@@ -115,8 +115,9 @@ void View::setupConnect()
 //передача в логику
 void View::s_ButtonClicked()
 {
+    QString selectedFilter = filterComboBox->currentText();
     paintSearch();
-    logic.processState(sender(),searchText);
+    logic.processState(sender(),searchText,selectedFilter);
 }
 
 //вывод бд
@@ -128,10 +129,7 @@ void View::s_showTable()
 
 void View::onFieldsRetrieved(const QStringList &fields)
 {
-    qDebug() << "onFieldsRetrieved called with fields:" << fields;
-    filterComboBox->clear();
     filterComboBox->addItem("All");
-
     for (const QString &field : fields)
     {
         filterComboBox->addItem(field);

@@ -64,11 +64,12 @@ bool Logic::connectToDatabase()
     return true;
 }
 
-void Logic::processState(QObject* sender,const QString &search)
+void Logic::processState(QObject* sender,const QString &search,QString filter)
 {
     State state = buttonStateMap[sender];
     auto it = funcmap.find(state);
     searchText = search;
+    filterText = filter;
 
     if (it != funcmap.end())
     {
@@ -167,15 +168,26 @@ QStringList Logic::getAllFieldsFromTable(const QString &tableName)
 
 QString Logic::createSearchCondition(const QStringList &fields)
 {
-    qDebug() << "Запрос на загрузку данных для страницы" << currentPage;
-    //условие поиска исходя из полей
-    QStringList conditions;
-    for (const auto &field : fields)
-    {
-        conditions << QString("%1 LIKE '%%2%'").arg(field).arg(searchText);
+    if (searchText.isEmpty())
+        return "";
 
+    QString condition;
+    if (filterText == "All")
+    {
+        // Создаем условие поиска по всем полям
+        QStringList conditions;
+        for (const auto &field : fields)
+        {
+            conditions << QString("%1 LIKE '%%2%'").arg(field).arg(searchText);
+        }
+        condition = conditions.join(" OR ");
     }
-    return conditions.join(" OR ");
+    else
+    {
+        // Создаем условие поиска только по выбранному полю
+        condition = QString("%1 LIKE '%%2%'").arg(filterText).arg(searchText);
+    }
+    return condition;
 }
 
 void Logic::calculateTotalPages()
@@ -188,7 +200,6 @@ void Logic::calculateTotalPages()
     }
     totalPages = (totalRecords + pageSize) / pageSize;
 }
-
 
 void Logic::FieldsForFilter()
 {

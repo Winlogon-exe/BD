@@ -48,7 +48,7 @@ public:
     void initModels();
     void FieldsForFilter();
 
-    void processState(QObject *sender, const QString &searchText);
+    void processState(QObject *sender, const QString &searchText,QString filter);
     void executeRequest(const QString &queryString,QSqlQueryModel *model);
     void setButtonState(QObject *button, State state);
 
@@ -85,6 +85,7 @@ private:
     QVector<QSqlQueryModel*> models;
 
     QStringList fields;
+    QString filterText;
 
     QThread workerThread;
     QString searchText;
