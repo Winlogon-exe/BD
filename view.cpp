@@ -8,6 +8,7 @@ View::View(QWidget *parent)
 
 void View::createUI()
 {
+    qDebug() << "Текущий поток View :" << QThread::currentThreadId();
     setupConnect();
     setupDisplay();
 }

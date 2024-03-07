@@ -19,6 +19,7 @@ void Logic::initThread()
 {
     this->moveToThread(&workerThread);
     workerThread.start();
+
 }
 
 void Logic::initModels()
@@ -45,6 +46,7 @@ void Logic::initDB()
     {
         FieldsForFilter();
         calculateTotalPages();
+
 
         executeRequest(buildQueryString(currentPage), models[center]);
         executeRequest(buildQueryString(currentPage + preload), models[right]);
@@ -96,6 +98,7 @@ void Logic::executeRequest(const QString &queryString, QSqlQueryModel *model)
 
 void Logic::nextPage()
 {
+    qDebug() << "Текущий поток Logic:" << QThread::currentThreadId();
     if(currentPage < totalPages)
     {
         currentPage++;
