@@ -9,9 +9,10 @@ Logic::Logic(QObject *parent) :
     totalPages(0)
 {
     initThread();
-    initModels();
-    initMap();
+    initModels();//!
+
     initDB();
+    initMap();
 }
 
 void Logic::initThread()
@@ -22,7 +23,8 @@ void Logic::initThread()
 
 void Logic::initModels()
 {
-    models.resize(3);
+    models = QVector<QSqlQueryModel*>(3);
+
     for (int i = 0; i < models.size(); ++i)
     {
         models[i] = new QSqlQueryModel();
@@ -31,6 +33,7 @@ void Logic::initModels()
 
 void Logic::initMap()
 {
+
     funcmap[Next]    = [this](){ nextPage(); };
     funcmap[Back]    = [this](){ backPage(); };
     funcmap[Search]  = [this](){ searchDataFromDB(); };
@@ -43,8 +46,8 @@ void Logic::initDB()
         FieldsForFilter();
         calculateTotalPages();
 
-        preloadPages(currentPage, models[center]);
-        preloadPages(currentPage + preload, models[right]);
+        executeRequest(buildQueryString(currentPage), models[center]);
+        executeRequest(buildQueryString(currentPage + preload), models[right]);
     }
     else
     {
@@ -64,18 +67,20 @@ bool Logic::connectToDatabase()
     return true;
 }
 
-void Logic::processState(QObject* sender,const QString &search,QString filter)
+void Logic::calculateTotalPages()
 {
-    State state = buttonStateMap[sender];
-    auto it = funcmap.find(state);
-    searchText = search;
-    filterText = filter;
-
-    if (it != funcmap.end())
+    QSqlQuery query("SELECT COUNT(*) FROM " + TABLE_NAME);
+    int totalRecords = 0;
+    if (query.next())
     {
-        it->second();
+        totalRecords = query.value(0).toInt();
     }
-    emit updateLabel(currentPage, totalPages);
+    totalPages = (totalRecords + pageSize) / pageSize;
+}
+
+void Logic::FieldsForFilter()
+{
+    fields = getAllFieldsFromTable(TABLE_NAME);
 }
 
 void Logic::executeRequest(const QString &queryString, QSqlQueryModel *model)
@@ -87,20 +92,6 @@ void Logic::executeRequest(const QString &queryString, QSqlQueryModel *model)
         return;
     }
     model->setQuery(std::move(query));
-}
-
-QString Logic::buildQueryString(int page)
-{
-    offset = page * pageSize;
-    return QString("SELECT * FROM popular_tracks LIMIT %1 OFFSET %2")
-        .arg(pageSize)
-        .arg(offset);
-}
-
-void Logic::preloadPages(int page, QSqlQueryModel *model)
-{
-    QString queryString = buildQueryString(page);
-    executeRequest(queryString, model);
 }
 
 void Logic::nextPage()
@@ -121,10 +112,33 @@ void Logic::backPage()
     {
         currentPage--;
         models[right]->setQuery(models[center]->query());
-        models[center]->setQuery(models[left]->query());
+        models[center]->setQuery(std::move(models[left]->query()));
 
         preloadPages(currentPage - preload, models[left]);
     }
+}
+
+QString Logic::buildQueryString(int page)
+{
+    QString queryString = "SELECT * FROM " + TABLE_NAME;
+
+    QStringList fields = getAllFieldsFromTable(TABLE_NAME);
+    QString searchCondition = createSearchCondition(fields);
+    if (!searchCondition.isEmpty())
+    {
+        queryString += " WHERE " + searchCondition;
+    }
+
+    offset = page * pageSize;
+    queryString += QString(" LIMIT %1 OFFSET %2").arg(pageSize).arg(offset);
+
+    return queryString;
+}
+
+void Logic::preloadPages(int page, QSqlQueryModel *model)
+{
+    QString queryString = buildQueryString(page);
+    executeRequest(queryString, model);
 }
 
 void Logic::searchDataFromDB()
@@ -132,29 +146,13 @@ void Logic::searchDataFromDB()
     if(searchText.isEmpty())
         return;
 
-    // поиск начинается с 0 страницы
+    //поиск с 0 страницы начинается
     currentPage = 0;
-
-    // Получаем список полей для поиска
-    QStringList fields = getAllFieldsFromTable("popular_tracks");
-
-    // Формируем условие поиска
-    QString searchCondition = createSearchCondition(fields);
-
-    // Строим запрос с условием поиска
-    QString queryString = "SELECT * FROM popular_tracks";
-    if (!searchCondition.isEmpty())
-    {
-        queryString += " WHERE " + searchCondition;
-    }
-
-    queryString += QString(" LIMIT %1 OFFSET %2").arg(pageSize).arg(currentPage * pageSize);
-    executeRequest(queryString, models[center]);
+    executeRequest(buildQueryString(currentPage), models[center]);
 }
 
 QStringList Logic::getAllFieldsFromTable(const QString &tableName)
 {
-    //получаем все поля из бд для поиска
     QSqlQuery fieldQuery(db);
     fieldQuery.exec(QString("PRAGMA table_info(%1)").arg(tableName));
 
@@ -168,54 +166,52 @@ QStringList Logic::getAllFieldsFromTable(const QString &tableName)
 
 QString Logic::createSearchCondition(const QStringList &fields)
 {
+    //!!
     if (searchText.isEmpty())
         return "";
 
-    QString condition;
+    QStringList conditions;
     if (filterText == "All")
     {
-        // Создаем условие поиска по всем полям
-        QStringList conditions;
         for (const auto &field : fields)
         {
             conditions << QString("%1 LIKE '%%2%'").arg(field).arg(searchText);
         }
-        condition = conditions.join(" OR ");
     }
     else
     {
-        // Создаем условие поиска только по выбранному полю
-        condition = QString("%1 LIKE '%%2%'").arg(filterText).arg(searchText);
+        conditions << QString("%1 LIKE '%%2%'").arg(filterText).arg(searchText);
     }
-    return condition;
-}
 
-void Logic::calculateTotalPages()
-{
-    QSqlQuery query("SELECT COUNT(*) FROM popular_tracks");
-    int totalRecords = 0;
-    if (query.next())
-    {
-        totalRecords = query.value(0).toInt();
-    }
-    totalPages = (totalRecords + pageSize) / pageSize;
-}
-
-void Logic::FieldsForFilter()
-{
-    fields = getAllFieldsFromTable("popular_tracks");
+    return conditions.join(" OR ");
 }
 
 void Logic::setButtonState(QObject* button, State state)
 {
-    //каждой кнопке делаем состояние
     buttonStateMap[button] = state;
+}
+
+void Logic::processState(QObject* sender,const QString &search,const QString filter)
+{
+    State state = buttonStateMap[sender];
+    auto it = funcmap.find(state);
+    searchText = search;
+    filterText = filter;
+
+    if (it != funcmap.end())
+    {
+        it->second();
+    }
+    emit updateLabel(currentPage, totalPages);
 }
 
 void Logic::stopWorkerThread()
 {
-    workerThread.quit();
-    workerThread.wait();
+    if(workerThread.isRunning())
+    {
+        workerThread.quit();
+        workerThread.wait();
+    }
 }
 
 void Logic::showError(const QString &errorText)

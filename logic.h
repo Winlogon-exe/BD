@@ -35,7 +35,6 @@ public:
 public:
     QStringList getAllFieldsFromTable(const QString &tableName);
     QString createSearchCondition(const QStringList &fields);
-    QList<QVariantMap> fetchPageData(QSqlQuery &query);
     QString buildQueryString(int page);
     QSqlQueryModel* getsqlModel() const;
     QStringList getFields() const;
@@ -48,11 +47,10 @@ public:
     void initModels();
     void FieldsForFilter();
 
-    void processState(QObject *sender, const QString &searchText,QString filter);
+    void processState(QObject *sender, const QString &searchText,const QString filter);
     void executeRequest(const QString &queryString,QSqlQueryModel *model);
     void setButtonState(QObject *button, State state);
 
-    void loadCenterModel();
     void preloadPages(int page, QSqlQueryModel *model);
 
     void searchDataFromDB();
@@ -79,6 +77,7 @@ private:
     int offset;
 
 private:
+    const QString TABLE_NAME = "popular_tracks";
     const QString dbFilename = "D:/QT_PROJECTS/BD/123.db";
     std::map<State, std::function<void()>> funcmap;
     std::map<QObject*, State> buttonStateMap;
