@@ -115,7 +115,7 @@ void Logic::backPage()
     {
         currentPage--;
         models[right]->setQuery(models[center]->query());
-        models[center]->setQuery(std::move(models[left]->query()));
+        models[center]->setQuery(models[left]->query());
 
         preloadPages(currentPage - preload, models[left]);
     }
