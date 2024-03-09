@@ -155,7 +155,6 @@ void View::s_showLabel(int currentPage, int totalPages)
     page->setText(pageInfo);
 }
 
-
 View::~View()
 {
     logicThread->quit();

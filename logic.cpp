@@ -4,18 +4,19 @@
 Logic::Logic(QObject *parent) :
     QObject(parent),
     currentPage(0),
-    pageSize(30),
+    pageSize(200),
     preload(1),
     offset(0),
     totalPages(0)
 {
+
     initModels();
     initMap();
 }
 
 void Logic::initModels()
 {
-      qDebug() << "Текущий поток initModels:" << QThread::currentThreadId();
+    qDebug() << "Текущий поток initModels:" << QThread::currentThreadId();
     models = QVector<QSqlQueryModel*>(3);
 
     for (int i = 0; i < models.size(); ++i)
@@ -27,6 +28,7 @@ void Logic::initModels()
 void Logic::initMap()
 {
     qDebug() << "initMap вызван в потоке:" << QThread::currentThreadId();
+
     funcmap[Next]    = [this](){ nextPage(); };
     funcmap[Back]    = [this](){ backPage(); };
     funcmap[Search]  = [this](){ searchDataFromDB(); };
@@ -53,6 +55,7 @@ void Logic::initDB()
 bool Logic::connectToDatabase()
 {
     qDebug() << "Текущий поток connectToDatabase:" << QThread::currentThreadId();
+
     db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName(dbFilename);
     if (!db.open())
@@ -65,13 +68,14 @@ bool Logic::connectToDatabase()
 void Logic::calculateTotalPages()
 {
     qDebug() << "Текущий поток calculateTotalPages:" << QThread::currentThreadId();
+
     QSqlQuery query("SELECT COUNT(*) FROM " + TABLE_NAME);
     int totalRecords = 0;
     if (query.next())
     {
         totalRecords = query.value(0).toInt();
     }
-    totalPages = (totalRecords + pageSize) / pageSize;
+    totalPages = (totalRecords + pageSize) / pageSize - 1;
 }
 
 void Logic::FieldsForFilter()
@@ -82,6 +86,7 @@ void Logic::FieldsForFilter()
 void Logic::executeRequest(const QString &queryString, QSqlQueryModel *model)
 {
     qDebug() << "Текущий поток executeRequest:" << QThread::currentThreadId();
+
     QSqlQuery query(db);
     if (!query.exec(queryString))
     {
@@ -93,7 +98,8 @@ void Logic::executeRequest(const QString &queryString, QSqlQueryModel *model)
 
 void Logic::nextPage()
 {
-    qDebug() << "Текущий поток nextPage:" << QThread::currentThreadId();
+    qDebug() << "\nТекущий поток nextPage:" << QThread::currentThreadId();
+
     if(currentPage < totalPages)
     {
         currentPage++;
@@ -107,6 +113,7 @@ void Logic::nextPage()
 void Logic::backPage()
 {
     qDebug() << "Текущий поток backPage:" << QThread::currentThreadId();
+
     if (currentPage > 0)
     {
         currentPage--;
@@ -120,10 +127,11 @@ void Logic::backPage()
 QString Logic::buildQueryString(int page)
 {
     qDebug() << "Текущий поток buildQueryString:" << QThread::currentThreadId();
-    QString queryString = "SELECT * FROM " + TABLE_NAME;
 
+    QString queryString = "SELECT * FROM " + TABLE_NAME;
     QStringList fields = getAllFieldsFromTable(TABLE_NAME);
     QString searchCondition = createSearchCondition(fields);
+
     if (!searchCondition.isEmpty())
     {
         queryString += " WHERE " + searchCondition;
@@ -137,7 +145,8 @@ QString Logic::buildQueryString(int page)
 
 void Logic::preloadPages(int page, QSqlQueryModel *model)
 {
-     qDebug() << "Текущий поток preloadPages:" << QThread::currentThreadId();
+    qDebug() << "Текущий поток preloadPages: " << QThread::currentThreadId();
+
     QString queryString = buildQueryString(page);
     executeRequest(queryString, model);
 }
@@ -155,7 +164,7 @@ void Logic::searchDataFromDB()
 
 QStringList Logic::getAllFieldsFromTable(const QString &tableName)
 {
-      qDebug() << "Текущий поток getAllFieldsFromTable:" << QThread::currentThreadId();
+    qDebug() << "Текущий поток getAllFieldsFromTable:" << QThread::currentThreadId();
     QSqlQuery fieldQuery(db);
     fieldQuery.exec(QString("PRAGMA table_info(%1)").arg(tableName));
 
@@ -231,13 +240,13 @@ void Logic::disconnectFromDatabase()
 
 QSqlQueryModel* Logic::getsqlModel() const
 {
-       qDebug() << "Текущий поток getsqlModel:" << QThread::currentThreadId();
+    qDebug() << "Текущий поток getsqlModel:" << QThread::currentThreadId();
     return models[center];
 }
 
 QStringList Logic::getFields() const
 {
-     qDebug() << "Текущий поток getFields:" << QThread::currentThreadId();
+    qDebug() << "Текущий поток getFields:" << QThread::currentThreadId();
     return fields;
 }
 
