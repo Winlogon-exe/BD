@@ -41,7 +41,6 @@ public:
 
 public:
     bool connectToDatabase();
-    void initThread();
     void initMap();
     void initDB();
     void initModels();
@@ -59,12 +58,10 @@ public:
 
     void calculateTotalPages();
     void showError(const QString &error);
-    void stopWorkerThread();
     void disconnectFromDatabase();
 
 signals:
     void updateLabel(int currentPage, int totalPages);
-    //void fieldsRetrieved(const QStringList &fields);
     //void updateDB();
 
 public:
@@ -86,7 +83,6 @@ private:
     QStringList fields;
     QString filterText;
 
-    QThread workerThread;
     QString searchText;
     QMutex queueMutex;
     QSqlDatabase db;

@@ -8,18 +8,10 @@ Logic::Logic(QObject *parent) :
     offset(0),
     totalPages(0)
 {
-    initThread();
     initModels();//!
 
     initDB();
     initMap();
-}
-
-void Logic::initThread()
-{
-    this->moveToThread(&workerThread);
-    workerThread.start();
-
 }
 
 void Logic::initModels()
@@ -208,15 +200,6 @@ void Logic::processState(QObject* sender,const QString &search,const QString fil
     emit updateLabel(currentPage, totalPages);
 }
 
-void Logic::stopWorkerThread()
-{
-    if(workerThread.isRunning())
-    {
-        workerThread.quit();
-        workerThread.wait();
-    }
-}
-
 void Logic::showError(const QString &errorText)
 {
     QMessageBox::critical(nullptr, QObject::tr("Ошибка"), QObject::tr("Ошибка в запросе: ") + errorText);
@@ -247,5 +230,5 @@ QStringList Logic::getFields() const
 
 Logic::~Logic()
 {
-    stopWorkerThread();
+
 }
