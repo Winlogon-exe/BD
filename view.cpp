@@ -11,6 +11,7 @@ void View::iniThread()
 {
     QThread* logicThread = new QThread(this);
     logic.moveToThread(logicThread);
+
     connect(logicThread, &QThread::started, &logic, &Logic::initDB);
     connect(logicThread, &QThread::finished, logicThread, &QThread::deleteLater);
     logicThread->start();

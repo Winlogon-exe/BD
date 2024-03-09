@@ -9,6 +9,7 @@
 #include <QThread>
 #include <QMutex>
 #include<QStandardItemModel>
+#include <QtConcurrent/QtConcurrent>
 
 enum State
 {
