@@ -41,15 +41,12 @@ public:
 
 public:
     bool connectToDatabase();
-    void initMap();
     void initDB();
     void initModels();
     void FieldsForFilter();
 
     void processState(QObject *sender, const QString &searchText,const QString filter);
     void executeRequest(const QString &queryString,QSqlQueryModel *model);
-    void setButtonState(QObject *button, State state);
-
     void preloadPages(int page, QSqlQueryModel *model);
 
     void searchDataFromDB();
@@ -59,6 +56,10 @@ public:
     void calculateTotalPages();
     void showError(const QString &error);
     void disconnectFromDatabase();
+
+public slots:
+    void initMap();
+    void setButtonState(QObject *button, State state);
 
 signals:
     void updateLabel(int currentPage, int totalPages);

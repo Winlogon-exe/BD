@@ -1,4 +1,5 @@
 #include "logic.h"
+ //QThread::sleep(5); // Задержка на 5 секунд
 
 Logic::Logic(QObject *parent) :
     QObject(parent),
@@ -8,9 +9,7 @@ Logic::Logic(QObject *parent) :
     offset(0),
     totalPages(0)
 {
-    initModels();//!
-
-    initDB();
+    initModels();
     initMap();
 }
 
@@ -26,7 +25,6 @@ void Logic::initModels()
 
 void Logic::initMap()
 {
-
     funcmap[Next]    = [this](){ nextPage(); };
     funcmap[Back]    = [this](){ backPage(); };
     funcmap[Search]  = [this](){ searchDataFromDB(); };
@@ -34,14 +32,15 @@ void Logic::initMap()
 
 void Logic::initDB()
 {
+     qDebug() << "Текущий поток initDB :" << QThread::currentThreadId();
     if(connectToDatabase())
     {
         FieldsForFilter();
         calculateTotalPages();
 
-
         executeRequest(buildQueryString(currentPage), models[center]);
         executeRequest(buildQueryString(currentPage + preload), models[right]);
+
     }
     else
     {
@@ -51,13 +50,13 @@ void Logic::initDB()
 
 bool Logic::connectToDatabase()
 {
+    qDebug() << "connectToDatabase вызван в потоке:" << QThread::currentThreadId();
     db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName(dbFilename);
     if (!db.open())
     {
         return false;
     }
-    qInfo() << "База данных успешно открыта.";
     return true;
 }
 
@@ -90,7 +89,7 @@ void Logic::executeRequest(const QString &queryString, QSqlQueryModel *model)
 
 void Logic::nextPage()
 {
-    qDebug() << "Текущий поток Logic:" << QThread::currentThreadId();
+    qDebug() << "Текущий поток nextPage:" << QThread::currentThreadId();
     if(currentPage < totalPages)
     {
         currentPage++;
@@ -103,6 +102,7 @@ void Logic::nextPage()
 
 void Logic::backPage()
 {
+    qDebug() << "Текущий поток backPage:" << QThread::currentThreadId();
     if (currentPage > 0)
     {
         currentPage--;
@@ -183,11 +183,13 @@ QString Logic::createSearchCondition(const QStringList &fields)
 
 void Logic::setButtonState(QObject* button, State state)
 {
+    qDebug() << "setButtonState вызван в потоке:" << QThread::currentThreadId();
     buttonStateMap[button] = state;
 }
 
 void Logic::processState(QObject* sender,const QString &search,const QString filter)
 {
+    qDebug() << "processState вызван в потоке:" << QThread::currentThreadId();
     State state = buttonStateMap[sender];
     auto it = funcmap.find(state);
     searchText = search;

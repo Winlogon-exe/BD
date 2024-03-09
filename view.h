@@ -14,6 +14,7 @@
 #include <QLabel>
 #include <QHeaderView>
 #include <QToolBar>
+
 #include "highlightdelegate.h"
 #include "logic.h"
 
@@ -23,7 +24,9 @@ class View : public QWidget
 
 public:
    explicit View(QWidget *parent = nullptr);
+    ~View();
 
+    void iniThread();
     void createUI();
     void setupDisplay();
     void setupButtons();
@@ -32,6 +35,10 @@ public:
     void setupConnect();
     void paintSearch();
     QPushButton* createButton(const QString& text,State state);
+
+signals:
+void requestProcessState(QObject *sender, const QString &searchText,const QString filter);
+void setState(QObject* button, State state);
 
 public slots:
     void onFieldsRetrieved(const QStringList &fields);
@@ -46,6 +53,7 @@ private:
     QLabel              *page;
     QVBoxLayout         *mainLayout;
     Logic               logic;
+    QThread*            logicThread;
 
 private:
     QString pageInfo;

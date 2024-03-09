@@ -3,7 +3,17 @@
 View::View(QWidget *parent)
     : QWidget(parent)
 {
+    iniThread();
     createUI();
+}
+
+void View::iniThread()
+{
+    QThread* logicThread = new QThread(this);
+    logic.moveToThread(logicThread);
+    connect(logicThread, &QThread::started, &logic, &Logic::initDB);
+    connect(logicThread, &QThread::finished, logicThread, &QThread::deleteLater);
+    logicThread->start();
 }
 
 void View::createUI()
@@ -64,7 +74,7 @@ void View::setupLayouts()
 {
     mainLayout = new QVBoxLayout(this);
 
-    // Layout для верхней части интерфейса, включая фильтр, поиск и кнопки навигации
+    // Layout для верхней части интерфейса, включая фильтр, поиск
     QHBoxLayout *topLayout = new QHBoxLayout();
 
     topLayout->addWidget(backButton);
@@ -91,7 +101,8 @@ void View::setupLayouts()
 QPushButton* View::createButton(const QString& text,State state)
 {
     QPushButton* button = new QPushButton(text, this);
-    logic.setButtonState(button,state);
+    emit setState(button,state);
+
     connect(button, &QPushButton::clicked, this, &View::s_ButtonClicked);
     return button;
 }
@@ -107,10 +118,9 @@ void View::paintSearch()
 //подключение сигналов и слотов.
 void View::setupConnect()
 {
+    connect(this, &View::requestProcessState, &logic, &Logic::processState);
+    connect(this, &View::setState, &logic, &Logic::setButtonState);
     connect(&logic,&Logic::updateLabel,this,&View::s_showLabel);
-
-    //connect(&logic, &Logic::fieldsRetrieved, this, &View::onFieldsRetrieved);
-    //connect(&logic,&Logic::updateDB,this,&View::s_showTable);
 }
 
 //передача в логику
@@ -118,7 +128,7 @@ void View::s_ButtonClicked()
 {
     QString selectedFilter = filterComboBox->currentText();
     paintSearch();
-    logic.processState(sender(),searchText,selectedFilter);
+    emit requestProcessState(sender(),searchText,selectedFilter);
 }
 
 //вывод бд
@@ -142,4 +152,11 @@ void View::s_showLabel(int currentPage, int totalPages)
 {
     pageInfo = QString("%1/%2").arg(currentPage).arg(totalPages);
     page->setText(pageInfo);
+}
+
+
+View::~View()
+{
+    logicThread->quit();
+    logicThread->wait();
 }
