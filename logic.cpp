@@ -4,7 +4,7 @@
 Logic::Logic(QObject *parent) :
     QObject(parent),
     currentPage(0),
-    pageSize(200),
+    pageSize(30),
     preload(1),
     offset(0),
     totalPages(0)
@@ -27,7 +27,7 @@ void Logic::initModels()
 
 void Logic::initMap()
 {
-    qDebug() << "initMap вызван в потоке:" << QThread::currentThreadId();
+    qDebug() << "Текущий поток initMap :" << QThread::currentThreadId();
 
     funcmap[Next]    = [this](){ nextPage(); };
     funcmap[Back]    = [this](){ backPage(); };
@@ -98,7 +98,7 @@ void Logic::executeRequest(const QString &queryString, QSqlQueryModel *model)
 
 void Logic::nextPage()
 {
-    qDebug() << "\nТекущий поток nextPage:" << QThread::currentThreadId();
+    qDebug() << "Текущий поток nextPage:" << QThread::currentThreadId();
 
     if(currentPage < totalPages)
     {
@@ -106,7 +106,10 @@ void Logic::nextPage()
         models[left]->setQuery(models[center]->query());
         models[center]->setQuery(models[right]->query());
 
-        preloadPages(currentPage + preload, models[right]);
+        QtConcurrent::run([&]()
+        {
+            this->preloadPages(currentPage+preload, models[right]);
+        });
     }
 }
 
@@ -120,7 +123,11 @@ void Logic::backPage()
         models[right]->setQuery(models[center]->query());
         models[center]->setQuery(models[left]->query());
 
-        preloadPages(currentPage - preload, models[left]);
+
+        QtConcurrent::run([&]()
+        {
+            this->preloadPages(currentPage - preload, models[left]);
+        });
     }
 }
 
@@ -201,13 +208,13 @@ QString Logic::createSearchCondition(const QStringList &fields)
 
 void Logic::setButtonState(QObject* button, State state)
 {
-    qDebug() << "setButtonState вызван в потоке:" << QThread::currentThreadId();
+     qDebug() << "Текущий поток setButtonState:" << QThread::currentThreadId();
     buttonStateMap[button] = state;
 }
 
 void Logic::processState(QObject* sender,const QString &search,const QString filter)
 {
-    qDebug() << "processState вызван в потоке:" << QThread::currentThreadId();
+    qDebug() << "\nТекущий поток processState:" << QThread::currentThreadId();
     State state = buttonStateMap[sender];
     auto it = funcmap.find(state);
     searchText = search;
