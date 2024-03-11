@@ -20,9 +20,7 @@
 
 class View : public QWidget
 {
-
     Q_OBJECT
-
 
 public:
    explicit View(QWidget *parent = nullptr);
@@ -45,7 +43,7 @@ void setState(QObject* button, State state);
 public slots:
     void onFieldsRetrieved(const QStringList &fields);
     void s_ButtonClicked();
-    void s_showTable();
+    void s_showTable(QSqlQueryModel*model);
     void s_showLabel(int currentPage, int totalPages);
 
 private:

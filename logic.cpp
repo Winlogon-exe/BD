@@ -35,16 +35,19 @@ void Logic::initMap()
 void Logic::initDB()
 {
     qDebug() << "Текущий поток initDB :" << QThread::currentThreadId();
-    initMap();
-    initModels();
 
     if(connectToDatabase())
     {
+        initMap();
+        initModels();
+
         FieldsForFilter();       
         calculateTotalPages();
 
         executeRequest(buildQueryString(currentPage), models[Center]);
         executeRequest(buildQueryString(currentPage + preload), models[Right]);
+
+        emit updateTable(models[Center]);
     }
     else
     {
@@ -75,7 +78,7 @@ void Logic::calculateTotalPages()
     {
         totalRecords = query.value(0).toInt();
     }
-    totalPages = (totalRecords + pageSize) / pageSize - 1;
+    totalPages = (totalRecords + pageSize) / pageSize - 1;//-1 для округления
     emit updateLabel(currentPage, totalPages);
 }
 
@@ -228,7 +231,6 @@ void Logic::processState(QObject* sender,const QString &search,const QString fil
         it->second();
     }
    // QThread::sleep(5);
-
 }
 
 void Logic::showError(const QString &errorText)

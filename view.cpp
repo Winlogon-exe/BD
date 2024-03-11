@@ -43,9 +43,6 @@ void View::setupButtons()
     // Создание фильтра(поиск по фильтру)
     filterComboBox = new QComboBox(this);
 
-    //!
-    //onFieldsRetrieved(logic.getFields());
-
     // Создание и настройка кнопок
     nextButton = createButton(">",Next);
     backButton = createButton("<",Back);
@@ -93,20 +90,14 @@ void View::setupLayouts()
     QGridLayout *gridLayout = new QGridLayout();
     gridLayout->addWidget(tableView, 0, 0, 1, 1);
     mainLayout->addLayout(gridLayout);
-
     this->setLayout(mainLayout);
-
-    //показываем 0 страницу
-    s_showTable();
-    s_showLabel(logic.currentPage,logic.totalPages);
 }
 
 QPushButton* View::createButton(const QString& text,State state)
 {
     QPushButton* button = new QPushButton(text, this);
-    emit setState(button,state);
     //logic.setButtonState(button,state);
-
+    emit setState(button,state);  
     connect(button, &QPushButton::clicked, this, &View::s_ButtonClicked);
     return button;
 }
@@ -124,9 +115,9 @@ void View::setupConnect()
 {
     connect(this, &View::requestProcessState, &logic, &Logic::processState);
     connect(this, &View::setState, &logic, &Logic::setButtonState);
-    connect(&logic,&Logic::updateLabel,this,&View::s_showLabel);
     connect(&logic,&Logic::updateFilter,this,&View::onFieldsRetrieved);
-
+    connect(&logic,&Logic::updateLabel,this,&View::s_showLabel);
+    connect(&logic,&Logic::updateTable,this,&View::s_showTable);
 }
 
 //передача в логику
@@ -138,9 +129,9 @@ void View::s_ButtonClicked()
 }
 
 //вывод бд
-void View::s_showTable()
+void View::s_showTable(QSqlQueryModel*model)
 {
-    tableView->setModel(logic.getsqlModel());
+    tableView->setModel(model);
     tableView->show();
 }
 
