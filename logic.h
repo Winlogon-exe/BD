@@ -28,7 +28,6 @@ enum Models
 
 class Logic : public QObject
 {
-
     Q_OBJECT
 
 public:
@@ -38,9 +37,7 @@ public:
 public:
     QStringList getAllFieldsFromTable(const QString &tableName);
     QString createSearchCondition(const QStringList &fields);
-    QSqlQueryModel* getsqlModel() const;
     QString buildQueryString(int page);
-    QStringList getFields() const;
 
 public:
     bool connectToDatabase();
@@ -69,14 +66,12 @@ signals:
     void updateFilter(const QStringList &fields);
     void updateTable(QSqlQueryModel*model);
 
-public:
-    int currentPage;
-    int totalPages;
-
 private:
     int pageSize;
     int preload;
     int offset;
+    int currentPage;
+    int totalPages;
 
 private:
     const QString TABLE_NAME = "popular_tracks";

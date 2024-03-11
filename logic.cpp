@@ -214,7 +214,7 @@ QString Logic::createSearchCondition(const QStringList &fields)
 
 void Logic::setButtonState(QObject* button, State state)
 {
-     qDebug() << "Текущий поток setButtonState:" << QThread::currentThreadId();
+    qDebug() << "Текущий поток setButtonState:" << QThread::currentThreadId();
     buttonStateMap[button] = state;
 }
 
@@ -249,18 +249,6 @@ void Logic::disconnectFromDatabase()
     {
         qWarning() << "База данных уже закрыта.";
     }
-}
-
-QSqlQueryModel* Logic::getsqlModel() const
-{
-    qDebug() << "Текущий поток getsqlModel:" << QThread::currentThreadId();
-    return models[Center];
-}
-
-QStringList Logic::getFields() const
-{
-    qDebug() << "Текущий поток getFields:" << QThread::currentThreadId();
-    return fields;
 }
 
 Logic::~Logic()
