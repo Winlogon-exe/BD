@@ -42,7 +42,9 @@ void View::setupButtons()
 
     // Создание фильтра(поиск по фильтру)
     filterComboBox = new QComboBox(this);
-    onFieldsRetrieved(logic.getFields());
+
+    //!
+    //onFieldsRetrieved(logic.getFields());
 
     // Создание и настройка кнопок
     nextButton = createButton(">",Next);
@@ -79,8 +81,8 @@ void View::setupLayouts()
     QHBoxLayout *topLayout = new QHBoxLayout();
 
     topLayout->addWidget(backButton);
-    topLayout->addWidget(nextButton);
     topLayout->addWidget(page);
+    topLayout->addWidget(nextButton);
 
     topLayout->addWidget(searchLineEdit);
     topLayout->addWidget(searchButton);
@@ -103,6 +105,7 @@ QPushButton* View::createButton(const QString& text,State state)
 {
     QPushButton* button = new QPushButton(text, this);
     emit setState(button,state);
+    //logic.setButtonState(button,state);
 
     connect(button, &QPushButton::clicked, this, &View::s_ButtonClicked);
     return button;
@@ -122,6 +125,8 @@ void View::setupConnect()
     connect(this, &View::requestProcessState, &logic, &Logic::processState);
     connect(this, &View::setState, &logic, &Logic::setButtonState);
     connect(&logic,&Logic::updateLabel,this,&View::s_showLabel);
+    connect(&logic,&Logic::updateFilter,this,&View::onFieldsRetrieved);
+
 }
 
 //передача в логику

@@ -9,9 +9,7 @@ Logic::Logic(QObject *parent) :
     offset(0),
     totalPages(0)
 {
-
-    initModels();
-    initMap();
+    qRegisterMetaType<State>("State");
 }
 
 void Logic::initModels()
@@ -37,14 +35,16 @@ void Logic::initMap()
 void Logic::initDB()
 {
     qDebug() << "Текущий поток initDB :" << QThread::currentThreadId();
+    initMap();
+    initModels();
+
     if(connectToDatabase())
     {
-        FieldsForFilter();
+        FieldsForFilter();       
         calculateTotalPages();
 
-        executeRequest(buildQueryString(currentPage), models[center]);
-        executeRequest(buildQueryString(currentPage + preload), models[right]);
-
+        executeRequest(buildQueryString(currentPage), models[Center]);
+        executeRequest(buildQueryString(currentPage + preload), models[Right]);
     }
     else
     {
@@ -76,11 +76,13 @@ void Logic::calculateTotalPages()
         totalRecords = query.value(0).toInt();
     }
     totalPages = (totalRecords + pageSize) / pageSize - 1;
+    emit updateLabel(currentPage, totalPages);
 }
 
 void Logic::FieldsForFilter()
 {
     fields = getAllFieldsFromTable(TABLE_NAME);
+    emit updateFilter(fields);
 }
 
 void Logic::executeRequest(const QString &queryString, QSqlQueryModel *model)
@@ -103,13 +105,14 @@ void Logic::nextPage()
     if(currentPage < totalPages)
     {
         currentPage++;
-        models[left]->setQuery(models[center]->query());
-        models[center]->setQuery(models[right]->query());
+        models[Left]->setQuery(models[Center]->query());
+        models[Center]->setQuery(models[Right]->query());
 
         QtConcurrent::run([&]()
         {
-            this->preloadPages(currentPage+preload, models[right]);
+            this->preloadPages(currentPage+preload, models[Right]);
         });
+        emit updateLabel(currentPage, totalPages);
     }
 }
 
@@ -120,14 +123,14 @@ void Logic::backPage()
     if (currentPage > 0)
     {
         currentPage--;
-        models[right]->setQuery(models[center]->query());
-        models[center]->setQuery(models[left]->query());
-
+        models[Right]->setQuery(models[Center]->query());
+        models[Center]->setQuery(models[Left]->query());
 
         QtConcurrent::run([&]()
         {
-            this->preloadPages(currentPage - preload, models[left]);
+            this->preloadPages(currentPage - preload, models[Left]);
         });
+        emit updateLabel(currentPage, totalPages);
     }
 }
 
@@ -166,7 +169,7 @@ void Logic::searchDataFromDB()
 
     //поиск с 0 страницы начинается
     currentPage = 0;
-    executeRequest(buildQueryString(currentPage), models[center]);
+    executeRequest(buildQueryString(currentPage), models[Center]);
 }
 
 QStringList Logic::getAllFieldsFromTable(const QString &tableName)
@@ -224,7 +227,8 @@ void Logic::processState(QObject* sender,const QString &search,const QString fil
     {
         it->second();
     }
-    emit updateLabel(currentPage, totalPages);
+   // QThread::sleep(5);
+
 }
 
 void Logic::showError(const QString &errorText)
@@ -248,7 +252,7 @@ void Logic::disconnectFromDatabase()
 QSqlQueryModel* Logic::getsqlModel() const
 {
     qDebug() << "Текущий поток getsqlModel:" << QThread::currentThreadId();
-    return models[center];
+    return models[Center];
 }
 
 QStringList Logic::getFields() const

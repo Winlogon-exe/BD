@@ -20,13 +20,15 @@ enum State
 
 enum Models
 {
-    center,
-    right,
-    left
+    Center,
+    Right,
+    Left
 };
+
 
 class Logic : public QObject
 {
+
     Q_OBJECT
 
 public:
@@ -64,6 +66,7 @@ public slots:
 
 signals:
     void updateLabel(int currentPage, int totalPages);
+    void updateFilter(const QStringList &fields);
 
 public:
     int currentPage;
@@ -76,7 +79,7 @@ private:
 
 private:
     const QString TABLE_NAME = "popular_tracks";
-    const QString dbFilename = "D:/QT_PROJECTS/BD/123.db";
+    const QString dbFilename = "C:/Qt/projects/BD/123.db";
 
     std::map<State, std::function<void()>> funcmap;
     std::map<QObject*, State> buttonStateMap;

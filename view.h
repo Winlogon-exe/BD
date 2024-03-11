@@ -20,7 +20,9 @@
 
 class View : public QWidget
 {
+
     Q_OBJECT
+
 
 public:
    explicit View(QWidget *parent = nullptr);
