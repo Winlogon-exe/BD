@@ -12,6 +12,29 @@ Logic::Logic(QObject *parent) :
     qRegisterMetaType<State>("State");
 }
 
+void Logic::initDB()
+{
+    qDebug() << "Текущий поток initDB :" << QThread::currentThreadId();
+
+    if(connectToDatabase())
+    {
+        initMap();
+        initModels();
+
+        FieldsForFilter();
+        calculateTotalPages();
+
+        executeRequest(buildQueryString(currentPage), models[Center]);
+        executeRequest(buildQueryString(currentPage + preload), models[Right]);
+
+        emit updateTable(models[Center]);
+    }
+    else
+    {
+        showError(db.lastError().text());
+    }
+}
+
 void Logic::initModels()
 {
     qDebug() << "Текущий поток initModels:" << QThread::currentThreadId();
@@ -30,29 +53,6 @@ void Logic::initMap()
     funcmap[Next]    = [this](){ nextPage(); };
     funcmap[Back]    = [this](){ backPage(); };
     funcmap[Search]  = [this](){ searchDataFromDB(); };
-}
-
-void Logic::initDB()
-{
-    qDebug() << "Текущий поток initDB :" << QThread::currentThreadId();
-
-    if(connectToDatabase())
-    {
-        initMap();
-        initModels();
-
-        FieldsForFilter();       
-        calculateTotalPages();
-
-        executeRequest(buildQueryString(currentPage), models[Center]);
-        executeRequest(buildQueryString(currentPage + preload), models[Right]);
-
-        emit updateTable(models[Center]);
-    }
-    else
-    {
-        showError(db.lastError().text());
-    }
 }
 
 bool Logic::connectToDatabase()
@@ -111,10 +111,11 @@ void Logic::nextPage()
         models[Left]->setQuery(models[Center]->query());
         models[Center]->setQuery(models[Right]->query());
 
-        QtConcurrent::run([&]()
+        (void)QtConcurrent::run([&]()
         {
             this->preloadPages(currentPage+preload, models[Right]);
         });
+
         emit updateLabel(currentPage, totalPages);
     }
 }
@@ -129,10 +130,11 @@ void Logic::backPage()
         models[Right]->setQuery(models[Center]->query());
         models[Center]->setQuery(models[Left]->query());
 
-        QtConcurrent::run([&]()
+        (void)QtConcurrent::run([&]()
         {
             this->preloadPages(currentPage - preload, models[Left]);
         });
+
         emit updateLabel(currentPage, totalPages);
     }
 }

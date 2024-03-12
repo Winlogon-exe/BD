@@ -25,7 +25,6 @@ enum Models
     Left
 };
 
-
 class Logic : public QObject
 {
     Q_OBJECT
@@ -67,11 +66,11 @@ signals:
     void updateTable(QSqlQueryModel*model);
 
 private:
+    int currentPage;
+    int totalPages;
     int pageSize;
     int preload;
     int offset;
-    int currentPage;
-    int totalPages;
 
 private:
     const QString TABLE_NAME = "popular_tracks";
