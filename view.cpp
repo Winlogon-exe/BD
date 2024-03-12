@@ -96,7 +96,6 @@ void View::setupLayouts()
 QPushButton* View::createButton(const QString& text,State state)
 {
     QPushButton* button = new QPushButton(text, this);
-    //logic.setButtonState(button,state);
     emit setState(button,state);  
     connect(button, &QPushButton::clicked, this, &View::s_ButtonClicked);
     return button;
@@ -115,6 +114,7 @@ void View::setupConnect()
 {
     connect(this, &View::requestProcessState, &logic, &Logic::processState);
     connect(this, &View::setState, &logic, &Logic::setButtonState);
+
     connect(&logic,&Logic::updateFilter,this,&View::onFieldsRetrieved);
     connect(&logic,&Logic::updateLabel,this,&View::s_showLabel);
     connect(&logic,&Logic::updateTable,this,&View::s_showTable);

@@ -23,8 +23,8 @@ void Logic::initDB()
         initModels();
 
         FieldsForFilter();
-        calculateTotalPages();
 
+        calculateTotalPages();
         executeRequest(buildQueryString(currentPage), models[Center]);
         executeRequest(buildQueryString(currentPage + preload), models[Right]);
 
@@ -69,6 +69,7 @@ bool Logic::connectToDatabase()
 
 void Logic::calculateTotalPages()
 {
+    //QThread::sleep(5);
     qDebug() << "Текущий поток calculateTotalPages:" << QThread::currentThreadId();
 
     QSqlQuery query("SELECT COUNT(*) FROM " + TABLE_NAME);
@@ -172,7 +173,7 @@ void Logic::searchDataFromDB()
         return;
 
     //поиск с 0 страницы начинается
-    currentPage = 0;
+    int currentPage = 0;
     executeRequest(buildQueryString(currentPage), models[Center]);
 }
 
