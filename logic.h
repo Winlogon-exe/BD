@@ -45,7 +45,8 @@ public:
 
     void FieldsForFilter();
     void processState(QObject *sender, const QString &searchText,const QString filter);
-    void executeRequest(const QString &queryString,QSqlQueryModel *model);
+    void executeRequest(const QString &queryString,QSharedPointer<QSqlQueryModel>model);
+    void preloadPages(int page, QSharedPointer<QSqlQueryModel>model);
 
     void searchDataFromDB();
     void nextPage();
@@ -57,13 +58,12 @@ public:
 
 public slots:
     void initMap();
-    void preloadPages(int page, QSqlQueryModel *model);
     void setButtonState(QObject *button, State state);
 
 signals:
     void updateLabel(int currentPage, int totalPages);
     void updateFilter(const QStringList &fields);
-    void updateTable(QSqlQueryModel*model);
+    void updateTable(QSharedPointer<QSqlQueryModel>model);
 
 private:
     int currentPage;
@@ -74,11 +74,11 @@ private:
 
 private:
     const QString TABLE_NAME = "popular_tracks";
-    const QString dbFilename = "D:/QT_PROJECTS/BD/123.db";
+    const QString dbFilename = "C:/Qt/projects/BD/123.db";
 
     std::map<State, std::function<void()>> funcmap;
     std::map<QObject*, State> buttonStateMap;
-    QVector<QSqlQueryModel*> models;
+    QVector<QSharedPointer<QSqlQueryModel>> models;
 
     QStringList fields;
     QString filterText;

@@ -42,18 +42,18 @@ void setState(QObject* button, State state);
 
 public slots:
     void onFieldsRetrieved(const QStringList &fields);
-    void s_ButtonClicked();
-    void s_showTable(QSqlQueryModel*model);
     void s_showLabel(int currentPage, int totalPages);
+    void s_showTable(QSharedPointer<QSqlQueryModel>model);
+    void s_ButtonClicked();
 
 private:
-    QString             searchText;
+    QThread*            logicThread;
+    QVBoxLayout         *mainLayout;
     QTableView          *tableView;
+    QString             searchText;
     HighlightDelegate   *delegate;
     QLabel              *page;
-    QVBoxLayout         *mainLayout;
     Logic               logic;
-    QThread*            logicThread;
 
 private:
     QString pageInfo;

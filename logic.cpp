@@ -9,6 +9,7 @@ Logic::Logic(QObject *parent) :
     offset(0),
     totalPages(0)
 {
+    qRegisterMetaType<QSharedPointer<QSqlQueryModel>>("QSharedPointer<QSqlQueryModel>");
     qRegisterMetaType<State>("State");
 }
 
@@ -38,11 +39,9 @@ void Logic::initDB()
 void Logic::initModels()
 {
     qDebug() << "Текущий поток initModels:" << QThread::currentThreadId();
-    models = QVector<QSqlQueryModel*>(3);
-
-    for (int i = 0; i < models.size(); ++i)
+    for (int i = 0; i < 3; ++i)
     {
-        models[i] = new QSqlQueryModel();
+        models.append(QSharedPointer<QSqlQueryModel>(new QSqlQueryModel()));
     }
 }
 
@@ -88,7 +87,7 @@ void Logic::FieldsForFilter()
     emit updateFilter(fields);
 }
 
-void Logic::executeRequest(const QString &queryString, QSqlQueryModel *model)
+void Logic::executeRequest(const QString &queryString, QSharedPointer<QSqlQueryModel>model)
 {
     qDebug() << "Текущий поток executeRequest:" << QThread::currentThreadId();
 
@@ -158,7 +157,7 @@ QString Logic::buildQueryString(int page)
     return queryString;
 }
 
-void Logic::preloadPages(int page, QSqlQueryModel *model)
+void Logic::preloadPages(int page, QSharedPointer<QSqlQueryModel>model)
 {
     qDebug() << "Текущий поток preloadPages: " << QThread::currentThreadId();
 
@@ -232,6 +231,7 @@ void Logic::processState(QObject* sender,const QString &search,const QString fil
     {
         it->second();
     }
+    //emit updateTable(models[Center]);
    // QThread::sleep(5);
 }
 

@@ -129,9 +129,9 @@ void View::s_ButtonClicked()
 }
 
 //вывод бд
-void View::s_showTable(QSqlQueryModel*model)
+void View::s_showTable(QSharedPointer<QSqlQueryModel>model)
 {
-    tableView->setModel(model);
+    tableView->setModel(model.data());
     tableView->show();
 }
 
