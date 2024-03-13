@@ -23,9 +23,11 @@ void Logic::initDB()
         initModels();
         FieldsForFilter();
         executeRequest(buildQueryString(currentPage), models[Center]);
+        (void)QtConcurrent::run([this](){ calculateTotalPages(); });
+        (void)QtConcurrent::run([this](){ preloadPages(currentPage + preload, models[Right]); });
 
-        QtConcurrent::run(this, &Logic::calculateTotalPages);
-        QtConcurrent::run(this, &Logic::preloadPages, currentPage + preload, models[Right]);
+        // QtConcurrent::run(this, &Logic::calculateTotalPages);
+        // QtConcurrent::run(this, &Logic::preloadPages, currentPage + preload, models[Right]);
         emit updateTable(models[Center]);
     }
     else
@@ -114,7 +116,7 @@ void Logic::nextPage()
     currentPage++;
     models[Left]->setQuery(models[Center]->query());
     models[Center]->setQuery(models[Right]->query());
-    QtConcurrent::run(this, &Logic::preloadPages, currentPage + preload, models[Right]);
+    (void)QtConcurrent::run([this](){ preloadPages(currentPage + preload, models[Right]); });
     emit updateLabel(currentPage, totalPages);
 }
 
@@ -127,7 +129,7 @@ void Logic::backPage()
         currentPage--;
         models[Right]->setQuery(models[Center]->query());
         models[Center]->setQuery(models[Left]->query());
-        QtConcurrent::run(this, &Logic::preloadPages, currentPage - preload, models[Left]);
+        (void)QtConcurrent::run([this](){ preloadPages(currentPage - preload, models[Left]); });
         emit updateLabel(currentPage, totalPages);
     }
 }
