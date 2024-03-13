@@ -22,6 +22,7 @@ void Logic::initDB()
         initMap();
         initModels();
         FieldsForFilter();
+
         QtConcurrent::run(this, &Logic::calculateTotalPages);
         executeRequest(buildQueryString(currentPage), models[Center]);
         QtConcurrent::run(this, &Logic::preloadPages, currentPage + preload, models[Right]);
@@ -110,11 +111,11 @@ void Logic::nextPage()
 {
     qDebug() << "Текущий поток nextPage:" << QThread::currentThreadId();
 
-        currentPage++;
-        models[Left]->setQuery(models[Center]->query());
-        models[Center]->setQuery(models[Right]->query());
-        QtConcurrent::run(this, &Logic::preloadPages, currentPage + preload, models[Right]);
-        emit updateLabel(currentPage, totalPages);
+    currentPage++;
+    models[Left]->setQuery(models[Center]->query());
+    models[Center]->setQuery(models[Right]->query());
+    QtConcurrent::run(this, &Logic::preloadPages, currentPage + preload, models[Right]);
+    emit updateLabel(currentPage, totalPages);
 }
 
 void Logic::backPage()
