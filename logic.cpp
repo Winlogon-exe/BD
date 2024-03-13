@@ -67,7 +67,7 @@ bool Logic::connectToDatabase()
 
 void Logic::calculateTotalPages()
 {
-   // QThread::sleep(5);
+    QThread::sleep(5);
     qDebug() << "Текущий поток calculateTotalPages:" << QThread::currentThreadId();
     QSqlQuery query(db);
 
