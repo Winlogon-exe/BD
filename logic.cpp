@@ -76,12 +76,13 @@ void Logic::calculateTotalPages()
     {
         if (query.next())
         {
+
             totalRecords = query.value(0).toInt();
         }
     }
     else
     {
-        qDebug() << "Ошибка выполнения запроса: " << query.lastError().text();
+        showError(db.lastError().text());
     }
     totalPages = (totalRecords + pageSize) / pageSize - 1;//-1 для округления
     emit updateLabel(currentPage, totalPages);
