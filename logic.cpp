@@ -21,8 +21,8 @@ void Logic::initDB()
     {
         initMap();
         initModels();
-        FieldsForFilter();
-
+        FieldsForFilter()
+                ;
         QtConcurrent::run(this, &Logic::calculateTotalPages);
         executeRequest(buildQueryString(currentPage), models[Center]);
         QtConcurrent::run(this, &Logic::preloadPages, currentPage + preload, models[Right]);
@@ -67,7 +67,7 @@ bool Logic::connectToDatabase()
 
 void Logic::calculateTotalPages()
 {
-    //QThread::sleep(5);
+    QThread::sleep(5);
     qDebug() << "Текущий поток calculateTotalPages:" << QThread::currentThreadId();
     QSqlQuery query(db);
 
