@@ -22,9 +22,9 @@ void Logic::initDB()
         initMap();
         initModels();
         FieldsForFilter();
+        executeRequest(buildQueryString(currentPage), models[Center]);
 
         QtConcurrent::run(this, &Logic::calculateTotalPages);
-        executeRequest(buildQueryString(currentPage), models[Center]);
         QtConcurrent::run(this, &Logic::preloadPages, currentPage + preload, models[Right]);
         emit updateTable(models[Center]);
     }
@@ -39,7 +39,7 @@ void Logic::initModels()
     qDebug() << "Текущий поток initModels:" << QThread::currentThreadId();
     for (int i = 0; i < 3; ++i)
     {
-        models.append(QSharedPointer<QSqlQueryModel>(new QSqlQueryModel()));
+        models.append(QSharedPointer<QSqlQueryModel>::create());
     }
 }
 
@@ -67,7 +67,7 @@ bool Logic::connectToDatabase()
 
 void Logic::calculateTotalPages()
 {
-    //QThread::sleep(5);
+   // QThread::sleep(5);
     qDebug() << "Текущий поток calculateTotalPages:" << QThread::currentThreadId();
     QSqlQuery query(db);
 
