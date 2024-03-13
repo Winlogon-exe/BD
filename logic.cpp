@@ -30,7 +30,7 @@ void Logic::initDB()
         (void)QtConcurrent::run([this](){ calculateTotalPages(); });
         (void)QtConcurrent::run([this](){ preloadPages(currentPage + preload, models[Right]); });
 
-        emit updateTable(models[Center]);
+
     }
     else
     {
@@ -121,6 +121,7 @@ void Logic::executeRequest(const QString &queryString, QSharedPointer<QSqlQueryM
     }
 
     model->setQuery(std::move(query));
+    emit updateTable(models[Center]);
 }
 
 
@@ -254,6 +255,8 @@ void Logic::processState(QObject* sender,const QString &search,const QString fil
 
     State state = buttonStateMap[sender];
     auto it = funcmap.find(state);
+
+
     searchText = search;
     filterText = filter;
 
