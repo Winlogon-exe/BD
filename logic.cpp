@@ -216,8 +216,7 @@ QStringList Logic::getAllFieldsFromTable(const QString &tableName)
     return fields;
 }
 
-QString Logic::createSearchCondition(const QStringList &fields)
-{
+QString Logic::createSearchCondition(const QStringList &fields) {
     qDebug() << "\nСоздание условия поиска";
     qDebug() << "Текущий поток:" << QThread::currentThreadId();
 
@@ -225,20 +224,21 @@ QString Logic::createSearchCondition(const QStringList &fields)
         return "";
 
     QStringList conditions;
-    if (filterText == "All")
-    {
-        for (const auto &field : fields)
-        {
-            conditions << QString("%1 LIKE '%%2%'").arg(field).arg(searchText);
+    QString searchTextEscaped = searchText;
+    searchTextEscaped.replace("%", "\\%");
+    searchTextEscaped.replace("_", "\\_");
+
+    if (filterText == "All") {
+        for (const auto &field : fields) {
+            conditions << QString("%1 LIKE '%%2%' ESCAPE '\\'").arg(field).arg(searchTextEscaped);
         }
-    }
-    else
-    {
-        conditions << QString("%1 LIKE '%%2%'").arg(filterText).arg(searchText);
+    } else {
+        conditions << QString("%1 LIKE '%%2%' ESCAPE '\\'").arg(filterText).arg(searchTextEscaped);
     }
 
     return conditions.join(" OR ");
 }
+
 
 void Logic::setButtonState(QObject* button, State state)
 {
