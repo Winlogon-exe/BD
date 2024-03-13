@@ -9,12 +9,14 @@ Logic::Logic(QObject *parent) :
     offset(0),
     totalPages(0)
 {
+    dbFilename = QDir(QApplication::applicationDirPath()).filePath("123.db");
     qRegisterMetaType<QSharedPointer<QSqlQueryModel>>("QSharedPointer<QSqlQueryModel>");
     qRegisterMetaType<State>("State");
 }
 
 void Logic::initDB()
 {
+    QMutexLocker locker(&mutex);
     qDebug() << "Текущий поток initDB :" << QThread::currentThreadId();
 
     if(connectToDatabase())
@@ -69,7 +71,8 @@ bool Logic::connectToDatabase()
 
 void Logic::calculateTotalPages()
 {
-    QThread::sleep(5);
+    //QThread::sleep(5);
+    QMutexLocker locker(&mutex);
     qDebug() << "Текущий поток calculateTotalPages:" << QThread::currentThreadId();
     QSqlQuery query(db);
 
@@ -111,6 +114,7 @@ void Logic::executeRequest(const QString &queryString, QSharedPointer<QSqlQueryM
 
 void Logic::nextPage()
 {
+    QMutexLocker locker(&mutex);
     qDebug() << "Текущий поток nextPage:" << QThread::currentThreadId();
 
     currentPage++;
@@ -122,6 +126,7 @@ void Logic::nextPage()
 
 void Logic::backPage()
 {
+    QMutexLocker locker(&mutex);
     qDebug() << "Текущий поток backPage:" << QThread::currentThreadId();
 
     if (currentPage > 0)
@@ -167,9 +172,10 @@ void Logic::searchDataFromDB()
     if(searchText.isEmpty())
         return;
 
+    //тут проблема скорее всего
     //поиск с 0 страницы начинается
-    int currentPage = 0;
-    executeRequest(buildQueryString(currentPage), models[Center]);
+    int page = 0;
+    executeRequest(buildQueryString(page), models[Center]);
 }
 
 QStringList Logic::getAllFieldsFromTable(const QString &tableName)

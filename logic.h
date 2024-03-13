@@ -8,6 +8,7 @@
 #include <QDebug>
 #include <QThread>
 #include <QMutex>
+#include <QDir>
 #include<QStandardItemModel>
 #include <QtConcurrent/QtConcurrent>
 
@@ -74,8 +75,9 @@ private:
 
 private:
     const QString TABLE_NAME = "popular_tracks";
-    const QString dbFilename = "D:/QT_PROJECTS/BD/123.db";
-
+    QString dbFilename;
+    QMutex mutex;
+    QMutex mutex2;
     std::map<State, std::function<void()>> funcmap;
     std::map<QObject*, State> buttonStateMap;
     QVector<QSharedPointer<QSqlQueryModel>> models;
