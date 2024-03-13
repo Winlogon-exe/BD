@@ -21,13 +21,11 @@ void Logic::initDB()
     {
         initMap();
         initModels();
-
         FieldsForFilter();
 
-        calculateTotalPages();
+        QtConcurrent::run(this, &Logic::calculateTotalPages);
         executeRequest(buildQueryString(currentPage), models[Center]);
-        executeRequest(buildQueryString(currentPage + preload), models[Right]);
-
+        QtConcurrent::run(this, &Logic::preloadPages, currentPage + preload, models[Right]);
         emit updateTable(models[Center]);
     }
     else
@@ -71,12 +69,19 @@ void Logic::calculateTotalPages()
 {
     //QThread::sleep(5);
     qDebug() << "Текущий поток calculateTotalPages:" << QThread::currentThreadId();
+    QSqlQuery query(db);
 
-    QSqlQuery query("SELECT COUNT(*) FROM " + TABLE_NAME);
     int totalRecords = 0;
-    if (query.next())
+    if (query.exec("SELECT COUNT(*) FROM " + TABLE_NAME))
     {
-        totalRecords = query.value(0).toInt();
+        if (query.next())
+        {
+            totalRecords = query.value(0).toInt();
+        }
+    }
+    else
+    {
+        qDebug() << "Ошибка выполнения запроса: " << query.lastError().text();
     }
     totalPages = (totalRecords + pageSize) / pageSize - 1;//-1 для округления
     emit updateLabel(currentPage, totalPages);
@@ -105,19 +110,11 @@ void Logic::nextPage()
 {
     qDebug() << "Текущий поток nextPage:" << QThread::currentThreadId();
 
-    if(currentPage < totalPages)
-    {
         currentPage++;
         models[Left]->setQuery(models[Center]->query());
         models[Center]->setQuery(models[Right]->query());
-
-        (void)QtConcurrent::run([&]()
-        {
-            this->preloadPages(currentPage+preload, models[Right]);
-        });
-
+        QtConcurrent::run(this, &Logic::preloadPages, currentPage + preload, models[Right]);
         emit updateLabel(currentPage, totalPages);
-    }
 }
 
 void Logic::backPage()
@@ -129,12 +126,7 @@ void Logic::backPage()
         currentPage--;
         models[Right]->setQuery(models[Center]->query());
         models[Center]->setQuery(models[Left]->query());
-
-        (void)QtConcurrent::run([&]()
-        {
-            this->preloadPages(currentPage - preload, models[Left]);
-        });
-
+        QtConcurrent::run(this, &Logic::preloadPages, currentPage - preload, models[Left]);
         emit updateLabel(currentPage, totalPages);
     }
 }
