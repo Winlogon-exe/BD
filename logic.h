@@ -74,6 +74,7 @@ private:
     int offset;
 
 private:
+    static const int MODELS_COUNT = 3;
     const QString TABLE_NAME = "popular_tracks";
     QString dbFilename;
     QMutex mutex;
