@@ -16,10 +16,18 @@ set(PROJECT_SOURCES
         main.cpp
         view.cpp
         view.h
+
         logic.h
+        logic.cpp
+
         highlightdelegate.h
         highlightdelegate.cpp
-        logic.cpp
+
+        loginform.h
+        loginform.cpp
+
+        menuform.h
+        menuform.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
