@@ -37,3 +37,10 @@ void LoginForm::setupConnect()
 
 }
 
+QPushButton* LoginForm::createButton(const QString &text, State state)
+{
+    QPushButton* button = new QPushButton(text, this);
+    //connect(button, &QPushButton::clicked, this, &View::s_ButtonClicked);
+    return button;
+}
+

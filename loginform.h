@@ -5,6 +5,7 @@
 #include <QWidget>
 #include<QDialog>
 #include<QLineEdit>
+#include<QPushButton>
 #include"loginlogic.h"
 
 
