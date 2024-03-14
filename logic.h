@@ -76,7 +76,7 @@ private:
 private:
     static const int MODELS_COUNT = 3;
     const QString TABLE_NAME = "popular_tracks";
-    QString dbFilename;
+    QString dbFilename = "C:/Qt/projects/BD/123.db";
     QMutex mutex;
     QMutex mutex2;
     std::map<State, std::function<void()>> funcmap;
