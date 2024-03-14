@@ -6,7 +6,9 @@
 #include<QDialog>
 #include<QLineEdit>
 #include<QPushButton>
+#include<QVBoxLayout>
 #include"loginlogic.h"
+
 
 
 class LoginForm :public QDialog
@@ -19,7 +21,7 @@ public:
    void setupButtons();
    void setupLayouts();
    void setupConnect();
-   QPushButton* createButton(const QString& text,State state);
+   QPushButton* createButton(const QString& text,StateButton state);
 
 signals:
     void requestProcessState(QObject *sender);

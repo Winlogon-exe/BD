@@ -4,15 +4,15 @@
 #include <QObject>
 #include <QWidget>
 
-enum State
+enum StateButton
 {
     Login,
-    Cancel,
+    Cancel
 };
 
 class LoginLogic
 {
-    Q_OBJECT
+    //Q_OBJECT
 public:
     LoginLogic();
 };

@@ -3,23 +3,30 @@
 LoginForm::LoginForm(QWidget  *parent)
     : QDialog(parent)
 {
-    setupButtons();
+    createUI();
 }
 
 
 void LoginForm::createUI()
 {
-
+    setupDisplay();
+    setupButtons();
+    setupLayouts();
 }
 
 void LoginForm::setupDisplay()
 {
-
+    setWindowTitle("Вход");
+    this->resize(350, 300);
 }
 
 void LoginForm::setupLayouts()
 {
-
+    QVBoxLayout *layout = new QVBoxLayout(this);
+    layout->addWidget(usernameEdit);
+    layout->addWidget(passwordEdit);
+    layout->addWidget(loginButton);
+    layout->addWidget(cancelButton);
 }
 
 void LoginForm::setupButtons()
@@ -37,7 +44,7 @@ void LoginForm::setupConnect()
 
 }
 
-QPushButton* LoginForm::createButton(const QString &text, State state)
+QPushButton* LoginForm::createButton(const QString &text, StateButton state)
 {
     QPushButton* button = new QPushButton(text, this);
     //connect(button, &QPushButton::clicked, this, &View::s_ButtonClicked);
