@@ -14,8 +14,9 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Sql)
 
 set(PROJECT_SOURCES
         main.cpp
-        view.cpp
+
         view.h
+        view.cpp
 
         logic.h
         logic.cpp
@@ -25,6 +26,9 @@ set(PROJECT_SOURCES
 
         loginform.h
         loginform.cpp
+
+        loginlogic.h
+        loginlogic.cpp
 
         menuform.h
         menuform.cpp

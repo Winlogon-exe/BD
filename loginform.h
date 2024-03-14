@@ -3,12 +3,33 @@
 
 #include <QObject>
 #include <QWidget>
-#include"view.h"
+#include<QDialog>
+#include<QLineEdit>
+#include"loginlogic.h"
 
-class LoginForm :public View
+
+class LoginForm :public QDialog
 {
 public:
-    LoginForm();
+   explicit LoginForm(QWidget *parent = nullptr);
+
+   void createUI();
+   void setupDisplay();
+   void setupButtons();
+   void setupLayouts();
+   void setupConnect();
+   QPushButton* createButton(const QString& text,State state);
+
+signals:
+    void requestProcessState(QObject *sender);
+    void setState(QObject* button);
+
+private:
+    QLineEdit* usernameEdit;
+    QLineEdit* passwordEdit;
+
+    QPushButton* loginButton;
+    QPushButton* cancelButton;
 };
 
 #endif // LOGINFORM_H
