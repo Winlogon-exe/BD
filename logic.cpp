@@ -151,10 +151,16 @@ void Logic::backPage()
 
 QString Logic::buildQueryString(int page)
 {
-    qDebug() << "\nПостроение SQL-запроса для страницы" << page;
-    qDebug() << "Текущий поток:" << QThread::currentThreadId();
+    qDebug() << "Текущий поток buildQueryString:" << QThread::currentThreadId();
 
     QString queryString = "SELECT * FROM " + TABLE_NAME;
+    QString searchCondition = createSearchCondition(fields);
+
+    if (!searchCondition.isEmpty())
+    {
+        queryString += " WHERE " + searchCondition;
+    }
+
     offset = page * pageSize;
     queryString += QString(" LIMIT %1 OFFSET %2").arg(pageSize).arg(offset);
 
@@ -173,25 +179,13 @@ void Logic::preloadPages(int page, QSharedPointer<QSqlQueryModel>model)
 
 void Logic::searchDataFromDB()
 {
+    qDebug() << "Текущий поток searchDataFromDB:" << QThread::currentThreadId();
+    if(searchText.isEmpty())
+        return;
 
-    qDebug() << "\nПоиск данных в базе данных";
-    qDebug() << "Текущий поток:" << QThread::currentThreadId();
-
-//    if (searchText.isEmpty())
-//    {
-//        qDebug() << "Поисковый запрос пуст";
-//        return;
-//    }
-    //QString condition = createSearchCondition(fields);
-
-    int page = 0; // Начинаем поиск с первой страницы
-    QString queryString = "SELECT * FROM " + TABLE_NAME;
-//    if (!condition.isEmpty())
-//    {
-
-//    }
-    queryString += "WHERE" + searchText;
-    executeRequest(queryString, models[Center]);
+    //поиск с 0 страницы начинается
+    currentPage = 0;
+    executeRequest(buildQueryString(currentPage), models[Center]);
 }
 
 QStringList Logic::getAllFieldsFromTable(const QString &tableName)
@@ -210,28 +204,24 @@ QStringList Logic::getAllFieldsFromTable(const QString &tableName)
     return fields;
 }
 
-QString Logic::createSearchCondition(const QStringList &fields) {
-    qDebug() << "\nСоздание условия поиска";
-    qDebug() << "Текущий поток:" << QThread::currentThreadId();
-
+QString Logic::createSearchCondition(const QStringList &fields)
+{
+    qDebug() << "Текущий поток createSearchCondition:" << QThread::currentThreadId();
+    //!!
     if (searchText.isEmpty())
         return "";
 
     QStringList conditions;
-    QString searchTextEscaped = searchText;
-    searchTextEscaped.replace("%", "\\%");
-    searchTextEscaped.replace("_", "\\_");
-
     if (filterText == "All")
     {
         for (const auto &field : fields)
         {
-            conditions << QString("%1 LIKE '%%2%' ESCAPE '\\'").arg(field).arg(searchTextEscaped);
+            conditions << QString("%1 LIKE '%%2%'").arg(field).arg(searchText);
         }
     }
     else
     {
-        conditions << QString("%1 LIKE '%%2%' ESCAPE '\\'").arg(filterText).arg(searchTextEscaped);
+        conditions << QString("%1 LIKE '%%2%'").arg(filterText).arg(searchText);
     }
 
     return conditions.join(" OR ");
