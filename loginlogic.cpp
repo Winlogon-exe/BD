@@ -4,3 +4,14 @@ LoginLogic::LoginLogic()
 {
 
 }
+
+void LoginLogic::initMap()
+{
+
+    funcmap[Login]  = [this](){ login(); };
+    funcmap[Cancel] = [this](){ cancel(); };
+}
+void LoginLogic::setButtonState(QObject* button, StateButton state)
+{
+    buttonStateMap[button] = state;
+}
