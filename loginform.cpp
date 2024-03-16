@@ -10,7 +10,6 @@ LoginForm::LoginForm(QDialog  *parent)
 void LoginForm::createUI()
 {
     setupDisplayMain();
-
     setupLabel();
     setupLineEdit();
     setupButtons();
@@ -27,7 +26,7 @@ void LoginForm::setupDisplayMain()
 void LoginForm::setupLabel()
 {
     nameFormLabel = new QLabel("Вход");
-    loginLabel = new QLabel("Логин");
+    loginLabel    = new QLabel("Логин");
     passwordLabel = new QLabel("Пароль");
 
     QFont font = nameFormLabel->font();

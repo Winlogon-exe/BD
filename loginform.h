@@ -36,11 +36,15 @@ private:
     QLabel *nameFormLabel;
     QLabel *passwordLabel;
     QLabel *loginLabel;
+
+private:
     LoginLogic logic;
 
+private:
     QLineEdit* usernameEdit;
     QLineEdit* passwordEdit;
 
+private:
     QPushButton* loginButton;
     QPushButton* cancelButton;
 };
