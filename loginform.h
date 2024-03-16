@@ -12,6 +12,7 @@
 
 class LoginForm :public QDialog
 {
+   Q_OBJECT
 public:
    explicit LoginForm(QDialog *parent = nullptr);
 
@@ -33,8 +34,9 @@ public slots:
 
 private:
     QLabel *nameFormLabel;
-    QLabel *loginTextLabel;
-    QLabel *passwordTextLabel;
+    QLabel *passwordLabel;
+    QLabel *loginLabel;
+    LoginLogic logic;
 
     QLineEdit* usernameEdit;
     QLineEdit* passwordEdit;

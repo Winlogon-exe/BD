@@ -14,17 +14,19 @@ enum StateButton
 class LoginLogic: public QObject
 {
     Q_OBJECT
+
 public:
     LoginLogic();
+    void initMap();
     void login();
     void cancel();
 
-public slots:
-    void initMap();
-    void setButtonState(QObject *button, StateButton state);
+public slots:  
+    void s_processState(QObject *sender);
+    void s_setButtonState(QObject *button, StateButton state);
 
 private:
-    std::map<StateButton, std::function<void()>> funcmap;
+    std::map<StateButton, std::function<void()>> funcMap;
     std::map<QObject*, StateButton> buttonStateMap;
     StateButton state;
 };
