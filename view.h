@@ -37,8 +37,8 @@ public:
     QPushButton* createButton(const QString& text,State state);
 
 signals:
-void requestProcessState(QObject *sender, const QString &searchText,const QString filter);
-void setState(QObject* button, State state);
+    void requestProcessState(QObject *sender, const QString &searchText,const QString filter);
+    void setState(QObject* button, State state);
 
 public slots:
     void onFieldsRetrieved(const QStringList &fields);

@@ -26,13 +26,16 @@ public:
 
 signals:
     void requestProcessState(QObject *sender);
-    void setState(QObject* button);
+    void setState(QObject* button,StateButton state);
 
 public slots:
     void s_ButtonClicked();
 
 private:
     QLabel *nameFormLabel;
+    QLabel *loginTextLabel;
+    QLabel *passwordTextLabel;
+
     QLineEdit* usernameEdit;
     QLineEdit* passwordEdit;
 
