@@ -4,7 +4,7 @@ LoginLogic::LoginLogic(QObject* parent):
     QObject(parent)
 {
     qRegisterMetaType<StateButton>("StateButton");
-    dbFilename = QDir(QApplication::applicationDirPath()).filePath("test.db");
+    dbFilename = QDir(QApplication::applicationDirPath()).filePath("123.db");
     initDB();
 }
 
@@ -53,6 +53,17 @@ void LoginLogic::s_processState(QObject* sender)
 void LoginLogic::s_setButtonState(QObject* button, StateButton state)
 {
     buttonStateMap[button] = state;
+}
+
+
+void LoginLogic::executeRequest(const QString &queryString)
+{
+
+}
+
+QString LoginLogic::buildQueryString()
+{
+
 }
 
 void LoginLogic::login()
