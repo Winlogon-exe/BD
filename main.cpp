@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
     LoginForm login;
     login.show();
 
-    // View v;
-    // v.show();
+     // ViewForm v;
+     // v.show();
     return a.exec();
 }
