@@ -20,7 +20,7 @@ void LogicView::initDB()
 
     if (connectToDatabase())
     {
-        initMap();
+        s_initMap();
         initModels();
 
         FieldsForFilter();
@@ -47,7 +47,7 @@ void LogicView::initModels()
     }
 }
 
-void LogicView::initMap()
+void LogicView::s_initMap()
 {
     qDebug() << "\nИнициализация карты функций";
     qDebug() << "Текущий поток:" << QThread::currentThreadId();
@@ -228,7 +228,7 @@ QString LogicView::createSearchCondition(const QStringList &fields)
 }
 
 
-void LogicView::setButtonState(QObject* button, State state)
+void LogicView::s_setButtonState(QObject* button, State state)
 {
     qDebug() << "\nУстановка состояния кнопки";
     qDebug() << "Текущий поток:" << QThread::currentThreadId();
@@ -236,7 +236,7 @@ void LogicView::setButtonState(QObject* button, State state)
     buttonStateMap[button] = state;
 }
 
-void LogicView::processState(QObject* sender,const QString &search,const QString filter)
+void LogicView::s_processState(QObject* sender,const QString &search,const QString filter)
 {
     qDebug() << "\nОбработка состояния";
     qDebug() << "Текущий поток:" << QThread::currentThreadId();

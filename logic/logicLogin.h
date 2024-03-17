@@ -14,7 +14,7 @@ enum StateButton
     Cancel
 };
 
-class LoginLogic: public QObject
+class LoginLogic : public QObject
 {
     Q_OBJECT
 

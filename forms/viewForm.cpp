@@ -112,10 +112,10 @@ void ViewForm::paintSearch()
 //подключение сигналов и слотов.
 void ViewForm::setupConnect()
 {
-    connect(this, &ViewForm::requestProcessState, &logic, &LogicView::processState);
-    connect(this, &ViewForm::setState, &logic, &LogicView::setButtonState);
+    connect(this, &ViewForm::requestProcessState, &logic, &LogicView::s_processState);
+    connect(this, &ViewForm::setState, &logic, &LogicView::s_setButtonState);
 
-    connect(&logic,&LogicView::updateFilter,this,&ViewForm::onFieldsRetrieved);
+    connect(&logic,&LogicView::updateFilter,this,&ViewForm::s_onFieldsRetrieved);
     connect(&logic,&LogicView::updateLabel,this,&ViewForm::s_showLabel);
     connect(&logic,&LogicView::updateTable,this,&ViewForm::s_showTable);
 }
@@ -135,7 +135,7 @@ void ViewForm::s_showTable(QSharedPointer<QSqlQueryModel>model)
     tableView->show();
 }
 
-void ViewForm::onFieldsRetrieved(const QStringList &fields)
+void ViewForm::s_onFieldsRetrieved(const QStringList &fields)
 {
     filterComboBox->addItem("All");
     for (const QString &field : fields)

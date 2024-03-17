@@ -1,7 +1,7 @@
 #include "logicLogin.h"
 
-LoginLogic::LoginLogic(QObject* parent)
-    :QObject(parent)
+LoginLogic::LoginLogic(QObject* parent):
+    QObject(parent)
 {
     initMap();
 }

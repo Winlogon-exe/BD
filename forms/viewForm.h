@@ -40,7 +40,7 @@ signals:
     void setState(QObject* button, State state);
 
 public slots:
-    void onFieldsRetrieved(const QStringList &fields);
+    void s_onFieldsRetrieved(const QStringList &fields);
     void s_showLabel(int currentPage, int totalPages);
     void s_showTable(QSharedPointer<QSqlQueryModel>model);
     void s_ButtonClicked();
