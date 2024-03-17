@@ -1,4 +1,4 @@
-#include "logic.h"
+#include "logicView.h"
 
 Logic::Logic(QObject *parent) :
     QObject(parent),

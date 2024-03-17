@@ -1,5 +1,5 @@
-#ifndef VIEW_H
-#define VIEW_H
+#ifndef VIEWFORM_H
+#define VIEWFORM_H
 
 #include <QWidget>
 #include <QTableWidget>
@@ -15,8 +15,8 @@
 #include <QHeaderView>
 #include <QToolBar>
 
-#include "highlightdelegate.h"
-#include "logic.h"
+#include "../delegate/highlightdelegate.h"
+#include "../logic/logicView.h"
 
 class View : public QWidget
 {
@@ -65,4 +65,4 @@ private:
     QComboBox*   filterComboBox;
 };
 
-#endif // VIEW_H
+#endif // VIEWFORM_H

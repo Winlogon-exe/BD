@@ -15,23 +15,23 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Sql)
 set(PROJECT_SOURCES
         main.cpp
 
-        view.h
-        view.cpp
+        forms/viewForm.h
+        forms/viewForm.cpp
 
-        logic.h
-        logic.cpp
+        logic/logicView.h
+        logic/logicView.cpp
 
-        highlightdelegate.h
-        highlightdelegate.cpp
+        delegate/highlightdelegate.h
+        delegate/highlightdelegate.cpp
 
-        loginform.h
-        loginform.cpp
+        forms/loginform.h
+        forms/loginform.cpp
 
-        loginlogic.h
-        loginlogic.cpp
+        logic/logicLogin.h
+        logic/logicLogin.cpp
 
-        menuform.h
-        menuform.cpp
+        forms/menuform.h
+        forms/menuform.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

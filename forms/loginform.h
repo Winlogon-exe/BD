@@ -8,7 +8,7 @@
 #include<QPushButton>
 #include<QVBoxLayout>
 #include<QLabel>
-#include"loginlogic.h"
+#include"../logic/logicLogin.h"
 
 class LoginForm :public QDialog
 {

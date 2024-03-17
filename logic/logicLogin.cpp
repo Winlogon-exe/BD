@@ -1,4 +1,4 @@
-#include "loginlogic.h"
+#include "logicLogin.h"
 
 LoginLogic::LoginLogic()
 {

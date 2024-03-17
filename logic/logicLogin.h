@@ -1,5 +1,5 @@
-#ifndef LOGINLOGIC_H
-#define LOGINLOGIC_H
+#ifndef LOGICLOGIN_H
+#define LOGICLOGIN_H
 
 #include <QObject>
 #include <QWidget>
@@ -31,4 +31,4 @@ private:
     StateButton state;
 };
 
-#endif // LOGINLOGIC_H
+#endif // LOGICLOGIN_H

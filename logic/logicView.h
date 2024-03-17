@@ -1,5 +1,5 @@
-#ifndef LOGIC_H
-#define LOGIC_H
+#ifndef LOGICVIEW_H
+#define LOGICVIEW_H
 
 #include <QObject>
 #include <QtSql>
@@ -91,4 +91,4 @@ private:
     State state;
 };
 
-#endif // LOGIC_H
+#endif // LOGICVIEW_H
