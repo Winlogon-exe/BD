@@ -103,7 +103,8 @@ void LogicView::FieldsForFilter()
     emit updateFilter(fields);
 }
 
-void LogicView::executeRequest(const QString &queryString, QSharedPointer<QSqlQueryModel> model) {
+void LogicView::executeRequest(const QString &queryString, QSharedPointer<QSqlQueryModel> model)
+{
     QSqlQuery query(db);
     if (!query.prepare(queryString))
     {

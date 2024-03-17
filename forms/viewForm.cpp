@@ -102,11 +102,10 @@ QPushButton* ViewForm::createButton(const QString& text,State state)
 }
 
 //выделение текста
-void ViewForm::paintSearch()
+void ViewForm::paintSearch(const QString& text)
 {
-    searchText = searchLineEdit->text();
-    delegate = new HighlightDelegate(searchText);
-    tableView->setItemDelegate(delegate);
+    delegate.reset(new HighlightDelegate(text));
+    tableView->setItemDelegate(delegate.data());
 }
 
 //подключение сигналов и слотов.
@@ -124,7 +123,8 @@ void ViewForm::setupConnect()
 void ViewForm::s_ButtonClicked()
 {
     QString selectedFilter = filterComboBox->currentText();
-    paintSearch();
+    QString searchText = searchLineEdit->text();
+   // paintSearch(searchText);
     emit requestProcessState(sender(),searchText,selectedFilter);
 }
 

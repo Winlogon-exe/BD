@@ -7,6 +7,7 @@ HighlightDelegate::HighlightDelegate(const QString& searchText, QObject *parent)
 //возвращать строку надо?
 void HighlightDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+
     //для отрисовки стандартного вида элемента.
     QStyledItemDelegate::paint(painter, option, index);
 

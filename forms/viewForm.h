@@ -32,7 +32,7 @@ public:
     void setupTableView();
     void setupLayouts();
     void setupConnect();
-    void paintSearch();
+    void paintSearch(const QString& text);
     QPushButton* createButton(const QString& text,State state);
 
 signals:
@@ -46,11 +46,12 @@ public slots:
     void s_ButtonClicked();
 
 private:
+    QScopedPointer<HighlightDelegate> delegate;
+
     QThread*            logicThread;
     QVBoxLayout         *mainLayout;
     QTableView          *tableView;
     QString             searchText;
-    HighlightDelegate   *delegate;
     QLabel              *page;
     LogicView            logic;
 
