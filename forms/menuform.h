@@ -7,7 +7,7 @@
 class MenuForm
 {
 public:
-    MenuForm();
+   explicit  MenuForm();
 };
 
 #endif // MENUFORM_H

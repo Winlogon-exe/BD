@@ -26,13 +26,13 @@ enum Models
     Left
 };
 
-class Logic : public QObject
+class LogicView : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit Logic(QObject *parent = nullptr);
-    ~Logic();
+    explicit LogicView(QObject* parent = nullptr);
+    ~LogicView();
 
 public:
     QStringList getAllFieldsFromTable(const QString &tableName);
@@ -76,7 +76,7 @@ private:
 private:
     static const int MODELS_COUNT = 3;
     const QString TABLE_NAME = "popular_tracks";
-    QString dbFilename = "C:/Qt/projects/BD/123.db";
+    QString dbFilename;// "C:/Qt/projects/BD/123.db"
     QMutex mutex;
     QMutex mutex2;
     std::map<State, std::function<void()>> funcmap;

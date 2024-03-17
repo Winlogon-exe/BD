@@ -3,7 +3,10 @@
 
 #include <QObject>
 #include <QWidget>
-#include<functional>
+#include <functional>
+#include <QMessageBox>
+#include <QSqlTableModel>
+#include <QSqlQueryModel>
 
 enum StateButton
 {
@@ -16,7 +19,7 @@ class LoginLogic: public QObject
     Q_OBJECT
 
 public:
-    LoginLogic();
+    explicit LoginLogic(QObject* parent = nullptr);
     void initMap();
     void login();
     void cancel();
@@ -29,6 +32,7 @@ private:
     std::map<StateButton, std::function<void()>> funcMap;
     std::map<QObject*, StateButton> buttonStateMap;
     StateButton state;
+    QSqlDatabase db;
 };
 
 #endif // LOGICLOGIN_H

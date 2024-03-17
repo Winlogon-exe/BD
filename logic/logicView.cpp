@@ -1,6 +1,6 @@
-#include "logicView.h"
+#include "LogicView.h"
 
-Logic::Logic(QObject *parent) :
+LogicView::LogicView(QObject* parent) :
     QObject(parent),
     currentPage(0),
     pageSize(30),
@@ -8,12 +8,12 @@ Logic::Logic(QObject *parent) :
     offset(0),
     totalPages(0)
 {
-   // dbFilename = QDir(QApplication::applicationDirPath()).filePath("123.db");
+    dbFilename = QDir(QApplication::applicationDirPath()).filePath("123.db");
     qRegisterMetaType<QSharedPointer<QSqlQueryModel>>("QSharedPointer<QSqlQueryModel>");
     qRegisterMetaType<State>("State");
 }
 
-void Logic::initDB()
+void LogicView::initDB()
 {
     qDebug() << "\nИнициализация базы данных";
     qDebug() << "Текущий поток:" << QThread::currentThreadId();
@@ -35,7 +35,7 @@ void Logic::initDB()
     }
 }
 
-void Logic::initModels()
+void LogicView::initModels()
 {
     qDebug() << "\nИнициализация моделей";
     qDebug() << "Текущий поток:" << QThread::currentThreadId();
@@ -47,7 +47,7 @@ void Logic::initModels()
     }
 }
 
-void Logic::initMap()
+void LogicView::initMap()
 {
     qDebug() << "\nИнициализация карты функций";
     qDebug() << "Текущий поток:" << QThread::currentThreadId();
@@ -57,7 +57,7 @@ void Logic::initMap()
     funcmap[Search]  = [this](){ searchDataFromDB(); };
 }
 
-bool Logic::connectToDatabase()
+bool LogicView::connectToDatabase()
 {
     qDebug() << "\nПодключение к базе данных";
     qDebug() << "Текущий поток:" << QThread::currentThreadId();
@@ -71,7 +71,7 @@ bool Logic::connectToDatabase()
     return true;
 }
 
-void Logic::calculateTotalPages()
+void LogicView::calculateTotalPages()
 {
     qDebug() << "\nРасчет общего количества страниц";
     qDebug() << "Текущий поток:" << QThread::currentThreadId();
@@ -93,7 +93,7 @@ void Logic::calculateTotalPages()
     emit updateLabel(currentPage, totalPages);
 }
 
-void Logic::FieldsForFilter()
+void LogicView::FieldsForFilter()
 {
 
     qDebug() << "\nПолучение полей для фильтрации";
@@ -103,7 +103,7 @@ void Logic::FieldsForFilter()
     emit updateFilter(fields);
 }
 
-void Logic::executeRequest(const QString &queryString, QSharedPointer<QSqlQueryModel> model) {
+void LogicView::executeRequest(const QString &queryString, QSharedPointer<QSqlQueryModel> model) {
     QSqlQuery query(db);
     if (!query.prepare(queryString))
     {
@@ -122,7 +122,7 @@ void Logic::executeRequest(const QString &queryString, QSharedPointer<QSqlQueryM
 }
 
 
-void Logic::nextPage()
+void LogicView::nextPage()
 {
     qDebug() << "\nПереход на следующую страницу";
     qDebug() << "Текущий поток:" << QThread::currentThreadId();
@@ -134,7 +134,7 @@ void Logic::nextPage()
     emit updateLabel(currentPage, totalPages);
 }
 
-void Logic::backPage()
+void LogicView::backPage()
 {
     qDebug() << "\nПереход на предыдущую страницу";
     qDebug() << "Текущий поток:" << QThread::currentThreadId();
@@ -149,7 +149,7 @@ void Logic::backPage()
     }
 }
 
-QString Logic::buildQueryString(int page)
+QString LogicView::buildQueryString(int page)
 {
     qDebug() << "Текущий поток buildQueryString:" << QThread::currentThreadId();
 
@@ -168,7 +168,7 @@ QString Logic::buildQueryString(int page)
 }
 
 
-void Logic::preloadPages(int page, QSharedPointer<QSqlQueryModel>model)
+void LogicView::preloadPages(int page, QSharedPointer<QSqlQueryModel>model)
 {
     qDebug() << "\nПредварительная загрузка страницы" << page;
     qDebug() << "Текущий поток:" << QThread::currentThreadId();
@@ -177,7 +177,7 @@ void Logic::preloadPages(int page, QSharedPointer<QSqlQueryModel>model)
     executeRequest(queryString, model);
 }
 
-void Logic::searchDataFromDB()
+void LogicView::searchDataFromDB()
 {
     qDebug() << "Текущий поток searchDataFromDB:" << QThread::currentThreadId();
     if(searchText.isEmpty())
@@ -188,7 +188,7 @@ void Logic::searchDataFromDB()
     executeRequest(buildQueryString(currentPage), models[Center]);
 }
 
-QStringList Logic::getAllFieldsFromTable(const QString &tableName)
+QStringList LogicView::getAllFieldsFromTable(const QString &tableName)
 {
     qDebug() << "\nПолучение списка полей из таблицы" << tableName;
     qDebug() << "Текущий поток:" << QThread::currentThreadId();
@@ -204,7 +204,7 @@ QStringList Logic::getAllFieldsFromTable(const QString &tableName)
     return fields;
 }
 
-QString Logic::createSearchCondition(const QStringList &fields)
+QString LogicView::createSearchCondition(const QStringList &fields)
 {
     qDebug() << "Текущий поток createSearchCondition:" << QThread::currentThreadId();
     //!!
@@ -228,7 +228,7 @@ QString Logic::createSearchCondition(const QStringList &fields)
 }
 
 
-void Logic::setButtonState(QObject* button, State state)
+void LogicView::setButtonState(QObject* button, State state)
 {
     qDebug() << "\nУстановка состояния кнопки";
     qDebug() << "Текущий поток:" << QThread::currentThreadId();
@@ -236,7 +236,7 @@ void Logic::setButtonState(QObject* button, State state)
     buttonStateMap[button] = state;
 }
 
-void Logic::processState(QObject* sender,const QString &search,const QString filter)
+void LogicView::processState(QObject* sender,const QString &search,const QString filter)
 {
     qDebug() << "\nОбработка состояния";
     qDebug() << "Текущий поток:" << QThread::currentThreadId();
@@ -254,7 +254,7 @@ void Logic::processState(QObject* sender,const QString &search,const QString fil
     }
 }
 
-void Logic::showError(const QString &errorText)
+void LogicView::showError(const QString &errorText)
 {
     qDebug() << "\nОтображение ошибки";
     qDebug() << "Текущий поток:" << QThread::currentThreadId();
@@ -262,7 +262,7 @@ void Logic::showError(const QString &errorText)
     QMessageBox::critical(nullptr, QObject::tr("Ошибка"), QObject::tr("Ошибка в запросе: ") + errorText);
 }
 
-void Logic::disconnectFromDatabase()
+void LogicView::disconnectFromDatabase()
 {
     if (db.isOpen())
     {
@@ -275,7 +275,7 @@ void Logic::disconnectFromDatabase()
     }
 }
 
-Logic::~Logic()
+LogicView::~LogicView()
 {
 
 }

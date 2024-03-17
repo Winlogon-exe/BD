@@ -1,23 +1,23 @@
 #include "viewForm.h"
 
-View::View(QWidget *parent)
+ViewForm::ViewForm(QWidget *parent)
     : QWidget(parent)
 {
     iniThread();
     createUI();
 }
 
-void View::iniThread()
+void ViewForm::iniThread()
 {
     QThread* logicThread = new QThread(this);
     logic.moveToThread(logicThread);
 
-    connect(logicThread, &QThread::started, &logic, &Logic::initDB);
+    connect(logicThread, &QThread::started, &logic, &LogicView::initDB);
     connect(logicThread, &QThread::finished, logicThread, &QThread::deleteLater);
     logicThread->start();
 }
 
-void View::createUI()
+void ViewForm::createUI()
 {
     qDebug() << "Текущий поток View :" << QThread::currentThreadId();
     setupConnect();
@@ -25,7 +25,7 @@ void View::createUI()
 }
 
 // настройка отображения основного окна.
-void View::setupDisplay()
+void ViewForm::setupDisplay()
 {
     setWindowTitle("DB");
     this->resize(800, 500);
@@ -33,7 +33,7 @@ void View::setupDisplay()
 }
 
 //создание и настройка кнопок и других элементов управления.
-void View::setupButtons()
+void ViewForm::setupButtons()
 {
     page = new QLabel("0");
 
@@ -62,7 +62,7 @@ void View::setupButtons()
 }
 
 //создание и настройка таблицы
-void View::setupTableView()
+void ViewForm::setupTableView()
 {
     tableView = new QTableView(this);
     tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
@@ -70,7 +70,7 @@ void View::setupTableView()
 }
 
 //настройка компоновки виджетов в окне.
-void View::setupLayouts()
+void ViewForm::setupLayouts()
 {
     mainLayout = new QVBoxLayout(this);
 
@@ -93,16 +93,16 @@ void View::setupLayouts()
     this->setLayout(mainLayout);
 }
 
-QPushButton* View::createButton(const QString& text,State state)
+QPushButton* ViewForm::createButton(const QString& text,State state)
 {
     QPushButton* button = new QPushButton(text, this);
     emit setState(button,state);  
-    connect(button, &QPushButton::clicked, this, &View::s_ButtonClicked);
+    connect(button, &QPushButton::clicked, this, &ViewForm::s_ButtonClicked);
     return button;
 }
 
 //выделение текста
-void View::paintSearch()
+void ViewForm::paintSearch()
 {
     searchText = searchLineEdit->text();
     delegate = new HighlightDelegate(searchText);
@@ -110,18 +110,18 @@ void View::paintSearch()
 }
 
 //подключение сигналов и слотов.
-void View::setupConnect()
+void ViewForm::setupConnect()
 {
-    connect(this, &View::requestProcessState, &logic, &Logic::processState);
-    connect(this, &View::setState, &logic, &Logic::setButtonState);
+    connect(this, &ViewForm::requestProcessState, &logic, &LogicView::processState);
+    connect(this, &ViewForm::setState, &logic, &LogicView::setButtonState);
 
-    connect(&logic,&Logic::updateFilter,this,&View::onFieldsRetrieved);
-    connect(&logic,&Logic::updateLabel,this,&View::s_showLabel);
-    connect(&logic,&Logic::updateTable,this,&View::s_showTable);
+    connect(&logic,&LogicView::updateFilter,this,&ViewForm::onFieldsRetrieved);
+    connect(&logic,&LogicView::updateLabel,this,&ViewForm::s_showLabel);
+    connect(&logic,&LogicView::updateTable,this,&ViewForm::s_showTable);
 }
 
 //передача в логику
-void View::s_ButtonClicked()
+void ViewForm::s_ButtonClicked()
 {
     QString selectedFilter = filterComboBox->currentText();
     paintSearch();
@@ -129,13 +129,13 @@ void View::s_ButtonClicked()
 }
 
 //вывод бд
-void View::s_showTable(QSharedPointer<QSqlQueryModel>model)
+void ViewForm::s_showTable(QSharedPointer<QSqlQueryModel>model)
 {
     tableView->setModel(model.data());
     tableView->show();
 }
 
-void View::onFieldsRetrieved(const QStringList &fields)
+void ViewForm::onFieldsRetrieved(const QStringList &fields)
 {
     filterComboBox->addItem("All");
     for (const QString &field : fields)
@@ -145,13 +145,13 @@ void View::onFieldsRetrieved(const QStringList &fields)
 }
 
 //вывод страниц
-void View::s_showLabel(int currentPage, int totalPages)
+void ViewForm::s_showLabel(int currentPage, int totalPages)
 {
     pageInfo = QString("%1/%2").arg(currentPage).arg(totalPages);
     page->setText(pageInfo);
 }
 
-View::~View()
+ViewForm::~ViewForm()
 {
     logicThread->quit();
     logicThread->wait();

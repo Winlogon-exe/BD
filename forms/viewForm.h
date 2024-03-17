@@ -7,7 +7,6 @@
 #include <QTableView>
 #include <QSqlDatabase>
 #include <QVBoxLayout>
-#include <QtSql>
 #include <QSqlTableModel>
 #include <QPushButton>
 #include <QLineEdit>
@@ -18,13 +17,13 @@
 #include "../delegate/highlightdelegate.h"
 #include "../logic/logicView.h"
 
-class View : public QWidget
+class ViewForm : public QWidget
 {
     Q_OBJECT
 
 public:
-   explicit View(QWidget *parent = nullptr);
-    ~View();
+   explicit ViewForm(QWidget *parent = nullptr);
+    ~ViewForm();
 
     void iniThread();
     void createUI();
@@ -53,7 +52,7 @@ private:
     QString             searchText;
     HighlightDelegate   *delegate;
     QLabel              *page;
-    Logic               logic;
+    LogicView            logic;
 
 private:
     QString pageInfo;
