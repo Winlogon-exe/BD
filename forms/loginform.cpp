@@ -47,9 +47,11 @@ void LoginForm::setupLayouts()
 
     layout->addWidget(nameFormLabel, 0, 0, 1, 2, Qt::AlignCenter);
     layout->addWidget(loginLabel, 1, 0);
+
     layout->addWidget(usernameEdit, 1, 1);
-    layout->addWidget(passwordLabel, 2, 0);
     layout->addWidget(passwordEdit, 2, 1);
+    layout->addWidget(passwordLabel, 2, 0);
+
     layout->addWidget(loginButton, 3, 0, 1, 2);
     layout->addWidget(cancelButton, 4, 0, 1, 2);
 }
@@ -77,5 +79,7 @@ QPushButton* LoginForm::createButton(const QString &text,StateButton state)
 //передача в логику
 void LoginForm::s_ButtonClicked()
 {
-    emit requestProcessState(sender());
+    QString username = usernameEdit->text();
+    QString password = passwordEdit->text();
+    emit requestProcessState(sender(),username,password);
 }

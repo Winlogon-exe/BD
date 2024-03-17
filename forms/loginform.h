@@ -26,7 +26,7 @@ public:
    QPushButton* createButton(const QString& text,StateButton state);
 
 signals:
-    void requestProcessState(QObject *sender);
+    void requestProcessState(QObject *sender,const QString &login,const QString &password);
     void setState(QObject* button,StateButton state);
 
 public slots:

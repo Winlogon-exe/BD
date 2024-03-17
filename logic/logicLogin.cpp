@@ -39,10 +39,12 @@ void LoginLogic::initMap()
     funcMap[Cancel] = [this](){ cancel(); };
 }
 
-void LoginLogic::s_processState(QObject* sender)
+void LoginLogic::s_processState(QObject* sender,const QString &login,const QString &password)
 {
     StateButton state = buttonStateMap[sender];
     auto it = funcMap.find(state);
+    QString userName = login;
+    QString userPasword = password;
 
     if (it != funcMap.end())
     {

@@ -35,7 +35,7 @@ public:
     void cancel();
 
 public slots:  
-    void s_processState(QObject *sender);
+    void s_processState(QObject *sender,const QString &login,const QString &password);
     void s_setButtonState(QObject *button, StateButton state);
 
 private:
