@@ -6,7 +6,11 @@
 #include <functional>
 #include <QMessageBox>
 #include <QSqlTableModel>
+#include<QApplication>
 #include <QSqlQueryModel>
+#include <QDir>
+#include<QStandardItemModel>
+#include <QtConcurrent/QtConcurrent>
 
 enum StateButton
 {
@@ -20,7 +24,13 @@ class LoginLogic : public QObject
 
 public:
     explicit LoginLogic(QObject* parent = nullptr);
+    void initDB();
     void initMap();
+    bool connectToDatabase();
+
+    void executeRequest(const QString &queryString);
+    QString buildQueryString();
+
     void login();
     void cancel();
 
@@ -31,6 +41,7 @@ public slots:
 private:
     std::map<StateButton, std::function<void()>> funcMap;
     std::map<QObject*, StateButton> buttonStateMap;
+    QString dbFilename;
     StateButton state;
     QSqlDatabase db;
 };

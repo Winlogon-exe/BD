@@ -8,19 +8,19 @@ LogicView::LogicView(QObject* parent) :
     offset(0),
     totalPages(0)
 {
-    dbFilename = QDir(QApplication::applicationDirPath()).filePath("123.db");
     qRegisterMetaType<QSharedPointer<QSqlQueryModel>>("QSharedPointer<QSqlQueryModel>");
     qRegisterMetaType<State>("State");
+    dbFilename = QDir(QApplication::applicationDirPath()).filePath("123.db"); 
 }
 
-void LogicView::initDB()
+void LogicView::s_initDB()
 {
     qDebug() << "\nИнициализация базы данных";
     qDebug() << "Текущий поток:" << QThread::currentThreadId();
 
     if (connectToDatabase())
     {
-        s_initMap();
+        initMap();
         initModels();
 
         FieldsForFilter();
@@ -47,7 +47,7 @@ void LogicView::initModels()
     }
 }
 
-void LogicView::s_initMap()
+void LogicView::initMap()
 {
     qDebug() << "\nИнициализация карты функций";
     qDebug() << "Текущий поток:" << QThread::currentThreadId();

@@ -40,7 +40,8 @@ public:
     QString buildQueryString(int page);
 
 public:
-    void initDB();
+
+    void initMap();
     void initModels();
     bool connectToDatabase();
 
@@ -57,7 +58,7 @@ public:
     void disconnectFromDatabase();
 
 public slots:
-    void s_initMap();
+    void s_initDB();
     void s_setButtonState(QObject *button, State state);
     void s_processState(QObject *sender, const QString &searchText,const QString filter);
 

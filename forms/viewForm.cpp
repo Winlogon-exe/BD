@@ -12,7 +12,7 @@ void ViewForm::iniThread()
     QThread* logicThread = new QThread(this);
     logic.moveToThread(logicThread);
 
-    connect(logicThread, &QThread::started, &logic, &LogicView::initDB);
+    connect(logicThread, &QThread::started, &logic, &LogicView::s_initDB);
     connect(logicThread, &QThread::finished, logicThread, &QThread::deleteLater);
     logicThread->start();
 }

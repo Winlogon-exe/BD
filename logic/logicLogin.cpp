@@ -3,7 +3,34 @@
 LoginLogic::LoginLogic(QObject* parent):
     QObject(parent)
 {
-    initMap();
+    qRegisterMetaType<StateButton>("StateButton");
+    dbFilename = QDir(QApplication::applicationDirPath()).filePath("test.db");
+    initDB();
+}
+
+void LoginLogic::initDB()
+{
+    qDebug() << "\nИнициализация базы данных";
+    if (connectToDatabase())
+    {
+        initMap();
+        qDebug() << "succes";
+    }
+    else
+    {
+        qDebug() << "error";
+    }
+}
+
+bool LoginLogic::connectToDatabase()
+{
+    db = QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName(dbFilename);
+    if (!db.open())
+    {
+        return false;
+    }
+    return true;
 }
 
 void LoginLogic::initMap()
