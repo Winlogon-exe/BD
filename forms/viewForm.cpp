@@ -3,8 +3,7 @@
 ViewForm::ViewForm(QWidget *parent)
     : QWidget(parent)
 {
-    iniThread();
-    createUI();
+ createUI();
 }
 
 void ViewForm::iniThread()
@@ -20,6 +19,7 @@ void ViewForm::iniThread()
 void ViewForm::createUI()
 {
     qDebug() << "Текущий поток View :" << QThread::currentThreadId();
+    iniThread();
     setupConnect();
     setupDisplay();
 }
@@ -123,7 +123,7 @@ void ViewForm::setupConnect()
 void ViewForm::s_ButtonClicked()
 {
     QString selectedFilter = filterComboBox->currentText();
-    QString searchText = searchLineEdit->text();
+     searchText = searchLineEdit->text();
    // paintSearch(searchText);
     emit requestProcessState(sender(),searchText,selectedFilter);
 }

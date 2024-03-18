@@ -70,11 +70,13 @@ void LoginLogic::executeRequest(const QString &queryString)
         {
             QString role = query.value(0).toString();
             qDebug() << "Аутентификация успешна. Роль пользователя:" << userName <<role;
+            emit authenticationSuccess();
         }
         else
         {
             qDebug() << "Аутентификация не удалась. Пользователь с такими данными не найден.";
             QMessageBox::information(nullptr, "Ошибка", "Пользователь не найден.");
+            //emit authenticationFailed();
         }
     }
 }

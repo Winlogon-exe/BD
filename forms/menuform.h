@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QWidget>
 
-class MenuForm
+class MenuForm:public QWidget
 {
 public:
    explicit  MenuForm();

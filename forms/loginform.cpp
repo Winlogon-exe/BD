@@ -9,14 +9,14 @@ LoginForm::LoginForm(QDialog  *parent)
 
 void LoginForm::createUI()
 {
-    setupDisplayMain();
+    setupDisplay();
     setupLabel();
     setupLineEdit();
     setupButtons();
     setupLayouts();
 }
 
-void LoginForm::setupDisplayMain()
+void LoginForm::setupDisplay()
 {
     setWindowTitle("Вход");
     this->resize(350, 300);
@@ -66,6 +66,7 @@ void LoginForm::setupConnect()
 {
     connect(this, &LoginForm::setState, &logic, &LoginLogic::s_setButtonState);
     connect(this, &LoginForm::requestProcessState, &logic, &LoginLogic::s_processState);
+    connect(&logic, &LoginLogic::authenticationSuccess, this, &LoginForm::s_openNextForm);
 }
 
 QPushButton* LoginForm::createButton(const QString &text,StateButton state)
@@ -82,4 +83,11 @@ void LoginForm::s_ButtonClicked()
     QString username = usernameEdit->text();
     QString password = passwordEdit->text();
     emit requestProcessState(sender(),username,password);
+}
+
+void LoginForm::s_openNextForm()
+{
+   menu = std::make_unique<MenuForm>();
+   this->close();
+   menu->show();
 }

@@ -8,6 +8,7 @@
 #include<QPushButton>
 #include<QVBoxLayout>
 #include<QLabel>
+#include"../forms/menuform.h"
 #include"../logic/logicLogin.h"
 
 class LoginForm :public QDialog
@@ -16,21 +17,22 @@ class LoginForm :public QDialog
 public:
    explicit LoginForm(QDialog *parent = nullptr);
 
-   void createUI();
-   void setupDisplayMain();
-   void setupButtons();
+   void createUI() ;
+   void setupDisplay() ;
+   void setupButtons() ;
+   void setupLayouts() ;
+   void setupConnect() ;
    void setupLineEdit();
    void setupLabel();
-   void setupLayouts();
-   void setupConnect();
    QPushButton* createButton(const QString& text,StateButton state);
 
 signals:
-    void requestProcessState(QObject *sender,const QString &login,const QString &password);
+    void requestProcessState(QObject *sender,const QString &login,const QString &password) ;
     void setState(QObject* button,StateButton state);
 
 public slots:
     void s_ButtonClicked();
+    void s_openNextForm();
 
 private:
     QLabel *nameFormLabel;
@@ -39,6 +41,7 @@ private:
 
 private:
     LoginLogic logic;
+    std::unique_ptr<MenuForm> menu;
 
 private:
     QLineEdit* usernameEdit;

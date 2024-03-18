@@ -23,21 +23,21 @@ class ViewForm : public QWidget
 
 public:
     explicit ViewForm(QWidget *parent = nullptr);
-    ~ViewForm();
+      ~ViewForm();
 
     void iniThread();
-    void createUI();
-    void setupDisplay();
-    void setupButtons();
     void setupTableView();
-    void setupLayouts();
-    void setupConnect();
+    void  createUI();
+    void  setupDisplay();
+    void  setupButtons();
+    void  setupLayouts();
+    void  setupConnect();
     void paintSearch(const QString& text);
     QPushButton* createButton(const QString& text,State state);
 
 signals:
-    void requestProcessState(QObject *sender, const QString &searchText,const QString filter);
-    void setState(QObject* button, State state);
+    void  requestProcessState(QObject *sender, const QString &searchText,const QString filter);
+    void  setState(QObject* button, State state);
 
 public slots:
     void s_onFieldsRetrieved(const QStringList &fields);

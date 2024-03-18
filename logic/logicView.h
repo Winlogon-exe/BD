@@ -85,7 +85,6 @@ private:
     QStringList fields;
     QString filterText;
     QString searchText;
-    QMutex queueMutex;
     QSqlDatabase db;
     State state;
 };

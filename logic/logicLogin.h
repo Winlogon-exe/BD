@@ -28,7 +28,6 @@ public:
     void initDB();
     void initMap();
     bool connectToDatabase();
-
     void executeRequest(const QString &queryString);
     QString buildQueryString();
 
@@ -38,6 +37,10 @@ public:
 public slots:  
     void s_processState(QObject *sender,const QString &login,const QString &password);
     void s_setButtonState(QObject *button, StateButton state);
+
+signals:
+    void authenticationSuccess();
+    void authenticationFailed();
 
 private:
     std::map<StateButton, std::function<void()>> funcMap;
