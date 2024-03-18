@@ -3,7 +3,7 @@
 ViewForm::ViewForm(QWidget *parent)
     : QWidget(parent)
 {
- createUI();
+   // createUI();
 }
 
 void ViewForm::iniThread()

@@ -27,11 +27,11 @@ public:
 
     void iniThread();
     void setupTableView();
-    void  createUI();
-    void  setupDisplay();
-    void  setupButtons();
-    void  setupLayouts();
-    void  setupConnect();
+    void virtual createUI();
+    void virtual setupDisplay();
+    void virtual setupButtons();
+    void virtual setupLayouts();
+    void virtual setupConnect();
     void paintSearch(const QString& text);
     QPushButton* createButton(const QString& text,State state);
 

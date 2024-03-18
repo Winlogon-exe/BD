@@ -1,7 +1,6 @@
 #include "loginform.h"
 
-LoginForm::LoginForm(QDialog  *parent)
-    : QDialog(parent)
+LoginForm::LoginForm()
 {
     setupConnect();
     createUI();

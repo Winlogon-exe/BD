@@ -10,18 +10,19 @@
 #include<QLabel>
 #include"../forms/menuform.h"
 #include"../logic/logicLogin.h"
+#include"../forms/viewForm.h"
 
-class LoginForm :public QDialog
+class LoginForm :public ViewForm
 {
    Q_OBJECT
 public:
-   explicit LoginForm(QDialog *parent = nullptr);
+   explicit LoginForm();
 
-   void createUI() ;
-   void setupDisplay() ;
-   void setupButtons() ;
-   void setupLayouts() ;
-   void setupConnect() ;
+   void createUI()     override;
+   void setupDisplay() override;
+   void setupButtons() override;
+   void setupLayouts() override;
+   void setupConnect() override;
    void setupLineEdit();
    void setupLabel();
    QPushButton* createButton(const QString& text,StateButton state);
