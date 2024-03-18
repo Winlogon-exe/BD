@@ -43,7 +43,6 @@ private:
 private:
     LoginLogic logic;
     std::unique_ptr<MenuForm> menu;
-
 private:
     QLineEdit* usernameEdit;
     QLineEdit* passwordEdit;
