@@ -26,8 +26,13 @@ public:
    QPushButton* createButton(const QString& text,StateButton state);
 
 signals:
+<<<<<<< Updated upstream:forms/loginform.h
     void requestProcessState(QObject *sender,const QString &login,const QString &password);
     void setState(QObject* button,StateButton state);
+=======
+    void requestProcessState(QObject *sender);
+    void setState(QObject* button, StateButton state);
+>>>>>>> Stashed changes:loginform.h
 
 public slots:
     void s_ButtonClicked();
