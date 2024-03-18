@@ -40,7 +40,6 @@ public:
     QString buildQueryString(int page);
 
 public:
-
     void initMap();
     void initModels();
     bool connectToDatabase();

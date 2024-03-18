@@ -4,7 +4,7 @@ LoginLogic::LoginLogic(QObject* parent):
     QObject(parent)
 {
     qRegisterMetaType<StateButton>("StateButton");
-    dbFilename = QDir(QApplication::applicationDirPath()).filePath("123.db");
+    dbFilename = QDir(QApplication::applicationDirPath()).filePath("client.db");
     initDB();
 }
 
@@ -14,7 +14,6 @@ void LoginLogic::initDB()
     if (connectToDatabase())
     {
         initMap();
-        qDebug() << "succes";
     }
     else
     {
@@ -43,8 +42,9 @@ void LoginLogic::s_processState(QObject* sender,const QString &login,const QStri
 {
     StateButton state = buttonStateMap[sender];
     auto it = funcMap.find(state);
-    QString userName = login;
-    QString userPasword = password;
+
+    userName = login;
+    userPasword = password;
 
     if (it != funcMap.end())
     {
@@ -57,23 +57,41 @@ void LoginLogic::s_setButtonState(QObject* button, StateButton state)
     buttonStateMap[button] = state;
 }
 
-
 void LoginLogic::executeRequest(const QString &queryString)
 {
+    QSqlQuery query;
+    query.prepare(queryString);
+    query.bindValue(":username", userName);
+    query.bindValue(":password", userPasword);
 
+    if (query.exec())
+    {
+        if (query.next())
+        {
+            QString role = query.value(0).toString();
+            qDebug() << "Аутентификация успешна. Роль пользователя:" << userName <<role;
+        }
+        else
+        {
+            qDebug() << "Аутентификация не удалась. Пользователь с такими данными не найден.";
+            QMessageBox::information(nullptr, "Ошибка", "Пользователь не найден.");
+        }
+    }
 }
 
 QString LoginLogic::buildQueryString()
 {
-
+    QString queryString = "SELECT role FROM users WHERE username = :username AND password = :password";
+    return queryString;
 }
 
 void LoginLogic::login()
 {
-    qDebug()<<"login";
+    executeRequest(buildQueryString());
 }
 
 void LoginLogic::cancel()
 {
     qDebug()<<"cancel";
+    QApplication::quit();
 }

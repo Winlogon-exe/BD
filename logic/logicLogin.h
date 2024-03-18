@@ -6,11 +6,12 @@
 #include <functional>
 #include <QMessageBox>
 #include <QSqlTableModel>
-#include<QApplication>
+#include <QApplication>
 #include <QSqlQueryModel>
 #include <QDir>
-#include<QStandardItemModel>
+#include <QStandardItemModel>
 #include <QtConcurrent/QtConcurrent>
+#include<QSqlQuery>
 
 enum StateButton
 {
@@ -44,6 +45,9 @@ private:
     QString dbFilename;
     StateButton state;
     QSqlDatabase db;
+
+    QString userName;
+    QString userPasword;
 };
 
 #endif // LOGICLOGIN_H
