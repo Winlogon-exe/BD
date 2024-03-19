@@ -7,6 +7,7 @@
 #include <QPushButton>
 #include <QLabel>
 #include "../forms/viewForm.h"
+#include "../logic/logicMenu.h"
 
 class MenuForm : public ViewForm
 {
@@ -19,10 +20,21 @@ public:
    void setupLineEdit() override;
    void setupLayouts()  override;
    void setupLabel()    override;
-   //QPushButton* createButton(const QString& text,StateButton state);
+   QPushButton* createButton(const QString& text,StateButtonMenu state);
 
 private:
+   LogicMenu logic;
 
+private:
+    QPushButton* buttonListUsers;
+    QPushButton* buttonListProjects;
+
+public slots:
+    void s_buttonClicked();
+
+signals:
+    void requestProcessState(QObject *sender);
+    void setState(QObject* sender, StateButtonMenu state);
 
 };
 

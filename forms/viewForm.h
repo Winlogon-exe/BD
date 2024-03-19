@@ -34,13 +34,13 @@ public:
     void virtual setupLineEdit();
     void virtual setupLabel();
 
-    QPushButton* createButton(const QString& text,State state);
+    QPushButton* createButton(const QString& text,StateButtonView state);
     void paintSearch(const QString& text);
     void setupTableView();
 
 signals:
     void requestProcessState(QObject *sender, const QString &searchText,const QString filter);
-    void setState(QObject* button, State state);
+    void setState(QObject* sender, StateButtonView state);
 
 public slots:
     void s_showTable(QSharedPointer<QSqlQueryModel>model);

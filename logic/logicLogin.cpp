@@ -3,12 +3,11 @@
 LoginLogic::LoginLogic(QObject* parent):
     QObject(parent)
 {
-    qRegisterMetaType<StateButton>("StateButton");
+    qRegisterMetaType<StateButtonLogin>("StateButtonLogin");
     dbFilename = QDir(QApplication::applicationDirPath()).filePath("client.db");
-    initDB();
 }
 
-void LoginLogic::initDB()
+void LoginLogic::s_initDB()
 {
     if (connectToDatabase())
     {
@@ -40,7 +39,7 @@ void LoginLogic::initMap()
 
 void LoginLogic::s_processState(QObject* sender,const QString &login,const QString &password)
 {
-    StateButton state = buttonStateMap[sender];
+    StateButtonLogin state = buttonStateMap[sender];
     auto it = funcMap.find(state);
 
     userName = login;
@@ -52,7 +51,7 @@ void LoginLogic::s_processState(QObject* sender,const QString &login,const QStri
     }
 }
 
-void LoginLogic::s_setButtonState(QObject* button, StateButton state)
+void LoginLogic::s_setButtonState(QObject* button, StateButtonLogin state)
 {
     buttonStateMap[button] = state;
 }

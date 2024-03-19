@@ -19,19 +19,19 @@ class LoginForm :public ViewForm
 public:
    explicit LoginForm();
 
-   void createUI()     override;
-   void iniThread()    override;
-   void setupDisplay() override;
-   void setupButtons() override;
-   void setupLayouts() override;
-   void setupConnect() override;
-   void setupLineEdit()override;
-   void setupLabel()   override;
-   QPushButton* createButton(const QString& text,StateButton state);
+   void createUI()      override;
+   void iniThread()     override;
+   void setupDisplay()  override;
+   void setupButtons()  override;
+   void setupLayouts()  override;
+   void setupConnect()  override;
+   void setupLineEdit() override;
+   void setupLabel()    override;
+   QPushButton* createButton(const QString& text,StateButtonLogin state);
 
 signals:
     void requestProcessState(QObject *sender,const QString &login,const QString &password) ;
-    void setState(QObject* button,StateButton state);
+    void setState(QObject* button,StateButtonLogin state);
 
 public slots:
     void s_ButtonClicked();
@@ -46,6 +46,7 @@ private:
 private:
     std::unique_ptr<MenuForm> menu;
     LoginLogic logic;
+
 private:
     QLineEdit* usernameEdit;
     QLineEdit* passwordEdit;

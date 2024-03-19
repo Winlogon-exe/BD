@@ -100,7 +100,7 @@ void ViewForm::setupLayouts()
     this->setLayout(mainLayout);
 }
 
-QPushButton* ViewForm::createButton(const QString& text,State state)
+QPushButton* ViewForm::createButton(const QString& text,StateButtonView state)
 {
     QPushButton* button = new QPushButton(text, this);
     emit setState(button,state);  

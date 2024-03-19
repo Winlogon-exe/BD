@@ -32,6 +32,9 @@ set(PROJECT_SOURCES
 
         forms/menuform.h
         forms/menuform.cpp
+
+        logic/logicMenu.cpp
+        logic/logicMenu.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

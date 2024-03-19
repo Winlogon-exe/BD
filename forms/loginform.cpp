@@ -8,6 +8,7 @@ LoginForm::LoginForm()
 
 void LoginForm::createUI()
 {
+    iniThread();
     setupDisplay();
     setupLabel();
     setupLineEdit();
@@ -17,7 +18,12 @@ void LoginForm::createUI()
 
 void LoginForm::iniThread()
 {
+    QThread* logicThread = new QThread(this);
+    logic.moveToThread(logicThread);
 
+    connect(logicThread, &QThread::started, &logic, &LoginLogic::s_initDB);
+    connect(logicThread, &QThread::finished, logicThread, &QThread::deleteLater);
+    logicThread->start();
 }
 
 void LoginForm::setupDisplay()
@@ -77,7 +83,7 @@ void LoginForm::setupConnect()
     connect(&logic, &LoginLogic::authenticationFailed, this, &LoginForm::s_unknownUser);
 }
 
-QPushButton* LoginForm::createButton(const QString &text,StateButton state)
+QPushButton* LoginForm::createButton(const QString &text,StateButtonLogin state)
 {
     QPushButton* button = new QPushButton(text, this);
     emit setState(button,state);

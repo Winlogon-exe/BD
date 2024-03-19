@@ -9,7 +9,7 @@ LogicView::LogicView(QObject* parent) :
     totalPages(0)
 {
     qRegisterMetaType<QSharedPointer<QSqlQueryModel>>("QSharedPointer<QSqlQueryModel>");
-    qRegisterMetaType<State>("State");
+    qRegisterMetaType<StateButtonView>("StateButtonView");
     dbFilename = QDir(QApplication::applicationDirPath()).filePath("123.db"); 
 }
 
@@ -229,7 +229,7 @@ QString LogicView::createSearchCondition(const QStringList &fields)
 }
 
 
-void LogicView::s_setButtonState(QObject* button, State state)
+void LogicView::s_setButtonState(QObject* button, StateButtonView state)
 {
     qDebug() << "\nУстановка состояния кнопки";
     qDebug() << "Текущий поток:" << QThread::currentThreadId();
@@ -242,7 +242,7 @@ void LogicView::s_processState(QObject* sender,const QString &search,const QStri
     qDebug() << "\nОбработка состояния";
     qDebug() << "Текущий поток:" << QThread::currentThreadId();
 
-    State state = buttonStateMap[sender];
+    StateButtonView state = buttonStateMap[sender];
     auto it = funcmap.find(state);
 
 

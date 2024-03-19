@@ -13,7 +13,7 @@
 #include <QtConcurrent/QtConcurrent>
 #include<QSqlQuery>
 
-enum StateButton
+enum StateButtonLogin
 {
     Login,
     Cancel
@@ -24,8 +24,7 @@ class LoginLogic : public QObject
     Q_OBJECT
 
 public:
-    explicit LoginLogic(QObject* parent = nullptr);
-    void initDB();
+    explicit LoginLogic(QObject* parent = nullptr);   
     void initMap();
     bool connectToDatabase();
     void executeRequest(const QString &queryString);
@@ -35,18 +34,19 @@ public:
     void cancel();
 
 public slots:  
+    void s_initDB();
     void s_processState(QObject *sender,const QString &login,const QString &password);
-    void s_setButtonState(QObject *button, StateButton state);
+    void s_setButtonState(QObject *button, StateButtonLogin state);
 
 signals:
     void authenticationSuccess();
     void authenticationFailed();
 
 private:
-    std::map<StateButton, std::function<void()>> funcMap;
-    std::map<QObject*, StateButton> buttonStateMap;
+    std::map<StateButtonLogin, std::function<void()>> funcMap;
+    std::map<QObject*, StateButtonLogin> buttonStateMap;
     QString dbFilename;
-    StateButton state;
+    StateButtonLogin state;
     QSqlDatabase db;
 
     QString userName;

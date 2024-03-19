@@ -12,7 +12,7 @@
 #include<QStandardItemModel>
 #include <QtConcurrent/QtConcurrent>
 
-enum State
+enum StateButtonView
 {
     Next,
     Back,
@@ -58,7 +58,7 @@ public:
 
 public slots:
     void s_initDB();
-    void s_setButtonState(QObject *button, State state);
+    void s_setButtonState(QObject *button, StateButtonView state);
     void s_processState(QObject *sender, const QString &searchText,const QString filter);
 
 signals:
@@ -79,14 +79,14 @@ private:
     QString dbFilename; // "C:/Qt/projects/BD/123.db"
 
     QVector<QSharedPointer<QSqlQueryModel>> models;
-    std::map<State, std::function<void()>> funcmap;
-    std::map<QObject*, State> buttonStateMap;
+    std::map<StateButtonView, std::function<void()>> funcmap;
+    std::map<QObject*, StateButtonView> buttonStateMap;
 
     QStringList fields;
     QString filterText;
     QString searchText;
     QSqlDatabase db;
-    State state;
+    StateButtonView state;
 };
 
 #endif // LOGICVIEW_H
