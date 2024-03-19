@@ -31,5 +31,6 @@
 *.out
 *.app
 CMakeLists.txt.user
+desktop.ini
 view.cpp.autosave
 main.cpp.autosave
