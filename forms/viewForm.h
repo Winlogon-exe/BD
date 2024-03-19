@@ -23,31 +23,33 @@ class ViewForm : public QWidget
 
 public:
     explicit ViewForm(QWidget *parent = nullptr);
-      ~ViewForm();
+    virtual ~ViewForm();
 
-    void iniThread();
-    void setupTableView();
+    void virtual iniThread();
     void virtual createUI();
     void virtual setupDisplay();
     void virtual setupButtons();
     void virtual setupLayouts();
     void virtual setupConnect();
-    void paintSearch(const QString& text);
+    void virtual setupLineEdit();
+    void virtual setupLabel();
+
     QPushButton* createButton(const QString& text,State state);
+    void paintSearch(const QString& text);
+    void setupTableView();
 
 signals:
-    void  requestProcessState(QObject *sender, const QString &searchText,const QString filter);
-    void  setState(QObject* button, State state);
+    void requestProcessState(QObject *sender, const QString &searchText,const QString filter);
+    void setState(QObject* button, State state);
 
 public slots:
+    void s_showTable(QSharedPointer<QSqlQueryModel>model);
     void s_onFieldsRetrieved(const QStringList &fields);
     void s_showLabel(int currentPage, int totalPages);
-    void s_showTable(QSharedPointer<QSqlQueryModel>model);
-    void s_ButtonClicked();
+    void s_buttonClicked();
 
 private:
     QScopedPointer<HighlightDelegate> delegate;
-
     QThread*            logicThread;
     QVBoxLayout         *mainLayout;
     QTableView          *tableView;

@@ -19,27 +19,37 @@ void ViewForm::iniThread()
 void ViewForm::createUI()
 {
     qDebug() << "Текущий поток View :" << QThread::currentThreadId();
-    iniThread();
     setupConnect();
+    iniThread();   
     setupDisplay();
+    setupButtons();
+    setupLineEdit();
+    setupLabel();
+    setupTableView();
+    setupLayouts();
 }
 
 // настройка отображения основного окна.
 void ViewForm::setupDisplay()
 {
     setWindowTitle("DB");
-    this->resize(800, 500);
-    setupButtons();
+    this->resize(800, 500);  
+}
+
+void ViewForm::setupLineEdit()
+{
+    searchLineEdit = new QLineEdit(this);
+    searchLineEdit->setPlaceholderText("Поиск...");
+}
+
+void ViewForm::setupLabel()
+{
+    page = new QLabel("0");
 }
 
 //создание и настройка кнопок и других элементов управления.
 void ViewForm::setupButtons()
-{
-    page = new QLabel("0");
-
-    searchLineEdit = new QLineEdit(this);
-    searchLineEdit->setPlaceholderText("Поиск...");
-
+{    
     // Создание фильтра(поиск по фильтру)
     filterComboBox = new QComboBox(this);
 
@@ -57,8 +67,6 @@ void ViewForm::setupButtons()
     {
         button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     }
-
-    setupTableView();
 }
 
 //создание и настройка таблицы
@@ -66,7 +74,6 @@ void ViewForm::setupTableView()
 {
     tableView = new QTableView(this);
     tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    setupLayouts();
 }
 
 //настройка компоновки виджетов в окне.
@@ -97,7 +104,7 @@ QPushButton* ViewForm::createButton(const QString& text,State state)
 {
     QPushButton* button = new QPushButton(text, this);
     emit setState(button,state);  
-    connect(button, &QPushButton::clicked, this, &ViewForm::s_ButtonClicked);
+    connect(button, &QPushButton::clicked, this, &ViewForm::s_buttonClicked);
     return button;
 }
 
@@ -120,10 +127,10 @@ void ViewForm::setupConnect()
 }
 
 //передача в логику
-void ViewForm::s_ButtonClicked()
+void ViewForm::s_buttonClicked()
 {
     QString selectedFilter = filterComboBox->currentText();
-     searchText = searchLineEdit->text();
+    searchText = searchLineEdit->text();
    // paintSearch(searchText);
     emit requestProcessState(sender(),searchText,selectedFilter);
 }

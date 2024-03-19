@@ -15,6 +15,11 @@ void LoginForm::createUI()
     setupLayouts();
 }
 
+void LoginForm::iniThread()
+{
+
+}
+
 void LoginForm::setupDisplay()
 {
     setWindowTitle("Вход");
@@ -67,7 +72,9 @@ void LoginForm::setupConnect()
 {
     connect(this, &LoginForm::setState, &logic, &LoginLogic::s_setButtonState);
     connect(this, &LoginForm::requestProcessState, &logic, &LoginLogic::s_processState);
+
     connect(&logic, &LoginLogic::authenticationSuccess, this, &LoginForm::s_openNextForm);
+    connect(&logic, &LoginLogic::authenticationFailed, this, &LoginForm::s_unknownUser);
 }
 
 QPushButton* LoginForm::createButton(const QString &text,StateButton state)
@@ -91,4 +98,9 @@ void LoginForm::s_openNextForm()
    menu = std::make_unique<MenuForm>();
    this->close();
    menu->show();
+}
+
+void LoginForm::s_unknownUser()
+{
+ QMessageBox::information(nullptr, "Ошибка", "Пользователь не найден.");
 }

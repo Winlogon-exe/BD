@@ -75,8 +75,7 @@ void LoginLogic::executeRequest(const QString &queryString)
         else
         {
             qDebug() << "Аутентификация не удалась. Пользователь с такими данными не найден.";
-            QMessageBox::information(nullptr, "Ошибка", "Пользователь не найден.");
-            //emit authenticationFailed();
+            emit authenticationFailed();
         }
     }
 }
