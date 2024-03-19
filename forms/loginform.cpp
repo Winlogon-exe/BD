@@ -18,6 +18,8 @@ void LoginForm::createUI()
 void LoginForm::setupDisplay()
 {
     setWindowTitle("Вход");
+    QIcon icon(iconPath);
+    this->setWindowIcon(icon);
     this->resize(350, 300);
     this->setMinimumSize(200,200);
 }

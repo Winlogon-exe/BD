@@ -50,6 +50,10 @@ private:
 private:
     QPushButton* loginButton;
     QPushButton* cancelButton;
+
+private:
+    QString appDir = QCoreApplication::applicationDirPath();
+    QString iconPath = QDir::toNativeSeparators(appDir + "/icons/icon.png");
 };
 
 #endif // LOGINFORM_H
