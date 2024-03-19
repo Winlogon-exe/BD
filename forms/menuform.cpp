@@ -24,7 +24,6 @@ void MenuForm::setupDisplay()
 {
     this->setWindowTitle("Меню");
     this->resize(1024,768);
-
 }
 
 void MenuForm::setupButtons()

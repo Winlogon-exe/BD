@@ -11,6 +11,7 @@
 
 class MenuForm : public ViewForm
 {
+    Q_OBJECT
 public:
    explicit MenuForm();
    void createUI()      override;
@@ -22,6 +23,10 @@ public:
    void setupLabel()    override;
    QPushButton* createButton(const QString& text,StateButtonMenu state);
 
+signals:
+    void requestProcessState(QObject *sender);
+    void setState(QObject* sender, StateButtonMenu state);
+
 private:
    LogicMenu logic;
 
@@ -31,10 +36,6 @@ private:
 
 public slots:
     void s_buttonClicked();
-
-signals:
-    void requestProcessState(QObject *sender);
-    void setState(QObject* sender, StateButtonMenu state);
 
 };
 
