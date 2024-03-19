@@ -29,9 +29,12 @@ signals:
     void requestProcessState(QObject *sender);
     void setState(QObject* sender, StateButtonMenu state);
 
+public slots:
+    void update();
+
 private:
    LogicMenu logic;
-    ViewForm *view;
+   ViewForm *view;
 
 private:
     QPushButton* buttonListUsers;

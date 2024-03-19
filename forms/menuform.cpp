@@ -29,6 +29,7 @@ void MenuForm::setupDisplay()
 void MenuForm::setupButtons()
 {
     buttonListUsers = createButton("Список сотрудников",Users);
+    buttonListProjects = createButton("Список проектов",Projects);
 }
 
 QPushButton* MenuForm::createButton(const QString& text,StateButtonMenu state)
@@ -45,11 +46,15 @@ void MenuForm::setupLayouts()
     tabWidget = new QTabWidget;
     layout->addWidget(tabWidget);
     layout->addWidget(buttonListUsers);
+    layout->addWidget(buttonListProjects);
 
     view = new ViewForm();
     tabWidget->addTab(view, "Список сотрудников");
     tabWidget->setVisible(false);
+    tabWidget->setTabsClosable(true);
+
 }
+
 
 void MenuForm::s_buttonClicked()
 {
@@ -66,8 +71,13 @@ void MenuForm::s_buttonClicked()
     tabWidget->setVisible(true); // Показываем tabWidget, если он был скрыт
 }
 
+void MenuForm::update()
+{
+
+
+}
+
 void MenuForm::setupLabel()
 {
 
 }
-
