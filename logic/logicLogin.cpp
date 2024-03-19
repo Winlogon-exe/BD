@@ -77,6 +77,10 @@ void LoginLogic::executeRequest(const QString &queryString)
             emit authenticationFailed();
         }
     }
+    else
+    {
+         qDebug() << "Не удалось сделать запрос к БД";
+    }
 }
 
 QString LoginLogic::buildQueryString()

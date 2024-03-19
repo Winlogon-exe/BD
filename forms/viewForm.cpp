@@ -3,7 +3,9 @@
 ViewForm::ViewForm(QWidget *parent)
     : QWidget(parent)
 {
-   // createUI();
+    setupConnect();
+    iniThread();
+    createUI();
 }
 
 void ViewForm::iniThread()
@@ -18,9 +20,7 @@ void ViewForm::iniThread()
 
 void ViewForm::createUI()
 {
-    qDebug() << "Текущий поток View :" << QThread::currentThreadId();
-    setupConnect();
-    iniThread();   
+    qDebug() << "Текущий поток View :" << QThread::currentThreadId();        
     setupDisplay();
     setupButtons();
     setupLineEdit();
@@ -50,10 +50,8 @@ void ViewForm::setupLabel()
 //создание и настройка кнопок и других элементов управления.
 void ViewForm::setupButtons()
 {    
-    // Создание фильтра(поиск по фильтру)
     filterComboBox = new QComboBox(this);
 
-    // Создание и настройка кнопок
     nextButton = createButton(">",Next);
     backButton = createButton("<",Back);
     searchButton = createButton("Поиск",Search);
@@ -69,7 +67,6 @@ void ViewForm::setupButtons()
     }
 }
 
-//создание и настройка таблицы
 void ViewForm::setupTableView()
 {
     tableView = new QTableView(this);
@@ -108,14 +105,12 @@ QPushButton* ViewForm::createButton(const QString& text,StateButtonView state)
     return button;
 }
 
-//выделение текста
 void ViewForm::paintSearch(const QString& text)
 {
     delegate.reset(new HighlightDelegate(text));
     tableView->setItemDelegate(delegate.data());
 }
 
-//подключение сигналов и слотов.
 void ViewForm::setupConnect()
 {
     connect(this, &ViewForm::requestProcessState, &logic, &LogicView::s_processState);
@@ -135,7 +130,6 @@ void ViewForm::s_buttonClicked()
     emit requestProcessState(sender(),searchText,selectedFilter);
 }
 
-//вывод бд
 void ViewForm::s_showTable(QSharedPointer<QSqlQueryModel>model)
 {
     tableView->setModel(model.data());
@@ -151,7 +145,6 @@ void ViewForm::s_onFieldsRetrieved(const QStringList &fields)
     }
 }
 
-//вывод страниц
 void ViewForm::s_showLabel(int currentPage, int totalPages)
 {
     pageInfo = QString("%1/%2").arg(currentPage).arg(totalPages);

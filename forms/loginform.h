@@ -10,23 +10,23 @@
 #include<QLabel>
 #include"../forms/menuform.h"
 #include"../logic/logicLogin.h"
-#include"../forms/viewForm.h"
 
-class LoginForm :public ViewForm
+class LoginForm :public QWidget
 {
    Q_OBJECT
 
 public:
    explicit LoginForm();
+   ~LoginForm();
 
-   void createUI()      override;
-   void iniThread()     override;
-   void setupDisplay()  override;
-   void setupButtons()  override;
-   void setupLayouts()  override;
-   void setupConnect()  override;
-   void setupLineEdit() override;
-   void setupLabel()    override;
+   void createUI();
+   void iniThread();
+   void setupDisplay();
+   void setupButtons();
+   void setupLayouts();
+   void setupConnect();
+   void setupLineEdit();
+   void setupLabel();
    QPushButton* createButton(const QString& text,StateButtonLogin state);
 
 signals:
@@ -46,6 +46,7 @@ private:
 private:
     std::unique_ptr<MenuForm> menu;
     LoginLogic logic;
+    QThread* logicThread;
 
 private:
     QLineEdit* usernameEdit;
@@ -56,8 +57,8 @@ private:
     QPushButton* cancelButton;
 
 private:
-    QString appDir = QCoreApplication::applicationDirPath();
-    QString iconPath = QDir::toNativeSeparators(appDir + "/icons/icon.png");
+   QString appDir = QCoreApplication::applicationDirPath();
+   QString iconPath = QDir::toNativeSeparators(appDir + "/icons/icon.png");
 };
 
 #endif // LOGINFORM_H

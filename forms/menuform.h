@@ -6,21 +6,23 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QLabel>
-#include "../forms/viewForm.h"
+#include <QStackedWidget>
+#include <QVBoxLayout>
+#include <QTabWidget>
+#include "viewForm.h"
 #include "../logic/logicMenu.h"
 
-class MenuForm : public ViewForm
+class MenuForm : public QWidget
 {
     Q_OBJECT
 public:
    explicit MenuForm();
-   void createUI()      override;
-   void setupConnect()  override;
-   void setupDisplay()  override;
-   void setupButtons()  override;
-   void setupLineEdit() override;
-   void setupLayouts()  override;
-   void setupLabel()    override;
+   void createUI();
+   void setupConnect();
+   void setupDisplay();
+   void setupButtons();
+   void setupLayouts();
+   void setupLabel();
    QPushButton* createButton(const QString& text,StateButtonMenu state);
 
 signals:
@@ -29,6 +31,7 @@ signals:
 
 private:
    LogicMenu logic;
+    ViewForm *view;
 
 private:
     QPushButton* buttonListUsers;
@@ -36,6 +39,9 @@ private:
 
 public slots:
     void s_buttonClicked();
+
+private:
+    QTabWidget *tabWidget;
 
 };
 

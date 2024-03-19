@@ -18,7 +18,7 @@ void LoginForm::createUI()
 
 void LoginForm::iniThread()
 {
-    QThread* logicThread = new QThread(this);
+    logicThread = new QThread(this);
     logic.moveToThread(logicThread);
 
     connect(logicThread, &QThread::started, &logic, &LoginLogic::s_initDB);
@@ -110,3 +110,11 @@ void LoginForm::s_unknownUser()
 {
     QMessageBox::information(nullptr, "Ошибка", "Пользователь не найден.");
 }
+
+ LoginForm::~LoginForm()
+{
+    logicThread->quit();
+    logicThread->wait();
+}
+
+

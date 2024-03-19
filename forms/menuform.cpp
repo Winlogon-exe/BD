@@ -11,7 +11,6 @@ void MenuForm::createUI()
     setupDisplay();
     setupButtons();
     setupLabel();
-    setupLineEdit();
     setupLayouts();
 }
 
@@ -30,12 +29,6 @@ void MenuForm::setupDisplay()
 void MenuForm::setupButtons()
 {
     buttonListUsers = createButton("Список сотрудников",Users);
-    buttonListProjects = createButton("Список проектов",Projects);
-}
-
-void MenuForm::setupLabel()
-{
-
 }
 
 QPushButton* MenuForm::createButton(const QString& text,StateButtonMenu state)
@@ -49,17 +42,32 @@ QPushButton* MenuForm::createButton(const QString& text,StateButtonMenu state)
 void MenuForm::setupLayouts()
 {
     QVBoxLayout* layout = new QVBoxLayout(this);
-    QTabWidget* tabWidget = new QTabWidget;
+    tabWidget = new QTabWidget;
     layout->addWidget(tabWidget);
+    layout->addWidget(buttonListUsers);
 
+    view = new ViewForm();
+    tabWidget->addTab(view, "Список сотрудников");
+    tabWidget->setVisible(false);
 }
 
 void MenuForm::s_buttonClicked()
 {
     emit requestProcessState(sender());
+    QObject* senderButton = sender();
+    if(senderButton == buttonListUsers)
+    {
+        tabWidget->setCurrentIndex(0); // Переключение на вкладку пользователей
+    }
+    else if(senderButton == buttonListProjects)
+    {
+        tabWidget->setCurrentIndex(1); // Переключение на вкладку проектов
+    }
+    tabWidget->setVisible(true); // Показываем tabWidget, если он был скрыт
 }
 
-void MenuForm::setupLineEdit()
+void MenuForm::setupLabel()
 {
 
 }
+
