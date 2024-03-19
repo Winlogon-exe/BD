@@ -27,7 +27,7 @@ public:
 
 public slots:
     void s_setButtonState(QObject* sender, StateButtonMenu state);
-
+    void s_processState(QObject* sender);
 };
 
 

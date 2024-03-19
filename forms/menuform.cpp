@@ -9,15 +9,16 @@ MenuForm::MenuForm()
 void MenuForm::createUI()
 {
     setupDisplay();
-    setupLayouts();
     setupButtons();
     setupLabel();
     setupLineEdit();
+    setupLayouts();
 }
 
 void MenuForm::setupConnect()
 {
     connect(this, &MenuForm::setState, &logic, &LogicMenu::s_setButtonState);
+    connect(this, &MenuForm::requestProcessState, &logic, &LogicMenu::s_processState);
 }
 
 void MenuForm::setupDisplay()
@@ -47,30 +48,15 @@ QPushButton* MenuForm::createButton(const QString& text,StateButtonMenu state)
 
 void MenuForm::setupLayouts()
 {
-//    QVBoxLayout* layout = new QVBoxLayout(this);
-
-//    // Создание виджета с вкладками
-//    QTabWidget* tabWidget = new QTabWidget;
-//    layout->addWidget(tabWidget);
-
-//    // Добавление вкладок
-//    tabWidget->addTab(new QLabel("Содержимое вкладки Сотрудники"), "Сотрудники");
-//    tabWidget->addTab(new QLabel("Содержимое вкладки Проекты"), "Проекты");
-//    // Здесь можно добавить больше вкладок
-
-//    // Создание кнопок для переключения вкладок
-//    layout->addWidget(buttonListUsers);
-//    layout->addWidget(buttonListProjects);
-
-//    // Соединение сигналов нажатия кнопок с слотами для переключения вкладок
-//    connect(buttonListUsers, &QPushButton::clicked, [tabWidget]() { tabWidget->setCurrentIndex(0); });
-//    connect(buttonListProjects, &QPushButton::clicked, [tabWidget]() { tabWidget->setCurrentIndex(1); });
+    QVBoxLayout* layout = new QVBoxLayout(this);
+    QTabWidget* tabWidget = new QTabWidget;
+    layout->addWidget(tabWidget);
 
 }
 
 void MenuForm::s_buttonClicked()
 {
-
+    emit requestProcessState(sender());
 }
 
 void MenuForm::setupLineEdit()
