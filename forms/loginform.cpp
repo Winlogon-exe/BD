@@ -95,12 +95,12 @@ void LoginForm::s_ButtonClicked()
 
 void LoginForm::s_openNextForm()
 {
-   menu = std::make_unique<MenuForm>();
-   this->close();
-   menu->show();
+    menu = std::make_unique<MenuForm>();
+    this->close();
+    menu->show();
 }
 
 void LoginForm::s_unknownUser()
 {
- QMessageBox::information(nullptr, "Ошибка", "Пользователь не найден.");
+    QMessageBox::information(nullptr, "Ошибка", "Пользователь не найден.");
 }

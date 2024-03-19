@@ -10,14 +10,14 @@ LoginLogic::LoginLogic(QObject* parent):
 
 void LoginLogic::initDB()
 {
-    qDebug() << "\nИнициализация базы данных";
     if (connectToDatabase())
     {
+        qDebug() << "\nИнициализация базы данных";
         initMap();
     }
     else
     {
-        qDebug() << "error";
+        QMessageBox::critical(nullptr, "Ошибка", "Ошибка открытия БД");
     }
 }
 
