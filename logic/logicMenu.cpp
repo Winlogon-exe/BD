@@ -14,6 +14,6 @@ void LogicMenu::s_setButtonState(QObject* sender, StateButtonMenu state)
 
 void LogicMenu::s_processState(QObject* sender)
 {
-   // buttonStateMap[button] = state;
+
 }
 
