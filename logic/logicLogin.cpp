@@ -79,7 +79,7 @@ void LoginLogic::executeRequest(const QString &queryString)
     }
     else
     {
-         qDebug() << "Не удалось сделать запрос к БД";
+        qDebug() << "Не удалось сделать запрос к БД";
     }
 }
 
@@ -115,5 +115,5 @@ void LoginLogic::disconnectFromDatabase()
 
 LoginLogic::~LoginLogic()
 {
-
+    disconnectFromDatabase();
 }

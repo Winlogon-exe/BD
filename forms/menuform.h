@@ -30,9 +30,8 @@ signals:
     void setState(QObject* sender, StateButtonMenu state);
 
 private:
-   LogicMenu logic;
-   ViewForm *view;
-
+    std::unique_ptr<ViewForm> view;
+    LogicMenu logic;
 
 private:
     QPushButton* buttonListUsers;

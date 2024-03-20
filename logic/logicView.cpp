@@ -60,17 +60,24 @@ void LogicView::initMap()
 
 bool LogicView::connectToDatabase()
 {
-    qDebug() << "\nПодключение к базе данных";
-    qDebug() << "Текущий поток:" << QThread::currentThreadId();
+     connectionName = QString("Connection_%1").arg(reinterpret_cast<quintptr>(this), 0, 16);
+    if (QSqlDatabase::contains(connectionName))
+    {
+        db = QSqlDatabase::database(connectionName);
+    }
+    else
+    {
+        db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
+        db.setDatabaseName(dbFilename);
+    }
 
-    db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName(dbFilename);
     if (!db.open())
     {
         return false;
     }
     return true;
 }
+
 
 void LogicView::calculateTotalPages()
 {
@@ -280,5 +287,6 @@ void LogicView::disconnectFromDatabase()
 
 LogicView::~LogicView()
 {
-
+    disconnectFromDatabase();
 }
+

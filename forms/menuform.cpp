@@ -16,13 +16,11 @@ void MenuForm::createUI()
 
 void MenuForm::setupConnect()
 {
-    connect(this, &MenuForm::setState, &logic, &LogicMenu::s_setButtonState);
     connect(this, &MenuForm::requestProcessState, &logic, &LogicMenu::s_processState);
-
+    connect(this, &MenuForm::setState, &logic, &LogicMenu::s_setButtonState);
     connect(tabWidget, &QTabWidget::tabCloseRequested, this, &MenuForm::closeTab);
-
-    connect(&logic, &LogicMenu::openFormUsers, this, &MenuForm::updateUsers);
     connect(&logic, &LogicMenu::openFormProjects, this, &MenuForm::updateProjects);
+    connect(&logic, &LogicMenu::openFormUsers, this, &MenuForm::updateUsers);
 }
 
 void MenuForm::setupDisplay()
@@ -51,8 +49,12 @@ void MenuForm::setupLayouts()
     QVBoxLayout* layout = new QVBoxLayout(this);
     tabWidget = new QTabWidget;
     layout->addWidget(tabWidget);
+    layout->addStretch();
+    tabWidget->setVisible(false);
+
     layout->addWidget(buttonListUsers);
     layout->addWidget(buttonListProjects);
+    layout->addStretch();
 }
 
 void MenuForm::s_buttonClicked()
@@ -66,7 +68,7 @@ void MenuForm::updateUsers()
     // Проверяем, существует ли вкладка с таким же содержимым
     for (int i = 0; i < tabWidget->count(); ++i)
     {
-        if (tabWidget->widget(i) == view)
+        if (tabWidget->widget(i) == view.get())
         {
             tabWidget->setCurrentIndex(i);
             return;
@@ -74,13 +76,14 @@ void MenuForm::updateUsers()
     }
 
     // Если такой вкладки еще нет, создаем новую
-    view = new ViewForm();
+    view = std::make_unique<ViewForm>();
+
+    //signal?
     view->createUI();
 
-    tabWidget->addTab(view, "Список сотрудников");
+    tabWidget->addTab(view.get(), "Список сотрудников");
     tabWidget->setTabsClosable(true);
     tabWidget->setVisible(true);
-
 }
 
 void MenuForm::closeTab(int index)
@@ -89,6 +92,7 @@ void MenuForm::closeTab(int index)
     if (tab)
     {
         tabWidget->removeTab(index);
+        tabWidget->setVisible(false);
     }
 }
 

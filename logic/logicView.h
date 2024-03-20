@@ -74,6 +74,7 @@ private:
     int offset;
 
 private:
+    QString connectionName;
     static const int MODELS_COUNT = 3;
     const QString TABLE_NAME = "users";
     QString dbFilename; // "C:/Qt/projects/BD/123.db"
