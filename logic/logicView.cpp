@@ -8,9 +8,10 @@ LogicView::LogicView(QObject* parent) :
     offset(0),
     totalPages(0)
 {
+    //имя базы и таблицы сделать параметров конструктора и вызывать нужную в зависимости от имени и таблицы?
     qRegisterMetaType<QSharedPointer<QSqlQueryModel>>("QSharedPointer<QSqlQueryModel>");
     qRegisterMetaType<StateButtonView>("StateButtonView");
-    dbFilename = QDir(QApplication::applicationDirPath()).filePath("123.db"); 
+    dbFilename = QDir(QApplication::applicationDirPath()).filePath("client.db");
 }
 
 void LogicView::s_initDB()
@@ -125,23 +126,25 @@ void LogicView::executeRequest(const QString &queryString, QSharedPointer<QSqlQu
 
 void LogicView::nextPage()
 {
-    qDebug() << "\nПереход на следующую страницу";
-    qDebug() << "Текущий поток:" << QThread::currentThreadId();
+    if(currentPage < totalPages)
+    {
+        qDebug() << "\nПереход на следующую страницу";
+        qDebug() << "Текущий поток:" << QThread::currentThreadId();
 
-    currentPage++;
-    models[Left]->setQuery(models[Center]->query());
-    models[Center]->setQuery(models[Right]->query());
-    (void)QtConcurrent::run([this](){ preloadPages(currentPage + preload, models[Right]); });
-    emit updateLabel(currentPage, totalPages);
+        currentPage++;
+        models[Left]->setQuery(models[Center]->query());
+        models[Center]->setQuery(models[Right]->query());
+        (void)QtConcurrent::run([this](){ preloadPages(currentPage + preload, models[Right]); });
+        emit updateLabel(currentPage, totalPages);
+    }
 }
 
 void LogicView::backPage()
-{
-    qDebug() << "\nПереход на предыдущую страницу";
-    qDebug() << "Текущий поток:" << QThread::currentThreadId();
-
+{    
     if (currentPage > 0)
     {
+        qDebug() << "\nПереход на предыдущую страницу";
+        qDebug() << "Текущий поток:" << QThread::currentThreadId();
         currentPage--;
         models[Right]->setQuery(models[Center]->query());
         models[Center]->setQuery(models[Left]->query());
@@ -244,7 +247,6 @@ void LogicView::s_processState(QObject* sender,const QString &search,const QStri
 
     StateButtonView state = buttonStateMap[sender];
     auto it = funcmap.find(state);
-
 
     searchText = search;
     filterText = filter;

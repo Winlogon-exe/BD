@@ -25,10 +25,12 @@ class LoginLogic : public QObject
 
 public:
     explicit LoginLogic(QObject* parent = nullptr);   
+    ~LoginLogic();
     void initMap();
     bool connectToDatabase();
     void executeRequest(const QString &queryString);
     QString buildQueryString();
+    void disconnectFromDatabase();
 
     void login();
     void cancel();
@@ -45,8 +47,8 @@ signals:
 private:
     std::map<StateButtonLogin, std::function<void()>> funcMap;
     std::map<QObject*, StateButtonLogin> buttonStateMap;
-    QString dbFilename;
     StateButtonLogin state;
+    QString dbFilename;
     QSqlDatabase db;
 
     QString userName;

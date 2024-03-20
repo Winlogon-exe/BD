@@ -2,8 +2,8 @@
 
 MenuForm::MenuForm()
 {
-    setupConnect();
     createUI();
+    setupConnect();
 }
 
 void MenuForm::createUI()
@@ -18,12 +18,18 @@ void MenuForm::setupConnect()
 {
     connect(this, &MenuForm::setState, &logic, &LogicMenu::s_setButtonState);
     connect(this, &MenuForm::requestProcessState, &logic, &LogicMenu::s_processState);
+
+    connect(tabWidget, &QTabWidget::tabCloseRequested, this, &MenuForm::closeTab);
+
+    connect(&logic, &LogicMenu::openFormUsers, this, &MenuForm::updateUsers);
+    connect(&logic, &LogicMenu::openFormProjects, this, &MenuForm::updateProjects);
 }
 
 void MenuForm::setupDisplay()
 {
     this->setWindowTitle("Меню");
-    this->resize(1024,768);
+    //1024,768
+    this->resize(500,450);
 }
 
 void MenuForm::setupButtons()
@@ -47,31 +53,46 @@ void MenuForm::setupLayouts()
     layout->addWidget(tabWidget);
     layout->addWidget(buttonListUsers);
     layout->addWidget(buttonListProjects);
-
-    view = new ViewForm();
-    tabWidget->addTab(view, "Список сотрудников");
-    tabWidget->setVisible(false);
-    tabWidget->setTabsClosable(true);
-
 }
-
 
 void MenuForm::s_buttonClicked()
 {
     emit requestProcessState(sender());
-    QObject* senderButton = sender();
-    if(senderButton == buttonListUsers)
-    {
-        tabWidget->setCurrentIndex(0); // Переключение на вкладку пользователей
-    }
-    else if(senderButton == buttonListProjects)
-    {
-        tabWidget->setCurrentIndex(1); // Переключение на вкладку проектов
-    }
-    tabWidget->setVisible(true); // Показываем tabWidget, если он был скрыт
 }
 
-void MenuForm::update()
+//здесь можно принимать роль от логики и вызывать доп функ. от формы
+void MenuForm::updateUsers()
+{
+    // Проверяем, существует ли вкладка с таким же содержимым
+    for (int i = 0; i < tabWidget->count(); ++i)
+    {
+        if (tabWidget->widget(i) == view)
+        {
+            tabWidget->setCurrentIndex(i);
+            return;
+        }
+    }
+
+    // Если такой вкладки еще нет, создаем новую
+    view = new ViewForm();
+    view->createUI();
+
+    tabWidget->addTab(view, "Список сотрудников");
+    tabWidget->setTabsClosable(true);
+    tabWidget->setVisible(true);
+
+}
+
+void MenuForm::closeTab(int index)
+{
+    QWidget* tab = tabWidget->widget(index);
+    if (tab)
+    {
+        tabWidget->removeTab(index);
+    }
+}
+
+void MenuForm::updateProjects()
 {
 
 

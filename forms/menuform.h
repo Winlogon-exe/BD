@@ -29,12 +29,10 @@ signals:
     void requestProcessState(QObject *sender);
     void setState(QObject* sender, StateButtonMenu state);
 
-public slots:
-    void update();
-
 private:
    LogicMenu logic;
    ViewForm *view;
+
 
 private:
     QPushButton* buttonListUsers;
@@ -42,6 +40,9 @@ private:
 
 public slots:
     void s_buttonClicked();
+    void updateUsers();
+    void updateProjects();
+    void closeTab(int index);
 
 private:
     QTabWidget *tabWidget;

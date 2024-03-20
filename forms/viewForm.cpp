@@ -3,9 +3,6 @@
 ViewForm::ViewForm(QWidget *parent)
     : QWidget(parent)
 {
-    setupConnect();
-    iniThread();
-    createUI();
 }
 
 void ViewForm::iniThread()
@@ -20,7 +17,9 @@ void ViewForm::iniThread()
 
 void ViewForm::createUI()
 {
-    qDebug() << "Текущий поток View :" << QThread::currentThreadId();        
+    qDebug() << "Текущий поток View :" << QThread::currentThreadId();
+    setupConnect();
+    iniThread();
     setupDisplay();
     setupButtons();
     setupLineEdit();

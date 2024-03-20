@@ -75,7 +75,7 @@ private:
 
 private:
     static const int MODELS_COUNT = 3;
-    const QString TABLE_NAME = "popular_tracks";
+    const QString TABLE_NAME = "users";
     QString dbFilename; // "C:/Qt/projects/BD/123.db"
 
     QVector<QSharedPointer<QSqlQueryModel>> models;

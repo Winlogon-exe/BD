@@ -99,3 +99,21 @@ void LoginLogic::cancel()
     qDebug()<<"cancel";
     QApplication::quit();
 }
+
+void LoginLogic::disconnectFromDatabase()
+{
+    if (db.isOpen())
+    {
+        db.close();
+        qInfo() << "База данных закрыта.";
+    }
+    else
+    {
+        qWarning() << "База данных уже закрыта.";
+    }
+}
+
+LoginLogic::~LoginLogic()
+{
+
+}

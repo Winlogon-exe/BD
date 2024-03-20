@@ -111,7 +111,7 @@ void LoginForm::s_unknownUser()
     QMessageBox::information(nullptr, "Ошибка", "Пользователь не найден.");
 }
 
- LoginForm::~LoginForm()
+LoginForm::~LoginForm()
 {
     logicThread->quit();
     logicThread->wait();

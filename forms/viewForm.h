@@ -25,14 +25,14 @@ public:
     explicit ViewForm(QWidget *parent = nullptr);
     virtual ~ViewForm();
 
-    void virtual iniThread();
-    void virtual createUI();
-    void virtual setupDisplay();
-    void virtual setupButtons();
-    void virtual setupLayouts();
-    void virtual setupConnect();
-    void virtual setupLineEdit();
-    void virtual setupLabel();
+    void iniThread();
+    void createUI();
+    void setupDisplay();
+    void setupButtons();
+    void setupLayouts();
+    void setupConnect();
+    void setupLineEdit();
+    void setupLabel();
 
     QPushButton* createButton(const QString& text,StateButtonView state);
     void paintSearch(const QString& text);
