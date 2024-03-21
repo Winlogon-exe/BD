@@ -9,7 +9,6 @@ LogicView::LogicView(QObject* parent) :
     totalPages(0)
 {
     initTypes();
-    dbFilename = QDir(QApplication::applicationDirPath()).filePath("client.db");
 }
 
 void LogicView::initTypes()
@@ -53,9 +52,7 @@ void LogicView::initMap()
 
 bool LogicView::connectToDatabase()
 {
-    db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName(dbFilename);
-
+    db = DatabaseManager::instance("client.db").database();
     if (!db.open())
     {
         return false;
@@ -226,7 +223,6 @@ void LogicView::disconnectFromDatabase()
     if (db.isOpen())
     {
         db.close();
-       // QSqlDatabase::removeDatabase("LogicViewDB");
         qInfo() << "База данных закрыта. LogicView";
     }
     else
@@ -237,6 +233,5 @@ void LogicView::disconnectFromDatabase()
 
 LogicView::~LogicView()
 {
-    disconnectFromDatabase();
     qWarning() << "Дестуктор LogicView";
 }

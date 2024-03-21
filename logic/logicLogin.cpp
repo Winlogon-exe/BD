@@ -22,8 +22,7 @@ void LoginLogic::s_initDB()
 
 bool LoginLogic::connectToDatabase()
 {
-    db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName(dbFilename);
+    db = DatabaseManager::instance("client.db").database();
     if (!db.open())
     {
         return false;
@@ -70,7 +69,6 @@ void LoginLogic::executeRequest(const QString &queryString)
             QString role = query.value(0).toString();
             qDebug() << "Аутентификация успешна. Роль пользователя:" << userName <<role;
             emit authenticationSuccess();
-            //disconnectFromDatabase();
         }
         else
         {
@@ -115,6 +113,5 @@ void LoginLogic::disconnectFromDatabase()
 
 LoginLogic::~LoginLogic()
 {
-    disconnectFromDatabase();
     qDebug()<<"деструктор LoginLogic";
 }

@@ -11,6 +11,7 @@
 #include <QDir>
 #include<QStandardItemModel>
 #include <QtConcurrent/QtConcurrent>
+#include "../databasemanager.h"
 
 enum StateButtonView
 {

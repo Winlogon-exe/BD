@@ -12,6 +12,7 @@
 #include <QStandardItemModel>
 #include <QtConcurrent/QtConcurrent>
 #include<QSqlQuery>
+#include "../databasemanager.h"
 
 enum StateButtonLogin
 {
@@ -48,7 +49,6 @@ private:
     std::map<StateButtonLogin, std::function<void()>> funcMap;
     std::map<QObject*, StateButtonLogin> buttonStateMap;
     StateButtonLogin state;
-    QString connectionName;
     QString dbFilename;
     QSqlDatabase db;
 

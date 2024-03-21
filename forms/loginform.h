@@ -11,6 +11,7 @@
 #include"../forms/menuform.h"
 #include"../logic/logicLogin.h"
 
+
 class LoginForm :public QWidget
 {
    Q_OBJECT
