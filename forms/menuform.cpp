@@ -19,10 +19,11 @@ void MenuForm::setupConnect()
 {
     connect(this, &MenuForm::requestProcessState, &logic, &LogicMenu::s_processState);
     connect(this, &MenuForm::setState, &logic, &LogicMenu::s_setButtonState);
-    connect(&logic, &LogicMenu::openFormProjects, this, &MenuForm::updateProjects);
 
     connect(tabWidget, &QTabWidget::tabCloseRequested, this, &MenuForm::closeTab);
+
     connect(&logic, &LogicMenu::openFormUsers, this, &MenuForm::updateUsers);
+    connect(&logic, &LogicMenu::openFormProjects, this, &MenuForm::updateProjects);
 }
 
 void MenuForm::setupDisplay()
