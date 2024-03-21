@@ -5,19 +5,10 @@ ViewForm::ViewForm(QWidget *parent)
 {
 }
 
-void ViewForm::iniThread()
-{
-    logicThread = new QThread();
-    logic.moveToThread(logicThread);
-
-    connect(logicThread, &QThread::started, &logic, &LogicView::s_initDB);
-    connect(logicThread, &QThread::finished, logicThread, &QThread::deleteLater);
-    logicThread->start();
-}
-
 void ViewForm::createUI()
 {
     qDebug() << "Текущий поток View :" << QThread::currentThreadId();
+
     iniThread();
     setupConnect();
     setupDisplay();
@@ -26,6 +17,16 @@ void ViewForm::createUI()
     setupLabel();
     setupTableView();
     setupLayouts();
+}
+
+void ViewForm::iniThread()
+{
+    logicThread = new QThread();
+    logic.moveToThread(logicThread);
+
+    connect(logicThread, &QThread::started, &logic, &LogicView::s_initDB);
+    connect(logicThread, &QThread::finished, logicThread, &QThread::deleteLater);
+    logicThread->start();
 }
 
 // настройка отображения основного окна.

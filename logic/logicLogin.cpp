@@ -70,6 +70,7 @@ void LoginLogic::executeRequest(const QString &queryString)
             QString role = query.value(0).toString();
             qDebug() << "Аутентификация успешна. Роль пользователя:" << userName <<role;
             emit authenticationSuccess();
+            //disconnectFromDatabase();
         }
         else
         {
@@ -103,7 +104,7 @@ void LoginLogic::disconnectFromDatabase()
 {
     if (db.isOpen())
     {
-
+        db.close();
         qInfo() << "База данных закрыта. LoginLogic";
     }
     else
@@ -114,6 +115,6 @@ void LoginLogic::disconnectFromDatabase()
 
 LoginLogic::~LoginLogic()
 {
-    qDebug()<<"деструктор LoginLogic";
     disconnectFromDatabase();
+    qDebug()<<"деструктор LoginLogic";
 }

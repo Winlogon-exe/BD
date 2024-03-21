@@ -53,9 +53,7 @@ void LogicView::initMap()
 
 bool LogicView::connectToDatabase()
 {
-    connectionName = QString("LogicViewConnection_%2").arg(reinterpret_cast<quintptr>(this), 0, 16);
-
-    db = QSqlDatabase::addDatabase("QSQLITE",connectionName);
+    db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName(dbFilename);
 
     if (!db.open())
@@ -228,6 +226,8 @@ void LogicView::disconnectFromDatabase()
     if (db.isOpen())
     {
         db.close();
+       // QSqlDatabase::removeDatabase("LogicViewDB");
+        qInfo() << "База данных закрыта. LogicView";
     }
     else
     {
@@ -237,6 +237,6 @@ void LogicView::disconnectFromDatabase()
 
 LogicView::~LogicView()
 {
-    qWarning() << "Дестуктор LogicView";
     disconnectFromDatabase();
+    qWarning() << "Дестуктор LogicView";
 }

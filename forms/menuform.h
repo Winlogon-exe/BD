@@ -19,6 +19,7 @@ public:
    explicit MenuForm();
    ~MenuForm();
    void createUI();
+   void iniThread();
    void setupConnect();
    void setupDisplay();
    void setupButtons();
