@@ -78,7 +78,6 @@ void MenuForm::updateUsers()
     }
 
     // Если такой вкладки еще нет, создаем новую
-    //view = std::make_unique<ViewForm>()
     view = new ViewForm;
 
     //signal?

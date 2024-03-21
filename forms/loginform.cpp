@@ -106,6 +106,8 @@ void LoginForm::s_openNextForm()
     menu->show();
 
     this->close();
+
+    //удаление подключения к бд после входа
     delete logic;
 }
 

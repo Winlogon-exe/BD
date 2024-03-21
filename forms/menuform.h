@@ -31,7 +31,6 @@ signals:
     void setState(QObject* sender, StateButtonMenu state);
 
 private:
-   // std::unique_ptr<ViewForm> view;
     ViewForm* view;
     LogicMenu logic;
 

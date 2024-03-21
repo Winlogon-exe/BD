@@ -50,8 +50,7 @@ public slots:
 
 private:
     QScopedPointer<HighlightDelegate> delegate;
-    //QThread*            logicThread;
-    QPointer<QThread> logicThread;
+    QPointer<QThread>   logicThread;
     QVBoxLayout         *mainLayout;
     QTableView          *tableView;
     QString             searchText;

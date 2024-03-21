@@ -96,7 +96,6 @@ void LoginLogic::login()
 
 void LoginLogic::cancel()
 {
-    qDebug()<<"cancel";
     QApplication::quit();
 }
 

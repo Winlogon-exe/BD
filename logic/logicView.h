@@ -42,6 +42,7 @@ public:
 public:
     void initMap();
     void initModels();
+    void initTypes();
     bool connectToDatabase();
 
     void FieldsForFilter();   
