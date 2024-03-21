@@ -30,7 +30,7 @@ public:
    QPushButton* createButton(const QString& text,StateButtonLogin state);
 
 signals:
-    void requestProcessState(QObject *sender,const QString &login,const QString &password) ;
+    void requestProcessState(QObject *sender,const QString &login,const QString &password);
     void setState(QObject* button,StateButtonLogin state);
 
 public slots:
@@ -44,10 +44,9 @@ private:
     QLabel *loginLabel;
 
 private:
-    std::unique_ptr<MenuForm> menu;
-    //LoginLogic logic;
-    LoginLogic* logic;
     QThread* logicThread;
+    LoginLogic logic;
+    MenuForm menu;
 
 private:
     QLineEdit* usernameEdit;

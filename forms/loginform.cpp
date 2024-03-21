@@ -2,7 +2,6 @@
 
 LoginForm::LoginForm()
 {
-    logic = new LoginLogic;
     setupConnect();
     createUI();
 }
@@ -20,9 +19,9 @@ void LoginForm::createUI()
 void LoginForm::iniThread()
 {
     logicThread = new QThread(this);
-    logic->moveToThread(logicThread);
+    logic.moveToThread(logicThread);
 
-    connect(logicThread, &QThread::started, logic, &LoginLogic::s_initDB);
+    connect(logicThread, &QThread::started, &logic, &LoginLogic::s_initDB);
     connect(logicThread, &QThread::finished, logicThread, &QThread::deleteLater);
     logicThread->start();
 }
@@ -77,11 +76,11 @@ void LoginForm::setupButtons()
 
 void LoginForm::setupConnect()
 {
-    connect(this, &LoginForm::setState, logic, &LoginLogic::s_setButtonState);
-    connect(this, &LoginForm::requestProcessState, logic, &LoginLogic::s_processState);
+    connect(this, &LoginForm::setState, &logic, &LoginLogic::s_setButtonState);
+    connect(this, &LoginForm::requestProcessState, &logic, &LoginLogic::s_processState);
 
-    connect(logic, &LoginLogic::authenticationSuccess, this, &LoginForm::s_openNextForm);
-    connect(logic, &LoginLogic::authenticationFailed, this, &LoginForm::s_unknownUser);
+    connect(&logic, &LoginLogic::authenticationSuccess, this, &LoginForm::s_openNextForm);
+    connect(&logic, &LoginLogic::authenticationFailed, this, &LoginForm::s_unknownUser);
 }
 
 QPushButton* LoginForm::createButton(const QString &text,StateButtonLogin state)
@@ -102,13 +101,8 @@ void LoginForm::s_ButtonClicked()
 
 void LoginForm::s_openNextForm()
 {
-    menu = std::make_unique<MenuForm>();
-    menu->show();
-
+    menu.show();
     this->close();
-
-    //удаление подключения к бд после входа
-    delete logic;
 }
 
 void LoginForm::s_unknownUser()
