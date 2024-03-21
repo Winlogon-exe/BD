@@ -45,7 +45,8 @@ private:
 
 private:
     std::unique_ptr<MenuForm> menu;
-    LoginLogic logic;
+    //LoginLogic logic;
+    LoginLogic* logic;
     QThread* logicThread;
 
 private:

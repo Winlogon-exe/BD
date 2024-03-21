@@ -17,6 +17,7 @@ class MenuForm : public QWidget
     Q_OBJECT
 public:
    explicit MenuForm();
+   ~MenuForm();
    void createUI();
    void setupConnect();
    void setupDisplay();
@@ -30,7 +31,8 @@ signals:
     void setState(QObject* sender, StateButtonMenu state);
 
 private:
-    std::unique_ptr<ViewForm> view;
+   // std::unique_ptr<ViewForm> view;
+    ViewForm* view;
     LogicMenu logic;
 
 private:

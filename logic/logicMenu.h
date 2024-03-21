@@ -24,6 +24,7 @@ class LogicMenu:public QObject
     Q_OBJECT
 public:
    explicit LogicMenu();
+    ~LogicMenu();
    void initMap();
    void users();
    void projects();

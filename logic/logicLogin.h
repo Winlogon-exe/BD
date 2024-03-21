@@ -48,6 +48,7 @@ private:
     std::map<StateButtonLogin, std::function<void()>> funcMap;
     std::map<QObject*, StateButtonLogin> buttonStateMap;
     StateButtonLogin state;
+    QString connectionName;
     QString dbFilename;
     QSqlDatabase db;
 

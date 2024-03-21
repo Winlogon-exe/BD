@@ -104,8 +104,8 @@ void LoginLogic::disconnectFromDatabase()
 {
     if (db.isOpen())
     {
-        db.close();
-        qInfo() << "База данных закрыта.";
+
+        qInfo() << "База данных закрыта. LoginLogic";
     }
     else
     {
@@ -115,5 +115,6 @@ void LoginLogic::disconnectFromDatabase()
 
 LoginLogic::~LoginLogic()
 {
+    qDebug()<<"деструктор LoginLogic";
     disconnectFromDatabase();
 }

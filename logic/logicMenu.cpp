@@ -37,3 +37,7 @@ void LogicMenu::s_setButtonState(QObject* button, StateButtonMenu state)
     buttonStateMap[button] = state;
 }
 
+LogicMenu::~LogicMenu()
+{
+    qDebug()<<"деструктор LogicMenu";
+}

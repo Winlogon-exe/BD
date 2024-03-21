@@ -60,7 +60,8 @@ void LogicView::initMap()
 
 bool LogicView::connectToDatabase()
 {
-     connectionName = QString("Connection_%1").arg(reinterpret_cast<quintptr>(this), 0, 16);
+    connectionName = "LogicViewConnection";
+    db = QSqlDatabase::database("QSQLITE");
     if (QSqlDatabase::contains(connectionName))
     {
         db = QSqlDatabase::database(connectionName);
@@ -77,7 +78,6 @@ bool LogicView::connectToDatabase()
     }
     return true;
 }
-
 
 void LogicView::calculateTotalPages()
 {
@@ -277,7 +277,8 @@ void LogicView::disconnectFromDatabase()
     if (db.isOpen())
     {
         db.close();
-        qInfo() << "База данных закрыта.";
+        QSqlDatabase::removeDatabase(connectionName); // Освобождаем подключение
+        qInfo() << "База данных закрыта. LogicView";
     }
     else
     {
@@ -287,6 +288,7 @@ void LogicView::disconnectFromDatabase()
 
 LogicView::~LogicView()
 {
+    qDebug()<<"деструктор LogicView";
     disconnectFromDatabase();
 }
 

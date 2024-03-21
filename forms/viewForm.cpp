@@ -7,7 +7,7 @@ ViewForm::ViewForm(QWidget *parent)
 
 void ViewForm::iniThread()
 {
-    QThread* logicThread = new QThread(this);
+    logicThread = new QThread();
     logic.moveToThread(logicThread);
 
     connect(logicThread, &QThread::started, &logic, &LogicView::s_initDB);
@@ -18,8 +18,8 @@ void ViewForm::iniThread()
 void ViewForm::createUI()
 {
     qDebug() << "Текущий поток View :" << QThread::currentThreadId();
-    setupConnect();
     iniThread();
+    setupConnect();
     setupDisplay();
     setupButtons();
     setupLineEdit();
@@ -152,6 +152,7 @@ void ViewForm::s_showLabel(int currentPage, int totalPages)
 
 ViewForm::~ViewForm()
 {
+    qDebug()<<"деструктор ViewForm";
     logicThread->quit();
     logicThread->wait();
 }

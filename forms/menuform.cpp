@@ -6,6 +6,7 @@ MenuForm::MenuForm()
     setupConnect();
 }
 
+
 void MenuForm::createUI()
 {
     setupDisplay();
@@ -18,8 +19,9 @@ void MenuForm::setupConnect()
 {
     connect(this, &MenuForm::requestProcessState, &logic, &LogicMenu::s_processState);
     connect(this, &MenuForm::setState, &logic, &LogicMenu::s_setButtonState);
-    connect(tabWidget, &QTabWidget::tabCloseRequested, this, &MenuForm::closeTab);
     connect(&logic, &LogicMenu::openFormProjects, this, &MenuForm::updateProjects);
+
+    connect(tabWidget, &QTabWidget::tabCloseRequested, this, &MenuForm::closeTab);
     connect(&logic, &LogicMenu::openFormUsers, this, &MenuForm::updateUsers);
 }
 
@@ -68,7 +70,7 @@ void MenuForm::updateUsers()
     // Проверяем, существует ли вкладка с таким же содержимым
     for (int i = 0; i < tabWidget->count(); ++i)
     {
-        if (tabWidget->widget(i) == view.get())
+        if (tabWidget->widget(i) == view)
         {
             tabWidget->setCurrentIndex(i);
             return;
@@ -76,12 +78,13 @@ void MenuForm::updateUsers()
     }
 
     // Если такой вкладки еще нет, создаем новую
-    view = std::make_unique<ViewForm>();
+    //view = std::make_unique<ViewForm>()
+    view = new ViewForm;
 
     //signal?
     view->createUI();
 
-    tabWidget->addTab(view.get(), "Список сотрудников");
+    tabWidget->addTab(view, "Список сотрудников");
     tabWidget->setTabsClosable(true);
     tabWidget->setVisible(true);
 }
@@ -93,6 +96,7 @@ void MenuForm::closeTab(int index)
     {
         tabWidget->removeTab(index);
         tabWidget->setVisible(false);
+        delete tab;
     }
 }
 
@@ -105,4 +109,9 @@ void MenuForm::updateProjects()
 void MenuForm::setupLabel()
 {
 
+}
+
+MenuForm::~MenuForm()
+{
+    qDebug()<<"деструктор MenuForm";
 }
