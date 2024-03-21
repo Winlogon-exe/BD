@@ -1,19 +1,24 @@
 #include "DatabaseManager.h"
+#include <QApplication>
+#include <QDir>
 
 DatabaseManager& DatabaseManager::instance(const QString& dbName)
 {
-    static DatabaseManager instance(databasePath(dbName));
-    return instance;
+    static QMap<QString, DatabaseManager*> instances;
+
+    if (!instances.contains(dbName))
+    {
+        qDebug() << "instances";
+        instances[dbName] = new DatabaseManager(databasePath(dbName));
+    }
+    return *instances[dbName];
 }
 
 DatabaseManager::DatabaseManager(const QString& dbName)
 {
-    db = QSqlDatabase::addDatabase("QSQLITE", "qt_sql_default_connection");
+    qDebug() << "DatabaseManager";
+    db = QSqlDatabase::addDatabase("QSQLITE", dbName);
     db.setDatabaseName(dbName);
-    if (!db.open())
-    {
-        qDebug()<<"error DatabaseManager";
-    }
 }
 
 DatabaseManager::~DatabaseManager()

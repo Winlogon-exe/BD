@@ -52,7 +52,8 @@ void LogicView::initMap()
 
 bool LogicView::connectToDatabase()
 {
-    db = DatabaseManager::instance("client.db").database();
+    auto& dbManager = DatabaseManager::instance("client.db");
+    db = dbManager.database();
     if (!db.open())
     {
         return false;

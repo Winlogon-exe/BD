@@ -4,7 +4,7 @@ LoginLogic::LoginLogic(QObject* parent):
     QObject(parent)
 {
     qRegisterMetaType<StateButtonLogin>("StateButtonLogin");
-    dbFilename = QDir(QApplication::applicationDirPath()).filePath("client.db");
+   // dbFilename = QDir(QApplication::applicationDirPath()).filePath("client.db");
 }
 
 void LoginLogic::s_initDB()
@@ -22,9 +22,11 @@ void LoginLogic::s_initDB()
 
 bool LoginLogic::connectToDatabase()
 {
-    db = DatabaseManager::instance("client.db").database();
-    if (!db.open())
+    auto& dbManager = DatabaseManager::instance("client.db");
+    db = dbManager.database();
+    if (!db.isOpen())
     {
+        qDebug() << "Не удалось открыть базу данных:";
         return false;
     }
     return true;

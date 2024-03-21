@@ -6,7 +6,6 @@ MenuForm::MenuForm()
     setupConnect();
 }
 
-
 void MenuForm::createUI()
 {
     setupDisplay();
@@ -95,10 +94,12 @@ void MenuForm::closeTab(int index)
     if (tab)
     {
         tabWidget->removeTab(index);
-        tabWidget->setVisible(false);
         delete tab;
     }
+    // Проверяем, остались ли еще вкладки
+    tabWidget->setVisible(tabWidget->count() > 0);
 }
+
 
 void MenuForm::updateProjects()
 {
