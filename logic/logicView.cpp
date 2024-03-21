@@ -43,6 +43,8 @@ void LogicView::initModels()
     }
 }
 
+
+
 void LogicView::initMap()
 {
     funcmap[Next]    = [this](){ nextPage(); };
