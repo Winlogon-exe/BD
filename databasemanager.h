@@ -5,11 +5,13 @@
 #include <QString>
 #include <QDir>
 #include <QApplication>
+#include <QMap>
 
-class DatabaseManager {
+class DatabaseManager
+{
 public:
-    static DatabaseManager& instance(const QString& dbName = "client.db");
-    QSqlDatabase& database();
+    static DatabaseManager& instance(const QString& dbName);
+    QSqlDatabase database();
 
 private:
     DatabaseManager(const QString& dbName);
@@ -18,7 +20,9 @@ private:
     DatabaseManager& operator=(const DatabaseManager&) = delete;
 
     QSqlDatabase db;
+    static QMap<QString, DatabaseManager*> instances; // Статический контейнер для хранения экземпляров
     static QString databasePath(const QString& dbName);
 };
 
 #endif // DATABASEMANAGER_H
+

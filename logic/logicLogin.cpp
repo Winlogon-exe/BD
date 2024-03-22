@@ -4,7 +4,7 @@ LoginLogic::LoginLogic(QObject* parent):
     QObject(parent)
 {
     qRegisterMetaType<StateButtonLogin>("StateButtonLogin");
-    dbFilename = QDir(QApplication::applicationDirPath()).filePath("client.db");
+   // dbFilename = QDir(QApplication::applicationDirPath()).filePath("client.db");
 }
 
 void LoginLogic::s_initDB()
@@ -23,8 +23,9 @@ void LoginLogic::s_initDB()
 bool LoginLogic::connectToDatabase()
 {
     db = DatabaseManager::instance("client.db").database();
-    if (!db.open())
+    if (!db.isOpen())
     {
+        qDebug() << "закрыто";
         return false;
     }
     return true;
@@ -57,7 +58,17 @@ void LoginLogic::s_setButtonState(QObject* button, StateButtonLogin state)
 
 void LoginLogic::executeRequest(const QString &queryString)
 {
-    QSqlQuery query;
+    if (!db.isOpen())
+    {
+        qDebug() << "База данных не открыта.переподключение...";
+        if (!connectToDatabase())
+        {
+            qDebug() << "Не удалось подключиться к базе данных.";
+            return;
+        }
+    }
+
+    QSqlQuery query(db); // Убедитесь, что используете правильное соединение
     query.prepare(queryString);
     query.bindValue(":username", userName);
     query.bindValue(":password", userPasword);

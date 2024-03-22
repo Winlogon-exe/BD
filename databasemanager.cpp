@@ -1,18 +1,23 @@
 #include "DatabaseManager.h"
 
+QMap<QString, DatabaseManager*> DatabaseManager::instances; // Инициализация статического контейнера
+
 DatabaseManager& DatabaseManager::instance(const QString& dbName)
 {
-    static DatabaseManager instance(databasePath(dbName));
-    return instance;
+    if (!instances.contains(dbName))
+    {
+        instances[dbName] = new DatabaseManager(databasePath(dbName));
+    }
+    return *instances[dbName];
 }
 
 DatabaseManager::DatabaseManager(const QString& dbName)
 {
-    db = QSqlDatabase::addDatabase("QSQLITE", "qt_sql_default_connection");
+    db = QSqlDatabase::addDatabase("QSQLITE", dbName); // Используем уникальное имя для каждого соединения
     db.setDatabaseName(dbName);
     if (!db.open())
     {
-        qDebug()<<"error DatabaseManager";
+        qDebug() << "Error opening database" << dbName;
     }
 }
 
@@ -24,7 +29,7 @@ DatabaseManager::~DatabaseManager()
     }
 }
 
-QSqlDatabase& DatabaseManager::database()
+QSqlDatabase DatabaseManager::database()
 {
     return db;
 }

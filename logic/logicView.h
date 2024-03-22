@@ -76,20 +76,19 @@ private:
     int offset;
 
 private:
-    QString connectionName;
     static const int MODELS_COUNT = 3;
     const QString TABLE_NAME = "users";
-    QString dbFilename; // "C:/Qt/projects/BD/123.db"
+    QString dbFilename;
 
-    QVector<QSharedPointer<QSqlQueryModel>> models;
     std::map<StateButtonView, std::function<void()>> funcmap;
     std::map<QObject*, StateButtonView> buttonStateMap;
+    QVector<QSharedPointer<QSqlQueryModel>> models;
 
+    StateButtonView state;
     QStringList fields;
     QString filterText;
     QString searchText;
     QSqlDatabase db;
-    StateButtonView state;
 };
 
 #endif // LOGICVIEW_H
