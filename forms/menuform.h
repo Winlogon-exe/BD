@@ -32,7 +32,7 @@ signals:
     void setState(QObject* sender, StateButtonMenu state);
 
 private:
-    ViewForm* view;
+    ViewForm view;
     LogicMenu logic;
 
 private:

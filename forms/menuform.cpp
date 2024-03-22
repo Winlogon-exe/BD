@@ -4,6 +4,7 @@ MenuForm::MenuForm()
 {
     createUI();
     setupConnect();
+    view.createUI();
 }
 
 
@@ -70,7 +71,7 @@ void MenuForm::updateUsers()
     // Проверяем, существует ли вкладка с таким же содержимым
     for (int i = 0; i < tabWidget->count(); ++i)
     {
-        if (tabWidget->widget(i) == view)
+        if (tabWidget->widget(i) == &view)
         {
             tabWidget->setCurrentIndex(i);
             return;
@@ -78,12 +79,9 @@ void MenuForm::updateUsers()
     }
 
     // Если такой вкладки еще нет, создаем новую
-    view = new ViewForm;
+    view.show();
 
-    //signal?
-    view->createUI();
-
-    tabWidget->addTab(view, "Список сотрудников");
+    tabWidget->addTab(&view, "Список сотрудников");
     tabWidget->setTabsClosable(true);
     tabWidget->setVisible(true);
 }
@@ -95,7 +93,7 @@ void MenuForm::closeTab(int index)
     {
         tabWidget->removeTab(index);
         tabWidget->setVisible(false);
-        delete tab;
+        //delete tab;
     }
 }
 
