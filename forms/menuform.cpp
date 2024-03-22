@@ -4,7 +4,7 @@ MenuForm::MenuForm()
 {
     createUI();
     setupConnect();
-    view.createUI();
+
 }
 
 
@@ -31,6 +31,7 @@ void MenuForm::setupDisplay()
     this->setWindowTitle("Меню");
     //1024,768
     this->resize(500,450);
+    view.createUI();
 }
 
 void MenuForm::setupButtons()
