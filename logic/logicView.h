@@ -77,8 +77,8 @@ private:
 
 private:
     static const int MODELS_COUNT = 3;
-    const QString TABLE_NAME = "users";
-    QString dbFilename = "client.db";
+    const QString TABLE_NAME = "popular_tracks";
+    QString dbFilename = "123.db";
 
     std::map<StateButtonView, std::function<void()>> funcmap;
     std::map<QObject*, StateButtonView> buttonStateMap;

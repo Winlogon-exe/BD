@@ -67,7 +67,6 @@ void MenuForm::s_buttonClicked()
 //здесь можно принимать роль от логики и вызывать доп функ. от формы
 void MenuForm::s_updateUsers()
 {
-    qDebug()<<"updateUsers";
     // Проверяем, существует ли вкладка с таким же содержимым
     for (int i = 0; i < tabWidget->count(); ++i)
     {
