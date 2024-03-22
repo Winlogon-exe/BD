@@ -11,7 +11,7 @@
 #include <QDir>
 #include<QStandardItemModel>
 #include <QtConcurrent/QtConcurrent>
-#include "../databasemanager.h"
+
 
 enum StateButtonView
 {
@@ -78,7 +78,7 @@ private:
 private:
     static const int MODELS_COUNT = 3;
     const QString TABLE_NAME = "users";
-    QString dbFilename;
+    QString dbFilename = "client.db";
 
     std::map<StateButtonView, std::function<void()>> funcmap;
     std::map<QObject*, StateButtonView> buttonStateMap;

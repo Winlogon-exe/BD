@@ -16,14 +16,14 @@
 enum StateButtonMenu
 {
     Users,
-    Projects
+    Projects,
 };
 
 class LogicMenu:public QObject
 {
     Q_OBJECT
 public:
-   explicit LogicMenu();
+   explicit LogicMenu(QObject* parent = nullptr);
     ~LogicMenu();
    void initMap();
    void users();
@@ -32,6 +32,7 @@ public:
 signals:
    void openFormUsers();
    void openFormProjects();
+   void testform();
 
 public slots:
     void s_setButtonState(QObject* sender, StateButtonMenu state);
@@ -40,6 +41,7 @@ public slots:
 private:
     std::map<StateButtonMenu, std::function<void()>> funcMap;
     std::map<QObject*, StateButtonMenu> buttonStateMap;
+    StateButtonMenu state;
 };
 
 

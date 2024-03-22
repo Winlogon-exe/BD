@@ -1,4 +1,5 @@
 #include "LogicView.h"
+#include "../databasemanager.h"
 
 LogicView::LogicView(QObject* parent) :
     QObject(parent),
@@ -52,7 +53,7 @@ void LogicView::initMap()
 
 bool LogicView::connectToDatabase()
 {
-    db = DatabaseManager::instance("client.db").database();
+    db = DatabaseManager::instance(dbFilename).database();
     if (!db.open())
     {
         return false;

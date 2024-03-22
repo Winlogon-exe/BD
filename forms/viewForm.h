@@ -23,7 +23,7 @@ class ViewForm : public QWidget
 
 public:
     explicit ViewForm(QWidget *parent = nullptr);
-    virtual ~ViewForm();
+     ~ViewForm();
 
     void iniThread();
     void createUI();

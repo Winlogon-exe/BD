@@ -16,7 +16,7 @@ class MenuForm : public QWidget
 {
     Q_OBJECT
 public:
-   explicit MenuForm();
+   explicit MenuForm(QWidget *parent = nullptr);
    ~MenuForm();
    void createUI();
    void iniThread();
@@ -32,7 +32,7 @@ signals:
     void setState(QObject* sender, StateButtonMenu state);
 
 private:
-    ViewForm view;
+    ViewForm* view;
     LogicMenu logic;
 
 private:
@@ -41,9 +41,9 @@ private:
 
 public slots:
     void s_buttonClicked();
-    void updateUsers();
-    void updateProjects();
-    void closeTab(int index);
+    void s_updateUsers();
+    void s_updateProjects();
+    void s_closeTab(int index);
 
 private:
     QTabWidget *tabWidget;

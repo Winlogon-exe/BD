@@ -1,15 +1,15 @@
 #include "menuform.h"
 
-MenuForm::MenuForm()
+MenuForm::MenuForm(QWidget *parent)
+    : QWidget(parent)
 {
-    createUI();
     setupConnect();
-
+    createUI();
 }
-
 
 void MenuForm::createUI()
 {
+    //iniThread();
     setupDisplay();
     setupButtons();
     setupLabel();
@@ -18,12 +18,11 @@ void MenuForm::createUI()
 
 void MenuForm::setupConnect()
 {
-    connect(this, &MenuForm::requestProcessState, &logic, &LogicMenu::s_processState);
     connect(this, &MenuForm::setState, &logic, &LogicMenu::s_setButtonState);
-    connect(&logic, &LogicMenu::openFormProjects, this, &MenuForm::updateProjects);
+    connect(this, &MenuForm::requestProcessState, &logic, &LogicMenu::s_processState);
 
-    connect(tabWidget, &QTabWidget::tabCloseRequested, this, &MenuForm::closeTab);
-    connect(&logic, &LogicMenu::openFormUsers, this, &MenuForm::updateUsers);
+    connect(&logic, &LogicMenu::openFormUsers, this, &MenuForm::s_updateUsers);
+    connect(&logic, &LogicMenu::openFormProjects, this, &MenuForm::s_updateProjects);
 }
 
 void MenuForm::setupDisplay()
@@ -31,7 +30,6 @@ void MenuForm::setupDisplay()
     this->setWindowTitle("Меню");
     //1024,768
     this->resize(500,450);
-    view.createUI();
 }
 
 void MenuForm::setupButtons()
@@ -42,7 +40,7 @@ void MenuForm::setupButtons()
 
 QPushButton* MenuForm::createButton(const QString& text,StateButtonMenu state)
 {
-    QPushButton* button = new QPushButton(text, this);
+    QPushButton* button = new QPushButton(text);
     emit setState(button,state);
     connect(button, &QPushButton::clicked, this, &MenuForm::s_buttonClicked);
     return button;
@@ -67,12 +65,13 @@ void MenuForm::s_buttonClicked()
 }
 
 //здесь можно принимать роль от логики и вызывать доп функ. от формы
-void MenuForm::updateUsers()
+void MenuForm::s_updateUsers()
 {
+    qDebug()<<"updateUsers";
     // Проверяем, существует ли вкладка с таким же содержимым
     for (int i = 0; i < tabWidget->count(); ++i)
     {
-        if (tabWidget->widget(i) == &view)
+        if (tabWidget->widget(i) == view)
         {
             tabWidget->setCurrentIndex(i);
             return;
@@ -80,25 +79,27 @@ void MenuForm::updateUsers()
     }
 
     // Если такой вкладки еще нет, создаем новую
-    view.show();
+    view = new ViewForm;
+    view->createUI();
 
-    tabWidget->addTab(&view, "Список сотрудников");
+    tabWidget->addTab(view, "Список сотрудников");
     tabWidget->setTabsClosable(true);
     tabWidget->setVisible(true);
+    connect(tabWidget, &QTabWidget::tabCloseRequested, this, &MenuForm::s_closeTab);
 }
 
-void MenuForm::closeTab(int index)
+void MenuForm::s_closeTab(int index)
 {
     QWidget* tab = tabWidget->widget(index);
     if (tab)
     {
         tabWidget->removeTab(index);
         tabWidget->setVisible(false);
-        //delete tab;
+        delete tab;
     }
 }
 
-void MenuForm::updateProjects()
+void MenuForm::s_updateProjects()
 {
 
 

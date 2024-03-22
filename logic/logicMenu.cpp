@@ -1,19 +1,20 @@
 #include"logicMenu.h"
 
-LogicMenu::LogicMenu()
+LogicMenu::LogicMenu(QObject* parent):
+    QObject(parent)
 {
     initMap();
 }
 
 void LogicMenu::initMap()
 {
-    funcMap[Users]  = [this](){ users(); };
+    funcMap[Users]    = [this](){ users(); };
     funcMap[Projects] = [this](){ projects(); };
 }
 
 void LogicMenu::s_processState(QObject* sender)
 {
-    StateButtonMenu state = buttonStateMap[sender];
+    state = buttonStateMap[sender];
     auto it = funcMap.find(state);
 
     if (it != funcMap.end())
