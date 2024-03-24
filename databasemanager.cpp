@@ -1,6 +1,6 @@
 #include "DatabaseManager.h"
 
-QMap<QString, DatabaseManager*> DatabaseManager::instances; // Инициализация статического контейнера
+QMap<QString, DatabaseManager*> DatabaseManager::instances;
 
 DatabaseManager& DatabaseManager::instance(const QString& dbName)
 {
@@ -13,7 +13,7 @@ DatabaseManager& DatabaseManager::instance(const QString& dbName)
 
 DatabaseManager::DatabaseManager(const QString& dbName)
 {
-    db = QSqlDatabase::addDatabase("QSQLITE", dbName); // Используем уникальное имя для каждого соединения
+    db = QSqlDatabase::addDatabase("QSQLITE", dbName); //  уникальное имя для каждого соединения
     db.setDatabaseName(dbName);
     if (!db.open())
     {

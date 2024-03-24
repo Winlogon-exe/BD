@@ -16,6 +16,7 @@ public:
 private:
     DatabaseManager(const QString& dbName);
     ~DatabaseManager();
+
     DatabaseManager(const DatabaseManager&) = delete;
     DatabaseManager& operator=(const DatabaseManager&) = delete;
 

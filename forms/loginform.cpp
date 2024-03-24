@@ -99,6 +99,7 @@ void LoginForm::s_ButtonClicked()
     emit requestProcessState(sender(),username,password);
 }
 
+//возможная проблема с созданием меню?
 void LoginForm::s_openNextForm()
 {
     menu.show();

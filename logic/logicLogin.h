@@ -27,12 +27,12 @@ class LoginLogic : public QObject
 public:
     explicit LoginLogic(QObject* parent = nullptr);   
     ~LoginLogic();
-    void initMap();
-    bool connectToDatabase();
-    void executeRequest(const QString &queryString);
-    QString buildQueryString();
-    void disconnectFromDatabase();
 
+    void executeRequest(const QString &queryString);
+    void disconnectFromDatabase();
+    QString buildQueryString();
+    bool connectToDatabase();
+    void initMap();
     void login();
     void cancel();
 
