@@ -54,12 +54,12 @@ QPushButton* MenuForm::createButton(const QString& text,StateButtonMenu state)
 void MenuForm::setupLayouts()
 {
     QVBoxLayout* layout = new QVBoxLayout(this);
-    usersTabWidget = new QTabWidget;
-    projectsTabWidget = new QTabWidget;
+    Tab = new QTabWidget(this);
+    connect(Tab, &QTabWidget::tabCloseRequested, this, &MenuForm::s_closeTab);
 
-    layout->addWidget(usersTabWidget);
+    layout->addWidget(Tab);
     layout->addStretch();
-    usersTabWidget->setVisible(false);
+    Tab->setVisible(false);
 
     layout->addWidget(buttonListUsers);
     layout->addWidget(buttonListProjects);
@@ -75,47 +75,52 @@ void MenuForm::s_buttonClicked()
 void MenuForm::s_updateUsers()
 {
     // Проверяем, существует ли вкладка с таким же содержимым
-    for (int i = 0; i < usersTabWidget->count(); ++i)
+    for (int i = 0; i < Tab->count(); ++i)
     {
-        if (usersTabWidget->widget(i) == users)
+        if (Tab->widget(i) == users)
         {
-            usersTabWidget->setCurrentIndex(i);
+            Tab->setCurrentIndex(i);
             return;
         }
     }
     users = new ViewForm("client.db","users");
-    usersTabWidget->addTab(users, "Список сотрудников");
-    usersTabWidget->setTabsClosable(true);
-    usersTabWidget->setVisible(true);
-    connect(usersTabWidget, &QTabWidget::tabCloseRequested, this, &MenuForm::s_closeTab);
+
+    Tab->addTab(users, "Список сотрудников");
+    Tab->setTabsClosable(true);
+    Tab->setVisible(true);
+
 }
 
 void MenuForm::s_closeTab(int index)
 {
-    QWidget* tab = usersTabWidget->widget(index);
+    QWidget* tab = Tab->widget(index);
     if (tab)
     {
-        usersTabWidget->removeTab(index);
-        usersTabWidget->setVisible(false);
+        Tab->removeTab(index);
         delete tab;
     }
+    if (Tab->count() == 0) {
+        Tab->setVisible(false); // Скрываем, только если нет вкладок
+    }
 }
+
 
 void MenuForm::s_updateProjects()
 {
     // Проверяем, существует ли вкладка с таким же содержимым
-    for (int i = 0; i < projectsTabWidget->count(); ++i)
+    for (int i = 0; i < Tab->count(); ++i)
     {
-        if (projectsTabWidget->widget(i) == projects)
+        if (Tab->widget(i) == projects)
         {
-            projectsTabWidget->setCurrentIndex(i);
+            Tab->setCurrentIndex(i);
             return;
         }
     }
     projects = new ViewForm("123.db","popular_tracks");
-    projectsTabWidget->addTab(projects, "Список проектов");
-    projectsTabWidget->setTabsClosable(true);
-    projectsTabWidget->setVisible(true);
+
+    Tab->addTab(projects, "Список проектов");
+    Tab->setTabsClosable(true);
+    Tab->setVisible(true);
 }
 
 void MenuForm::setupLabel()

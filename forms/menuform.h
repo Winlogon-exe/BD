@@ -47,8 +47,7 @@ public slots:
     void s_closeTab(int index);
 
 private:
-    QTabWidget *usersTabWidget;
-    QTabWidget* projectsTabWidget;
+    QTabWidget *Tab;
 
 };
 
