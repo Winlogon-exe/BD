@@ -1,6 +1,7 @@
 #include "LogicView.h"
 #include "../databasemanager.h"
 
+//проблема с потоками
 LogicView::LogicView(QObject* parent) :
     QObject(parent),
     currentPage(0),

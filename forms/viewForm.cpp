@@ -1,8 +1,10 @@
 #include "viewForm.h"
 
-ViewForm::ViewForm(QWidget *parent)
-    : QWidget(parent)
+ViewForm::ViewForm(const QString& bd,QWidget *parent)
+    : QWidget(parent),
+      nameBD(bd)
 {
+    createUI();
 }
 
 void ViewForm::createUI()

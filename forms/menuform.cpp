@@ -78,7 +78,7 @@ void MenuForm::s_updateUsers()
     }
 
     // Если такой вкладки еще нет, создаем новую
-    users = new ViewForm;
+    users = new ViewForm("client.db");
     //signal?
     users->createUI();
 
