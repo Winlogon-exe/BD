@@ -12,7 +12,6 @@
 #include<QStandardItemModel>
 #include <QtConcurrent/QtConcurrent>
 
-
 enum StateButtonView
 {
     Next,
@@ -77,8 +76,8 @@ private:
 
 private:
     static const int MODELS_COUNT = 3;
-    const QString TABLE_NAME = "popular_tracks";
-    QString dbFilename = "123.db";
+    const QString TABLE_NAME = "popular_tracks";//users
+    QString dbFilename = "123.db";//client.db
 
     std::map<StateButtonView, std::function<void()>> funcmap;
     std::map<QObject*, StateButtonView> buttonStateMap;

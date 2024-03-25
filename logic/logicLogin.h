@@ -33,6 +33,7 @@ public:
     QString buildQueryString();
     bool connectToDatabase();
     void initMap();
+    void initTypes();
     void login();
     void cancel();
 

@@ -1,4 +1,4 @@
-#include "HighlightDelegate.h"
+#include "highlightdelegate.h"
 
 HighlightDelegate::HighlightDelegate(const QString& searchText, QObject *parent):
     QStyledItemDelegate(parent),

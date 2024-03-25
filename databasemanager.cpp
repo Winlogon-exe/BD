@@ -1,4 +1,4 @@
-#include "DatabaseManager.h"
+#include "databasemanager.h"
 
 QMap<QString, DatabaseManager*> DatabaseManager::instances;
 

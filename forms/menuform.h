@@ -32,7 +32,8 @@ signals:
     void setState(QObject* sender, StateButtonMenu state);
 
 private:
-    ViewForm* view;
+    ViewForm* users;
+    ViewForm* projects;
     LogicMenu logic;
 
 private:

@@ -6,6 +6,7 @@
 #include <QDir>
 #include <QApplication>
 #include <QMap>
+#include<QDebug>
 
 class DatabaseManager
 {

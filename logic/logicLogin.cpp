@@ -3,8 +3,12 @@
 LoginLogic::LoginLogic(QObject* parent):
     QObject(parent)
 {
+    initTypes();
+}
+
+void LoginLogic::initTypes()
+{
     qRegisterMetaType<StateButtonLogin>("StateButtonLogin");
-   // dbFilename = QDir(QApplication::applicationDirPath()).filePath("client.db");
 }
 
 void LoginLogic::s_initDB()

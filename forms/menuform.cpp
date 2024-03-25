@@ -70,7 +70,7 @@ void MenuForm::s_updateUsers()
     // Проверяем, существует ли вкладка с таким же содержимым
     for (int i = 0; i < tabWidget->count(); ++i)
     {
-        if (tabWidget->widget(i) == view)
+        if (tabWidget->widget(i) == users)
         {
             tabWidget->setCurrentIndex(i);
             return;
@@ -78,10 +78,11 @@ void MenuForm::s_updateUsers()
     }
 
     // Если такой вкладки еще нет, создаем новую
-    view = new ViewForm;
-    view->createUI();
+    users = new ViewForm;
+    //signal?
+    users->createUI();
 
-    tabWidget->addTab(view, "Список сотрудников");
+    tabWidget->addTab(users, "Список сотрудников");
     tabWidget->setTabsClosable(true);
     tabWidget->setVisible(true);
     connect(tabWidget, &QTabWidget::tabCloseRequested, this, &MenuForm::s_closeTab);
@@ -100,8 +101,12 @@ void MenuForm::s_closeTab(int index)
 
 void MenuForm::s_updateProjects()
 {
-
-
+    //Сделать конструктор по имени БД
+  /*  projects = new ViewForm;
+    projects->createUI();
+    tabWidget->addTab(projects, "Список проектов");
+    tabWidget->setVisible(true);
+    connect(tabWidget, &QTabWidget::tabCloseRequested, this, &MenuForm::s_closeTab)*/;
 }
 
 void MenuForm::setupLabel()
