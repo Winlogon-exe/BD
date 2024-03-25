@@ -18,6 +18,7 @@ class MenuForm : public QWidget
 public:
    explicit MenuForm(QWidget *parent = nullptr);
    ~MenuForm();
+
    void createUI();
    void iniThread();
    void setupConnect();
@@ -25,6 +26,7 @@ public:
    void setupButtons();
    void setupLayouts();
    void setupLabel();
+   int findTabIndexByWidget(const QWidget* widget) const;
    QPushButton* createButton(const QString& text,StateButtonMenu state);
 
 signals:

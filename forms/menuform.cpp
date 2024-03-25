@@ -74,21 +74,18 @@ void MenuForm::s_buttonClicked()
 //здесь можно принимать роль от логики и вызывать доп функ. от формы
 void MenuForm::s_updateUsers()
 {
-    // Проверяем, существует ли вкладка с таким же содержимым
-    for (int i = 0; i < Tab->count(); ++i)
+    if (findTabIndexByWidget(users) != -1)
     {
-        if (Tab->widget(i) == users)
-        {
-            Tab->setCurrentIndex(i);
-            return;
-        }
+       // Если вкладка с пользователем уже существует, переключаемся на неё
+       Tab->setCurrentIndex(findTabIndexByWidget(users));
+       return;
     }
+
     users = new ViewForm("client.db","users");
 
     Tab->addTab(users, "Список сотрудников");
     Tab->setTabsClosable(true);
     Tab->setVisible(true);
-
 }
 
 void MenuForm::s_closeTab(int index)
@@ -99,28 +96,38 @@ void MenuForm::s_closeTab(int index)
         Tab->removeTab(index);
         delete tab;
     }
-    if (Tab->count() == 0) {
+
+    if (Tab->count() == 0)
+    {
         Tab->setVisible(false); // Скрываем, только если нет вкладок
     }
 }
 
-
 void MenuForm::s_updateProjects()
 {
-    // Проверяем, существует ли вкладка с таким же содержимым
-    for (int i = 0; i < Tab->count(); ++i)
+    if (findTabIndexByWidget(projects) != -1)
     {
-        if (Tab->widget(i) == projects)
-        {
-            Tab->setCurrentIndex(i);
-            return;
-        }
+       // Если вкладка с пользователем уже существует, переключаемся на неё
+       Tab->setCurrentIndex(findTabIndexByWidget(projects));
+       return;
     }
-    projects = new ViewForm("123.db","popular_tracks");
 
+    projects = new ViewForm("123.db","popular_tracks");
     Tab->addTab(projects, "Список проектов");
     Tab->setTabsClosable(true);
     Tab->setVisible(true);
+}
+
+int MenuForm::findTabIndexByWidget(const QWidget* widget) const
+{
+    for (int i = 0; i < Tab->count(); ++i)
+    {
+        if (Tab->widget(i) == widget)
+        {
+            return i;
+        }
+    }
+    return -1; // Вкладка не найдена
 }
 
 void MenuForm::setupLabel()
