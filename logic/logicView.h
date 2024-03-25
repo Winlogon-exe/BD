@@ -31,7 +31,7 @@ class LogicView : public QObject
     Q_OBJECT
 
 public:
-    explicit LogicView(QObject* parent = nullptr);
+    explicit LogicView(const QString &db,QObject* parent = nullptr);
     ~LogicView();
 
 public:
@@ -76,8 +76,8 @@ private:
 
 private:
     static const int MODELS_COUNT = 3;
-    const QString TABLE_NAME = "popular_tracks";//users
-    QString dbFilename = "123.db";//client.db
+    const QString TABLE_NAME = "users";//users
+    QString dbFilename;//client.db
 
     std::map<StateButtonView, std::function<void()>> funcmap;
     std::map<QObject*, StateButtonView> buttonStateMap;

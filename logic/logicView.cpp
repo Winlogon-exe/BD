@@ -1,14 +1,15 @@
-#include "LogicView.h"
+#include "logicView.h"
 #include "../databasemanager.h"
 
 //проблема с потоками
-LogicView::LogicView(QObject* parent) :
+LogicView::LogicView(const QString &db,QObject* parent) :
     QObject(parent),
     currentPage(0),
+    totalPages(0),
     pageSize(30),
     preload(1),
     offset(0),
-    totalPages(0)
+    dbFilename(db)
 {
     initTypes();
 }

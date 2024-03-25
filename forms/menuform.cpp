@@ -78,9 +78,8 @@ void MenuForm::s_updateUsers()
     }
 
     // Если такой вкладки еще нет, создаем новую
-    users = new ViewForm("client.db");
-    //signal?
-    users->createUI();
+    users = new ViewForm("client.db",this);
+    //users->createUI();
 
     tabWidget->addTab(users, "Список сотрудников");
     tabWidget->setTabsClosable(true);

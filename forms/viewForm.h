@@ -22,7 +22,7 @@ class ViewForm : public QWidget
     Q_OBJECT
 
 public:
-    explicit ViewForm(QWidget *parent = nullptr);
+    explicit ViewForm(const QString& bd,QWidget *parent = nullptr);
      ~ViewForm();
 
     void iniThread();
@@ -55,10 +55,11 @@ private:
     QTableView          *tableView;
     QString             searchText;
     QLabel              *page;
-    LogicView            logic;
+    LogicView            *logic;
 
 private:
     QString pageInfo;
+    QString nameBD;
     QPushButton* backButton;
     QPushButton* nextButton;
     QPushButton* searchButton;
