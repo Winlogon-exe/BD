@@ -12,6 +12,7 @@
 #include <QLineEdit>
 #include <QLabel>
 #include <QHeaderView>
+#include <memory>
 #include <QToolBar>
 
 #include "../delegate/highlightdelegate.h"
@@ -22,7 +23,7 @@ class ViewForm : public QWidget
     Q_OBJECT
 
 public:
-    explicit ViewForm(const QString& bd,QWidget *parent = nullptr);
+    explicit ViewForm(const QString& db,QWidget *parent = nullptr);
      ~ViewForm();
 
     void iniThread();
@@ -55,7 +56,7 @@ private:
     QTableView          *tableView;
     QString             searchText;
     QLabel              *page;
-    LogicView            *logic;
+    std::unique_ptr<LogicView> logic;
 
 private:
     QString pageInfo;

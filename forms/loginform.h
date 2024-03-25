@@ -46,7 +46,7 @@ private:
 private:
     QThread* logicThread;
     LoginLogic logic;
-    MenuForm menu;
+    MenuForm   menu;
 
 private:
     QLineEdit* usernameEdit;

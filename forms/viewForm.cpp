@@ -1,10 +1,10 @@
 #include "viewForm.h"
 
-ViewForm::ViewForm(const QString& bd,QWidget *parent)
+ViewForm::ViewForm(const QString& db,QWidget *parent)
     : QWidget(parent),
-      nameBD(bd)
+      nameBD(db)
 {
-    logic = new LogicView(nameBD);
+    logic = std::make_unique<LogicView>(nameBD);
     createUI();
 }
 
@@ -24,11 +24,10 @@ void ViewForm::createUI()
 
 void ViewForm::iniThread()
 {
-
     logicThread = new QThread();
     logic->moveToThread(logicThread);
 
-    connect(logicThread, &QThread::started, logic, &LogicView::s_initDB);
+    connect(logicThread, &QThread::started, logic.get(), &LogicView::s_initDB);
     connect(logicThread, &QThread::finished, logicThread, &QThread::deleteLater);
     logicThread->start();
 }
@@ -117,12 +116,12 @@ void ViewForm::paintSearch(const QString& text)
 
 void ViewForm::setupConnect()
 {
-    connect(this, &ViewForm::requestProcessState, logic, &LogicView::s_processState);
-    connect(this, &ViewForm::setState, logic, &LogicView::s_setButtonState);
+    connect(this, &ViewForm::requestProcessState, logic.get(), &LogicView::s_processState);
+    connect(this, &ViewForm::setState, logic.get(), &LogicView::s_setButtonState);
 
-    connect(logic,&LogicView::updateFilter,this,&ViewForm::s_onFieldsRetrieved);
-    connect(logic,&LogicView::updateLabel,this,&ViewForm::s_showLabel);
-    connect(logic,&LogicView::updateTable,this,&ViewForm::s_showTable);
+    connect(logic.get(),&LogicView::updateFilter,this,&ViewForm::s_onFieldsRetrieved);
+    connect(logic.get(),&LogicView::updateLabel,this,&ViewForm::s_showLabel);
+    connect(logic.get(),&LogicView::updateTable,this,&ViewForm::s_showTable);
 }
 
 //передача в логику
