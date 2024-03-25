@@ -1,10 +1,10 @@
 #include "viewForm.h"
 
-ViewForm::ViewForm(const QString& db,QWidget *parent)
+ViewForm::ViewForm(const QString& db,const QString& table,QWidget *parent)
     : QWidget(parent),
       nameBD(db)
 {
-    logic = std::make_unique<LogicView>(nameBD);
+    logic = std::make_unique<LogicView>(nameBD,table);
     createUI();
 }
 

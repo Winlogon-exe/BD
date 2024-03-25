@@ -2,14 +2,15 @@
 #include "../databasemanager.h"
 
 //проблема с потоками
-LogicView::LogicView(const QString &db,QObject* parent) :
+LogicView::LogicView(const QString &db,const QString &table,QObject* parent) :
     QObject(parent),
     currentPage(0),
     totalPages(0),
     pageSize(30),
     preload(1),
     offset(0),
-    dbFilename(db)
+    dbFilename(db),
+    TABLE_NAME(table)
 {
     initTypes();
 }
@@ -28,8 +29,8 @@ void LogicView::s_initDB()
         initModels();
         FieldsForFilter();
         executeRequest(buildQueryString(currentPage), models[Center]);
-        (void)QtConcurrent::run([this](){ calculateTotalPages(); });
-        (void)QtConcurrent::run([this](){ preloadPages(currentPage + preload, models[Right]); });
+        //(void)QtConcurrent::run([this](){ calculateTotalPages(); });
+        //(void)QtConcurrent::run([this](){ preloadPages(currentPage + preload, models[Right]); });
     }
     else
     {
@@ -115,7 +116,7 @@ void LogicView::nextPage()
         currentPage++;
         models[Left]->setQuery(models[Center]->query());
         models[Center]->setQuery(models[Right]->query());
-        (void)QtConcurrent::run([this](){ preloadPages(currentPage + preload, models[Right]); });
+        //(void)QtConcurrent::run([this](){ preloadPages(currentPage + preload, models[Right]); });
         emit updateLabel(currentPage, totalPages);
     }
 }
@@ -127,7 +128,7 @@ void LogicView::backPage()
         currentPage--;
         models[Right]->setQuery(models[Center]->query());
         models[Center]->setQuery(models[Left]->query());
-        (void)QtConcurrent::run([this](){ preloadPages(currentPage - preload, models[Left]); });
+        //(void)QtConcurrent::run([this](){ preloadPages(currentPage - preload, models[Left]); });
         emit updateLabel(currentPage, totalPages);
     }
 }

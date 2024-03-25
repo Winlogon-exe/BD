@@ -7,9 +7,14 @@ MenuForm::MenuForm(QWidget *parent)
     createUI();
 }
 
+void MenuForm::iniThread()
+{
+
+}
+
 void MenuForm::createUI()
 {
-    //iniThread();
+    iniThread();
     setupDisplay();
     setupButtons();
     setupLabel();
@@ -49,10 +54,12 @@ QPushButton* MenuForm::createButton(const QString& text,StateButtonMenu state)
 void MenuForm::setupLayouts()
 {
     QVBoxLayout* layout = new QVBoxLayout(this);
-    tabWidget = new QTabWidget;
-    layout->addWidget(tabWidget);
+    usersTabWidget = new QTabWidget;
+    projectsTabWidget = new QTabWidget;
+
+    layout->addWidget(usersTabWidget);
     layout->addStretch();
-    tabWidget->setVisible(false);
+    usersTabWidget->setVisible(false);
 
     layout->addWidget(buttonListUsers);
     layout->addWidget(buttonListProjects);
@@ -68,44 +75,47 @@ void MenuForm::s_buttonClicked()
 void MenuForm::s_updateUsers()
 {
     // Проверяем, существует ли вкладка с таким же содержимым
-    for (int i = 0; i < tabWidget->count(); ++i)
+    for (int i = 0; i < usersTabWidget->count(); ++i)
     {
-        if (tabWidget->widget(i) == users)
+        if (usersTabWidget->widget(i) == users)
         {
-            tabWidget->setCurrentIndex(i);
+            usersTabWidget->setCurrentIndex(i);
             return;
         }
     }
-
-    // Если такой вкладки еще нет, создаем новую
-    users = new ViewForm("client.db");
-    //users->createUI();
-
-    tabWidget->addTab(users, "Список сотрудников");
-    tabWidget->setTabsClosable(true);
-    tabWidget->setVisible(true);
-    connect(tabWidget, &QTabWidget::tabCloseRequested, this, &MenuForm::s_closeTab);
+    users = new ViewForm("client.db","users");
+    usersTabWidget->addTab(users, "Список сотрудников");
+    usersTabWidget->setTabsClosable(true);
+    usersTabWidget->setVisible(true);
+    connect(usersTabWidget, &QTabWidget::tabCloseRequested, this, &MenuForm::s_closeTab);
 }
 
 void MenuForm::s_closeTab(int index)
 {
-    QWidget* tab = tabWidget->widget(index);
+    QWidget* tab = usersTabWidget->widget(index);
     if (tab)
     {
-        tabWidget->removeTab(index);
-        tabWidget->setVisible(false);
+        usersTabWidget->removeTab(index);
+        usersTabWidget->setVisible(false);
         delete tab;
     }
 }
 
 void MenuForm::s_updateProjects()
 {
-    //Сделать конструктор по имени БД
-  /*  projects = new ViewForm;
-    projects->createUI();
-    tabWidget->addTab(projects, "Список проектов");
-    tabWidget->setVisible(true);
-    connect(tabWidget, &QTabWidget::tabCloseRequested, this, &MenuForm::s_closeTab)*/;
+    // Проверяем, существует ли вкладка с таким же содержимым
+    for (int i = 0; i < projectsTabWidget->count(); ++i)
+    {
+        if (projectsTabWidget->widget(i) == projects)
+        {
+            projectsTabWidget->setCurrentIndex(i);
+            return;
+        }
+    }
+    projects = new ViewForm("123.db","popular_tracks");
+    projectsTabWidget->addTab(projects, "Список проектов");
+    projectsTabWidget->setTabsClosable(true);
+    projectsTabWidget->setVisible(true);
 }
 
 void MenuForm::setupLabel()

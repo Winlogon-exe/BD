@@ -23,7 +23,7 @@ class ViewForm : public QWidget
     Q_OBJECT
 
 public:
-    explicit ViewForm(const QString& db,QWidget *parent = nullptr);
+    explicit ViewForm(const QString& db,const QString& table,QWidget *parent = nullptr);
      ~ViewForm();
 
     void iniThread();
@@ -34,10 +34,10 @@ public:
     void setupConnect();
     void setupLineEdit();
     void setupLabel();
+    void setupTableView();
+    void paintSearch(const QString& text);
 
     QPushButton* createButton(const QString& text,StateButtonView state);
-    void paintSearch(const QString& text);
-    void setupTableView();
 
 signals:
     void requestProcessState(QObject *sender, const QString &searchText,const QString filter);
@@ -56,17 +56,20 @@ private:
     QTableView          *tableView;
     QString             searchText;
     QLabel              *page;
+
+    QLineEdit*   searchLineEdit;
+    QComboBox*   filterComboBox;
     std::unique_ptr<LogicView> logic;
 
 private:
     QString pageInfo;
     QString nameBD;
+    QString nameTable;
+
+private:
     QPushButton* backButton;
     QPushButton* nextButton;
-    QPushButton* searchButton;
-
-    QLineEdit*   searchLineEdit;
-    QComboBox*   filterComboBox;
+    QPushButton* searchButton;  
 };
 
 #endif // VIEWFORM_H
