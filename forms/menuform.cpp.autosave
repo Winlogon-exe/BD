@@ -16,7 +16,7 @@ void MenuForm::iniThread()
 
 void MenuForm::loadThemeFromSettings()
 {
-    //QSettings settings("stil", "stil"); // Измените на имя вашей компании и приложения
+    QSettings settings("stil", "stil"); // Измените на имя вашей компании и приложения
     QString theme = settings.value("theme", "light").toString(); // Значение по умолчанию - "light"
 
     if (theme == "dark")
@@ -30,7 +30,6 @@ void MenuForm::loadThemeFromSettings()
         isDarkTheme = false;
     }
 }
-
 
 void MenuForm::createUI()
 {
@@ -122,7 +121,7 @@ void MenuForm::s_lightTheme()
 void MenuForm::s_toggleTheme()
 {
     isDarkTheme = !isDarkTheme;
-    //QSettings settings("stil", "stil");
+    QSettings settings("stil", "stil");
 
     if (isDarkTheme)
     {

@@ -32,6 +32,7 @@ public:
    void setupLayouts();
    void setupLabel();
    void setupMenuBar();
+   void loadThemeFromSettings();
 
    int findTabIndexByWidget(const QWidget* widget) const;
    QPushButton* createButton(const QString& text,StateButtonMenu state);
@@ -50,15 +51,15 @@ private:
     QPushButton* buttonListProjects;
 
 public slots:
+    void s_closeTab(int index);
+    void s_openAboutDialog();
+    void s_updateProjects();
     void s_buttonClicked();
     void s_updateUsers();
-    void s_updateProjects();
-    void s_closeTab(int index);
-    void s_open();
-    void s_openAboutDialog();
     void s_toggleTheme();
     void s_blackTheme();
     void s_lightTheme();
+    void s_open();
 
 private:
     QTabWidget *Tab;
@@ -67,7 +68,6 @@ private:
     QAction *themeAction;
     bool isDarkTheme = false;
     QSettings settings;
-
 
 };
 
