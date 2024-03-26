@@ -32,7 +32,6 @@ public:
 signals:
    void openFormUsers();
    void openFormProjects();
-   void testform();
 
 public slots:
     void s_setButtonState(QObject* sender, StateButtonMenu state);

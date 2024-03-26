@@ -9,6 +9,11 @@
 #include <QStackedWidget>
 #include <QVBoxLayout>
 #include <QTabWidget>
+#include<QMenuBar>
+#include<QFileDialog>
+#include<QStyleFactory>
+#include<QCursor>
+
 #include "viewForm.h"
 #include "../logic/logicMenu.h"
 
@@ -26,6 +31,8 @@ public:
    void setupButtons();
    void setupLayouts();
    void setupLabel();
+   void setupMenuBar();
+
    int findTabIndexByWidget(const QWidget* widget) const;
    QPushButton* createButton(const QString& text,StateButtonMenu state);
 
@@ -47,9 +54,20 @@ public slots:
     void s_updateUsers();
     void s_updateProjects();
     void s_closeTab(int index);
+    void s_open();
+    void s_openAboutDialog();
+    void s_toggleTheme();
+    void s_blackTheme();
+    void s_lightTheme();
 
 private:
     QTabWidget *Tab;
+    QMenuBar *menuBar;
+    QString lastDatabasePath;
+    QAction *themeAction;
+    bool isDarkTheme = false;
+    QSettings settings;
+
 
 };
 

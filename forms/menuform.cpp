@@ -3,6 +3,7 @@
 MenuForm::MenuForm(QWidget *parent)
     : QWidget(parent)
 {
+    isDarkTheme = settings.value("isDarkTheme", false).toBool(); // По умолчанию светлая тема
     setupConnect();
     createUI();
 }
@@ -17,8 +18,121 @@ void MenuForm::createUI()
     iniThread();
     setupDisplay();
     setupButtons();
+    setupMenuBar();
     setupLabel();
     setupLayouts();
+}
+
+void MenuForm::setupMenuBar()
+{
+    menuBar = new QMenuBar(this);
+
+    // Меню "Файл"
+    QMenu *fileMenu = menuBar->addMenu(tr("Файл"));
+    QAction *openAction = fileMenu->addAction(tr("Открыть"));
+    QAction *exitAction = fileMenu->addAction(tr("Выход"));
+    connect(openAction, &QAction::triggered, this, &MenuForm::s_open);
+    connect(exitAction, &QAction::triggered, this, &QWidget::close);
+
+    // Меню "Вид"
+    QMenu *viewMenu = menuBar->addMenu(tr("Вид"));
+    QAction *viewUsersAction = viewMenu->addAction(tr("Список сотрудников"));
+    QAction *viewProjectsAction = viewMenu->addAction(tr("Список проектов"));
+    connect(viewUsersAction, &QAction::triggered, this, &MenuForm::s_updateUsers);
+    connect(viewProjectsAction, &QAction::triggered, this, &MenuForm::s_updateProjects);
+
+    // Меню "Настройки"
+    QMenu *settingsMenu = menuBar->addMenu(tr("Настройки"));
+    themeAction = settingsMenu->addAction(tr("Темная тема"), this, &MenuForm::s_toggleTheme);
+
+    // Меню "Справка"
+    QMenu *helpMenu = menuBar->addMenu(tr("Справка"));
+    QAction *aboutAction = helpMenu->addAction(tr("О программе"));
+    connect(aboutAction, &QAction::triggered, this, &MenuForm::s_openAboutDialog);
+}
+
+void MenuForm::s_blackTheme()
+{
+    // Создаем новую палитру для темной темы
+    QPalette darkPalette;
+
+    // Цвет фона
+    darkPalette.setColor(QPalette::Window, QColor(53,53,53));
+
+    // Цвет виджетов
+    darkPalette.setColor(QPalette::WindowText, Qt::white);
+    darkPalette.setColor(QPalette::Text, Qt::white);
+    darkPalette.setColor(QPalette::Base, QColor(25,25,25));
+    darkPalette.setColor(QPalette::AlternateBase, QColor(53,53,53));
+    darkPalette.setColor(QPalette::ToolTipBase, Qt::white);
+    darkPalette.setColor(QPalette::ToolTipText, Qt::white);
+
+    // Цвета для выделения (например, выделенный текст)
+    darkPalette.setColor(QPalette::Highlight, QColor(42,130,218));
+    darkPalette.setColor(QPalette::HighlightedText, Qt::white);
+    darkPalette.setColor(QPalette::Button, QColor(53,53,53));
+    darkPalette.setColor(QPalette::ButtonText, Qt::white);
+    darkPalette.setColor(QPalette::Link, QColor(42, 130, 218));
+    darkPalette.setColor(QPalette::BrightText, Qt::red);
+    darkPalette.setColor(QPalette::LinkVisited, QColor(42, 130, 218).darker());
+
+    qApp->setPalette(darkPalette);
+    qApp->setStyle(QStyleFactory::create("Fusion"));
+}
+
+void MenuForm::s_lightTheme()
+{
+    QPalette lightPalette;
+    lightPalette.setColor(QPalette::Window, Qt::white);
+    lightPalette.setColor(QPalette::WindowText, Qt::black);
+    lightPalette.setColor(QPalette::Base, Qt::white);
+    lightPalette.setColor(QPalette::AlternateBase, Qt::lightGray);
+    lightPalette.setColor(QPalette::ToolTipBase, Qt::white);
+    lightPalette.setColor(QPalette::ToolTipText, Qt::black);
+    lightPalette.setColor(QPalette::Text, Qt::black);
+    lightPalette.setColor(QPalette::Button, Qt::white);
+    lightPalette.setColor(QPalette::ButtonText, Qt::black);
+    lightPalette.setColor(QPalette::Link, QColor(42, 130, 218));
+    lightPalette.setColor(QPalette::Highlight, QColor(42, 130, 218));
+    lightPalette.setColor(QPalette::HighlightedText, Qt::white);
+
+    qApp->setPalette(lightPalette);
+    qApp->setStyle(QStyleFactory::create("Fusion"));
+}
+
+void MenuForm::s_toggleTheme()
+{
+    isDarkTheme = !isDarkTheme;
+    settings.setValue("isDarkTheme", isDarkTheme);
+
+    if (isDarkTheme)
+    {
+        s_blackTheme();
+        themeAction->setText(tr("Светлая тема"));
+    }
+    else
+    {
+        s_lightTheme();
+        themeAction->setText(tr("Темная тема"));
+    }
+}
+
+
+void MenuForm::s_openAboutDialog()
+{
+    // Здесь код для открытия диалогового окна "О программе"
+
+}
+
+
+void MenuForm::s_open()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Открыть базу данных"), "", tr("Базы данных (*.db);;Все файлы (*.*)"));
+    if (!fileName.isEmpty())
+    {
+        //логика после открытия файла
+        lastDatabasePath = fileName;
+    }
 }
 
 void MenuForm::setupConnect()
@@ -34,7 +148,7 @@ void MenuForm::setupDisplay()
 {
     this->setWindowTitle("Меню");
     //1024,768
-    this->resize(500,450);
+    this->resize(1024,768);
 }
 
 void MenuForm::setupButtons()
@@ -57,10 +171,11 @@ void MenuForm::setupLayouts()
     Tab = new QTabWidget(this);
     connect(Tab, &QTabWidget::tabCloseRequested, this, &MenuForm::s_closeTab);
 
-    layout->addWidget(Tab);
+    layout->addWidget(Tab,1);
     layout->addStretch();
     Tab->setVisible(false);
 
+    layout->setMenuBar(menuBar);
     layout->addWidget(buttonListUsers);
     layout->addWidget(buttonListProjects);
     layout->addStretch();
@@ -76,14 +191,15 @@ void MenuForm::s_updateUsers()
 {
     if (findTabIndexByWidget(users) != -1)
     {
-       // Если вкладка с пользователем уже существует, переключаемся на неё
-       Tab->setCurrentIndex(findTabIndexByWidget(users));
-       return;
+        Tab->setCurrentIndex(findTabIndexByWidget(users));
+        return;
     }
 
-    users = new ViewForm("client.db","users");
+    // Используем lastDatabasePath вместо "client.db"
+    users = new ViewForm("client.db", "users");
 
-    Tab->addTab(users, "Список сотрудников");
+    int newIndex = Tab->addTab(users, tr("Список сотрудников"));
+    Tab->setCurrentIndex(newIndex);
     Tab->setTabsClosable(true);
     Tab->setVisible(true);
 }
@@ -113,11 +229,13 @@ void MenuForm::s_updateProjects()
     }
 
     projects = new ViewForm("123.db","popular_tracks");
-    Tab->addTab(projects, "Список проектов");
+    int newIndex = Tab->addTab(projects, "Список проектов");
+    Tab->setCurrentIndex(newIndex);
     Tab->setTabsClosable(true);
     Tab->setVisible(true);
 }
 
+//bool?
 int MenuForm::findTabIndexByWidget(const QWidget* widget) const
 {
     for (int i = 0; i < Tab->count(); ++i)

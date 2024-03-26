@@ -9,8 +9,8 @@ LogicView::LogicView(const QString &db,const QString &table,QObject* parent) :
     pageSize(30),
     preload(1),
     offset(0),
-    dbFilename(db),
-    TABLE_NAME(table)
+    TABLE_NAME(table),
+    dbFilename(db)
 {
     initTypes();
 }
@@ -29,8 +29,8 @@ void LogicView::s_initDB()
         initModels();
         FieldsForFilter();
         executeRequest(buildQueryString(currentPage), models[Center]);
-        //(void)QtConcurrent::run([this](){ calculateTotalPages(); });
-        //(void)QtConcurrent::run([this](){ preloadPages(currentPage + preload, models[Right]); });
+       // (void)QtConcurrent::run([this](){ calculateTotalPages(); });
+       // (void)QtConcurrent::run([this](){ preloadPages(currentPage + preload, models[Right]); });
     }
     else
     {
@@ -128,7 +128,7 @@ void LogicView::backPage()
         currentPage--;
         models[Right]->setQuery(models[Center]->query());
         models[Center]->setQuery(models[Left]->query());
-        //(void)QtConcurrent::run([this](){ preloadPages(currentPage - preload, models[Left]); });
+       // (void)QtConcurrent::run([this](){ preloadPages(currentPage - preload, models[Left]); });
         emit updateLabel(currentPage, totalPages);
     }
 }
