@@ -43,6 +43,8 @@ void MenuForm::createUI()
 
 void MenuForm::setupMenuBar()
 {
+    setWindowFlags(Qt::FramelessWindowHint); // Скрыть стандартный заголовок окна
+
     menuBar = new QMenuBar(this);
 
     // Меню "Файл"
@@ -71,51 +73,27 @@ void MenuForm::setupMenuBar()
 
 void MenuForm::s_blackTheme()
 {
-    // Создаем новую палитру для темной темы
-    QPalette darkPalette;
 
-    // Цвет фона
-    darkPalette.setColor(QPalette::Window, QColor(53,53,53));
+    applyTheme("./styles/darktheme.qss");
+}
 
-    // Цвет виджетов
-    darkPalette.setColor(QPalette::WindowText, Qt::white);
-    darkPalette.setColor(QPalette::Text, Qt::white);
-    darkPalette.setColor(QPalette::Base, QColor(25,25,25));
-    darkPalette.setColor(QPalette::AlternateBase, QColor(53,53,53));
-    darkPalette.setColor(QPalette::ToolTipBase, Qt::white);
-    darkPalette.setColor(QPalette::ToolTipText, Qt::white);
+void MenuForm::applyTheme(const QString &themeFilePath)
+{
 
-    // Цвета для выделения (например, выделенный текст)
-    darkPalette.setColor(QPalette::Highlight, QColor(42,130,218));
-    darkPalette.setColor(QPalette::HighlightedText, Qt::white);
-    darkPalette.setColor(QPalette::Button, QColor(53,53,53));
-    darkPalette.setColor(QPalette::ButtonText, Qt::white);
-    darkPalette.setColor(QPalette::Link, QColor(42, 130, 218));
-    darkPalette.setColor(QPalette::BrightText, Qt::red);
-    darkPalette.setColor(QPalette::LinkVisited, QColor(42, 130, 218).darker());
-
-    qApp->setPalette(darkPalette);
-    qApp->setStyle(QStyleFactory::create("Fusion"));
+    QFile file(themeFilePath);
+    if (file.open(QFile::ReadOnly | QFile::Text))
+    {
+        QTextStream stream(&file);
+        QString stylesheet = stream.readAll();
+        qApp->setStyle(QStyleFactory::create("Fusion"));
+        qApp->setStyleSheet(stylesheet);
+        file.close();
+    }
 }
 
 void MenuForm::s_lightTheme()
 {
-    QPalette lightPalette;
-    lightPalette.setColor(QPalette::Window, Qt::white);
-    lightPalette.setColor(QPalette::WindowText, Qt::black);
-    lightPalette.setColor(QPalette::Base, Qt::white);
-    lightPalette.setColor(QPalette::AlternateBase, Qt::lightGray);
-    lightPalette.setColor(QPalette::ToolTipBase, Qt::white);
-    lightPalette.setColor(QPalette::ToolTipText, Qt::black);
-    lightPalette.setColor(QPalette::Text, Qt::black);
-    lightPalette.setColor(QPalette::Button, Qt::white);
-    lightPalette.setColor(QPalette::ButtonText, Qt::black);
-    lightPalette.setColor(QPalette::Link, QColor(42, 130, 218));
-    lightPalette.setColor(QPalette::Highlight, QColor(42, 130, 218));
-    lightPalette.setColor(QPalette::HighlightedText, Qt::white);
-
-    qApp->setPalette(lightPalette);
-    qApp->setStyle(QStyleFactory::create("Fusion"));
+    applyTheme("./styles/lighttheme.qss");
 }
 
 void MenuForm::s_toggleTheme()

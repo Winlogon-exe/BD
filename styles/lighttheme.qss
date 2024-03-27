@@ -1,0 +1,44 @@
+/* Основные цвета */
+QWidget {
+    background-color: #FFFFFF;
+    color: black;
+}
+
+/* Цвета текста и фона для различных элементов */
+QLineEdit, QTextEdit, QPlainTextEdit, QComboBox, QToolTip {
+    background-color: #F0F0F0;
+    color: black;
+}
+
+/* Цвета кнопок */
+QPushButton, QCheckBox, QRadioButton, QSlider {
+    background-color: #FFFFFF;
+    color: black;
+}
+
+/* Выделение текста */
+QTextEdit::selection, QLineEdit::selection {
+    background-color: #2A82DA;
+    color: white;
+}
+
+/* Цвета для ссылок и текста в QLabel */
+QLabel, QCheckBox {
+    color: black; /* Изменено с #2A82DA на black для текста */
+}
+
+/* Цвет ссылок оставляем синим, но нужно будет использовать HTML форматирование внутри QLabel */
+QLabel::link {
+    color: #2A82DA; /* Указываем цвет только для гиперссылок */
+}
+
+/* Специфичные цвета для других элементов */
+QMenuBar::item:selected, QMenuBar::item:pressed {
+    background-color: #E0E0E0;
+    color: black;
+}
+
+QMenu::item:selected {
+    background-color: #E0E0E0;
+    color: black;
+}

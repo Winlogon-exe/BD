@@ -33,6 +33,7 @@ public:
    void setupLabel();
    void setupMenuBar();
    void loadThemeFromSettings();
+   void applyTheme(const QString &themeFilePath);
 
    int findTabIndexByWidget(const QWidget* widget) const;
    QPushButton* createButton(const QString& text,StateButtonMenu state);
@@ -62,12 +63,12 @@ public slots:
     void s_open();
 
 private:
-    QTabWidget *Tab;
-    QMenuBar *menuBar;
+    bool isDarkTheme = false;
     QString lastDatabasePath;
     QAction *themeAction;
-    bool isDarkTheme = false;
     QSettings settings;
+    QMenuBar *menuBar;
+    QTabWidget *Tab;
 
 };
 
