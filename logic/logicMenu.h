@@ -56,12 +56,12 @@ private:
 
 private:
     bool isDarkTheme = false;
-    StateButtonMenu state;
     QSettings theme_Settings;
+    StateButtonMenu state;
 
 private:
-    QString darkTheme = "dark";
     QString lightTheme = "light";
+    QString darkTheme = "dark";
 };
 
 
