@@ -32,10 +32,8 @@ public:
    void setupLayouts();
    void setupLabel();
    void setupMenuBar();
-   void loadThemeFromSettings();
-   void applyTheme(const QString &themeFilePath);
-
    int findTabIndexByWidget(const QWidget* widget) const;
+
    QPushButton* createButton(const QString& text,StateButtonMenu state);
 
 signals:
@@ -57,9 +55,6 @@ public slots:
     void s_updateProjects();
     void s_buttonClicked();
     void s_updateUsers();
-    void s_toggleTheme();
-    void s_blackTheme();
-    void s_lightTheme();
     void s_open();
 
 private:

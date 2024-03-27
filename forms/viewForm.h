@@ -59,7 +59,7 @@ private:
 
     QLineEdit*   searchLineEdit;
     QComboBox*   filterComboBox;
-    std::unique_ptr<LogicView> logic;
+    LogicView    logic;
 
 private:
     QString pageInfo;

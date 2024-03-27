@@ -32,6 +32,7 @@ class LogicView : public QObject
 
 public:
     explicit LogicView(const QString &db,const QString &table,QObject* parent = nullptr);
+    LogicView();
     ~LogicView();
 
 public:

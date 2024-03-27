@@ -3,7 +3,6 @@
 MenuForm::MenuForm(QWidget *parent)
     : QWidget(parent)
 {
-    loadThemeFromSettings();
     setupConnect();
     createUI();
 }
@@ -12,23 +11,6 @@ MenuForm::MenuForm(QWidget *parent)
 void MenuForm::iniThread()
 {
 
-}
-
-void MenuForm::loadThemeFromSettings()
-{
-    QSettings settings("stil", "stil"); // Измените на имя вашей компании и приложения
-    QString theme = settings.value("theme", "light").toString(); // Значение по умолчанию - "light"
-
-    if (theme == "dark")
-    {
-        s_blackTheme();
-        isDarkTheme = true;
-    }
-    else
-    {
-        s_lightTheme();
-        isDarkTheme = false;
-    }
 }
 
 void MenuForm::createUI()
@@ -43,8 +25,6 @@ void MenuForm::createUI()
 
 void MenuForm::setupMenuBar()
 {
-    setWindowFlags(Qt::FramelessWindowHint); // Скрыть стандартный заголовок окна
-
     menuBar = new QMenuBar(this);
 
     // Меню "Файл"
@@ -63,7 +43,7 @@ void MenuForm::setupMenuBar()
 
     // Меню "Настройки"
     QMenu *settingsMenu = menuBar->addMenu(tr("Настройки"));
-    themeAction = settingsMenu->addAction(tr("Темная тема"), this, &MenuForm::s_toggleTheme);
+    themeAction = settingsMenu->addAction(tr("Темная тема"), &logic, &LogicMenu::s_toggleTheme);
 
     // Меню "Справка"
     QMenu *helpMenu = menuBar->addMenu(tr("Справка"));
@@ -71,56 +51,11 @@ void MenuForm::setupMenuBar()
     connect(aboutAction, &QAction::triggered, this, &MenuForm::s_openAboutDialog);
 }
 
-void MenuForm::s_blackTheme()
-{
-
-    applyTheme("./styles/darktheme.qss");
-}
-
-void MenuForm::applyTheme(const QString &themeFilePath)
-{
-
-    QFile file(themeFilePath);
-    if (file.open(QFile::ReadOnly | QFile::Text))
-    {
-        QTextStream stream(&file);
-        QString stylesheet = stream.readAll();
-        qApp->setStyle(QStyleFactory::create("Fusion"));
-        qApp->setStyleSheet(stylesheet);
-        file.close();
-    }
-}
-
-void MenuForm::s_lightTheme()
-{
-    applyTheme("./styles/lighttheme.qss");
-}
-
-void MenuForm::s_toggleTheme()
-{
-    isDarkTheme = !isDarkTheme;
-    QSettings settings("stil", "stil");
-
-    if (isDarkTheme)
-    {
-        s_blackTheme();
-        themeAction->setText(tr("Светлая тема"));
-        settings.setValue("theme", "dark");
-    }
-    else
-    {
-        s_lightTheme();
-        themeAction->setText(tr("Темная тема"));
-        settings.setValue("theme", "light");
-    }
-}
-
 void MenuForm::s_openAboutDialog()
 {
     // Здесь код для открытия диалогового окна "О программе"
 
 }
-
 
 void MenuForm::s_open()
 {
@@ -192,9 +127,7 @@ void MenuForm::s_updateUsers()
         return;
     }
 
-    // Используем lastDatabasePath вместо "client.db"
     users = new ViewForm("client.db", "users");
-
     int newIndex = Tab->addTab(users, tr("Список сотрудников"));
     Tab->setCurrentIndex(newIndex);
     Tab->setTabsClosable(true);
