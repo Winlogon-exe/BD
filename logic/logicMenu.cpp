@@ -24,6 +24,7 @@ void LogicMenu::s_processState(QObject* sender)
     }
 }
 
+//тб узнавать передавать в ui?
 void LogicMenu::users()
 {
     emit openFormUsers();
